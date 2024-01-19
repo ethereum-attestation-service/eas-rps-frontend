@@ -8,6 +8,7 @@ import {
   CUSTOM_SCHEMAS,
   EASContractAddress,
   getAddressForENS,
+  RPS_GAME_UID,
   submitSignedAttestation,
 } from "./utils/utils";
 import {
@@ -35,7 +36,7 @@ const Container = styled.div`
   }
 `;
 
-const MetButton = styled.div`
+const Button = styled.div`
   border-radius: 10px;
   border: 1px solid #cfb9ff;
   background: #333342;
@@ -151,9 +152,7 @@ function Home() {
     <Container>
       <GradientBar />
       <WhiteBox>
-        <Title>
-          I <b>attest</b> that I met
-        </Title>
+        <Title>Create challenge</Title>
 
         <InputContainer>
           <InputBlock
@@ -166,16 +165,19 @@ function Home() {
           />
           {ensResolvedAddress && <EnsLogo src={"/ens-logo.png"} />}
         </InputContainer>
-        <MetButton
+        <Button
           onClick={async () => {
             if (status !== "connected") {
               modal.setOpen(true);
             } else {
               setAttesting(true);
               try {
-                const schemaEncoder = new SchemaEncoder("bool metIRL");
+                const schemaEncoder = new SchemaEncoder(
+                  "bool createGameChallenge"
+                );
+
                 const encoded = schemaEncoder.encodeData([
-                  { name: "metIRL", type: "bool", value: true },
+                  { name: "createGameChallenge", type: "bool", value: true },
                 ]);
 
                 const eas = new EAS(EASContractAddress);
@@ -183,7 +185,6 @@ function Home() {
                 invariant(signer, "signer must be defined");
                 eas.connect(signer);
 
-                // const offchain = await eas.getOffchain();
                 const offchain = await eas.getOffchain();
 
                 const recipient = ensResolvedAddress
@@ -193,12 +194,12 @@ function Home() {
                 const signedOffchainAttestation =
                   await offchain.signOffchainAttestation(
                     {
-                      schema: CUSTOM_SCHEMAS.MET_IRL_SCHEMA,
-                      recipient,
-                      refUID: ethers.ZeroHash,
+                      schema: CUSTOM_SCHEMAS.CREATE_GAME_CHALLENGE,
+                      recipient: recipient ? recipient : ethers.ZeroAddress,
+                      refUID: RPS_GAME_UID,
                       data: encoded,
                       time: BigInt(dayjs().unix()),
-                      revocable: true,
+                      revocable: false,
                       expirationTime: BigInt(0),
                       version: 1,
                       nonce: BigInt(0),
@@ -225,7 +226,7 @@ function Home() {
                   }
 
                   setTimeout(() => {
-                    navigate(`/connections`);
+                    navigate(`/challenge/${signedOffchainAttestation.uid}}`);
                   }, 500);
                 } else {
                   console.error(res.data.error);
@@ -239,11 +240,11 @@ function Home() {
           }}
         >
           {attesting
-            ? "Attesting..."
+            ? "Creating challenge..."
             : status === "connected"
-            ? "Make attestation"
+            ? "Create challenge"
             : "Connect wallet"}
-        </MetButton>
+        </Button>
 
         {status === "connected" && (
           <>

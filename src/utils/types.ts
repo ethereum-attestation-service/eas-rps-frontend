@@ -33,18 +33,6 @@ export interface MyData {
   attestations: Attestation[];
 }
 
-export interface Attestation {
-  id: string;
-  attester: string;
-  recipient: string;
-  refUID: string;
-  revocationTime: number;
-  expirationTime: number;
-  time: number;
-  txid: string;
-  data: string;
-}
-
 export type ResolvedAttestation = Attestation & {
   name: string;
   confirmation?: Attestation;
@@ -56,4 +44,37 @@ export type StoreIPFSActionReturn = {
   error: null | string;
   ipfsHash: string | null;
   offchainAttestationId: string | null;
+};
+
+export interface AvailableChallengesResult {
+  data: Data;
+}
+
+export interface Data {
+  attestations: Attestation[];
+}
+
+export interface Attestation {
+  attester: string;
+  data: string;
+  decodedDataJson: string;
+  expirationTime: number;
+  id: string;
+  ipfsHash: string;
+  isOffchain: boolean;
+  recipient: string;
+  revocable: boolean;
+  refUID: string;
+  revocationTime: number;
+  revoked: boolean;
+  schemaId: string;
+  time: number;
+  timeCreated: number;
+  txid: string;
+}
+
+export type GameCommit = {
+  salt: string;
+  choice: number;
+  challengeUID: string;
 };

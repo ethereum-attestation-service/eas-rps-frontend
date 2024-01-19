@@ -130,7 +130,7 @@ export function Header() {
 
   let menuItems: MenuItemType[] = [
     {
-      title: "Attest",
+      title: "Home",
       onClick: () => navigate("/"),
       path: "/",
     },
@@ -138,9 +138,9 @@ export function Header() {
 
   if (address) {
     menuItems.push({
-      title: "Connections",
-      onClick: () => navigate("/connections"),
-      path: "/connections",
+      title: "Challenges",
+      onClick: () => navigate("/challenges"),
+      path: "/challenges",
     });
   }
 

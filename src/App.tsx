@@ -3,7 +3,8 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Home from "./Home";
 import { Root } from "./Root";
 import Qr from "./Qr";
-import Connections from "./Connections";
+import Challenges from "./Challenges";
+import Challenge from "./Challenge";
 
 const router = createBrowserRouter([
   {
@@ -19,8 +20,12 @@ const router = createBrowserRouter([
         element: <Qr />,
       },
       {
-        path: "/connections",
-        element: <Connections />,
+        path: "/challenges",
+        element: <Challenges />,
+      },
+      {
+        path: "/challenge/:challengeId",
+        element: <Challenge />,
       },
     ],
   },

@@ -2,6 +2,7 @@ import invariant from "tiny-invariant";
 import type {
   Attestation,
   AttestationResult,
+  AvailableChallengesResult,
   EASChainConfig,
   EnsNamesResult,
   MyAttestationResult,
@@ -18,6 +19,11 @@ import { ethers } from "ethers";
 import { AttestationShareablePackageObject } from "@ethereum-attestation-service/eas-sdk";
 import axios from "axios";
 
+// @ts-ignore
+BigInt.prototype.toJSON = function () {
+  return this.toString();
+};
+
 export const alchemyApiKey = process.env.REACT_APP_ALCHEMY_API_KEY;
 
 export const CUSTOM_SCHEMAS = {
@@ -25,7 +31,18 @@ export const CUSTOM_SCHEMAS = {
     "0xc59265615401143689cbfe73046a922c975c99d97e4c248070435b1104b2dea7",
   CONFIRM_SCHEMA:
     "0x4eb603f49d68888d7f8b1fadd351b35a252f287ba465408ceb2b1e1e1efd90d5",
+  CREATE_GAME_CHALLENGE:
+    "0x64b1bac6f531c64a6aa372b1239111fe41a60003dcda62bfa967bc6e4c4d91e0",
+  CREATE_GAME_TYPE:
+    "0x312601bf4dbd15e56f2d53bcb58d96e85b9ace9e4ceb93bc0e741661ce27b400",
+  COMMIT_HASH:
+    "0x2328029cfa84b9ea42f4e0e8fa24fbf66da07ceec0a925dd27370b9617b32d59",
+  REVEAL_GAME_CHOICE:
+    "0xd37b0be1e85999415d1a3a1e5706772f477a7798edb520b28462bd29e150509a",
 };
+
+export const RPS_GAME_UID =
+  "0x048de8e6b4bf0769744930cc2641ce05d473f3cd5ce976ba9e6a3256d4b011eb";
 
 dayjs.extend(duration);
 dayjs.extend(relativeTime);
@@ -274,4 +291,29 @@ export async function getConnections(address: `0x${string}`) {
     });
   });
   return resolvedAttestations;
+}
+
+export async function getAvailableChallenges() {
+  const response = await axios.post<AvailableChallengesResult>(
+    "https://sepolia.easscan.org/graphql",
+    {
+      query:
+        "query Query($where: AttestationWhereInput) {\n  attestations(where: $where) {\n    attester\n    data\n    decodedDataJson\n    expirationTime\n    id\n    ipfsHash\n    isOffchain\n    recipient\n    revocable\n    refUID\n    revocationTime\n    revoked\n  \n    schemaId\n    time\n    timeCreated\n    txid\n  }\n}",
+      variables: {
+        where: {
+          schemaId: {
+            equals:
+              "0x64b1bac6f531c64a6aa372b1239111fe41a60003dcda62bfa967bc6e4c4d91e0",
+          },
+        },
+      },
+    },
+    {
+      headers: {
+        "content-type": "application/json",
+      },
+    }
+  );
+
+  return response.data.data.attestations;
 }

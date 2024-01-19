@@ -2,11 +2,10 @@ import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import GradientBar from "./components/GradientBar";
 import { useAccount } from "wagmi";
-import { getConnections } from "./utils/utils";
-import { ResolvedAttestation } from "./utils/types";
-import { AttestationItem } from "./AttestationItem";
-import invariant from "tiny-invariant";
+import { getAvailableChallenges } from "./utils/utils";
+import { Attestation } from "./utils/types";
 import { useNavigate } from "react-router";
+import { ChallengeAttestation } from "./ChallengeAttestation";
 
 const Container = styled.div`
   @media (max-width: 700px) {
@@ -41,9 +40,9 @@ const WhiteBox = styled.div`
   }
 `;
 
-function Connections() {
+function Challenges() {
   const { address } = useAccount();
-  const [attestations, setAttestations] = useState<ResolvedAttestation[]>([]);
+  const [attestations, setAttestations] = useState<Attestation[]>([]);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
@@ -54,12 +53,11 @@ function Connections() {
 
     async function getAtts() {
       setAttestations([]);
+
       setLoading(true);
+      const challengeAttestations = await getAvailableChallenges();
 
-      invariant(address, "Address should be defined");
-      const resolvedAttestations = await getConnections(address);
-
-      setAttestations(resolvedAttestations);
+      setAttestations(challengeAttestations);
       setLoading(false);
     }
     getAtts();
@@ -68,13 +66,13 @@ function Connections() {
   return (
     <Container>
       <GradientBar />
-      <NewConnection>Who you met IRL.</NewConnection>
+      <NewConnection>Challenges</NewConnection>
       <AttestationHolder>
         <WhiteBox>
           {loading && <div>Loading...</div>}
           {attestations.length > 0 || loading ? (
             attestations.map((attestation, i) => (
-              <AttestationItem key={i} data={attestation} />
+              <ChallengeAttestation attestation={attestation} />
             ))
           ) : (
             <div>No one here yet</div>
@@ -85,4 +83,4 @@ function Connections() {
   );
 }
 
-export default Connections;
+export default Challenges;
