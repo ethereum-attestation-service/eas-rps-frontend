@@ -154,7 +154,7 @@ export function Header() {
             <LogoContainer>
               <Logo onClick={() => navigate("/")}>
                 <LogoImage src="/logo.png" />
-                <LogoText>METIRL</LogoText>
+                <LogoText>EAS-RPS</LogoText>
               </Logo>
             </LogoContainer>
             <Left>
