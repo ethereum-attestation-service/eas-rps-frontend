@@ -178,13 +178,6 @@ function Home() {
           challengeUID: res.data.offchainAttestationId,
         });
 
-        addAcceptedChallenge({
-          UID: res.data.offchainAttestationId,
-          opponentAddress: address,
-          playerRevealed: false,
-          opponentRevealed: false,
-        });
-
         navigate(`/challenge/${signedOffchainAttestation.uid}`);
       } else {
         console.error(res.data.error);

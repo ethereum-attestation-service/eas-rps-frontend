@@ -1,12 +1,11 @@
-import { Attestation } from "./utils/types";
+import { Game } from "./utils/types";
 import styled from "styled-components";
 import { ButtonStandard } from "./styles/buttons";
-import { useState } from "react";
 import { useNavigate } from "react-router";
 import { useStore } from "./useStore";
 
 type Props = {
-  attestation: Attestation;
+  game: Game;
 };
 
 const Container = styled.div``;
@@ -18,26 +17,17 @@ const Challenger = styled.div`
   margin-bottom: 10px;
 `;
 
-const RPSHolder = styled.div``;
-
-export function ChallengeAttestation({ attestation }: Props) {
+export function ChallengeAttestation({ game: g }: Props) {
   const navigate = useNavigate();
-  const addAcceptedChallenge = useStore((state) => state.addAcceptedChallenge);
 
   return (
     <Container>
-      <UID>UID: {attestation.id}</UID>
-      <Challenger>Challenger: {attestation.attester}</Challenger>
+      <UID>UID: {g.uid}</UID>
+      <Challenger>Challenger: {g.player1}</Challenger>
 
       <ButtonStandard
         onClick={() => {
-          addAcceptedChallenge({
-            UID: attestation.id,
-            opponentAddress: attestation.attester,
-            playerRevealed: false,
-            opponentRevealed: false,
-          });
-          navigate(`/challenge/${attestation.id}`);
+          navigate(`/challenge/${g.uid}`);
         }}
       >
         Accept Challenge

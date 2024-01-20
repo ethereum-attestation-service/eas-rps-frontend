@@ -2,9 +2,11 @@ import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import GradientBar from "./components/GradientBar";
 import { useAccount } from "wagmi";
-import { Attestation } from "./utils/types";
 import { useNavigate } from "react-router";
 import { ChallengeAttestation } from "./ChallengeAttestation";
+import axios from "axios";
+import { baseURL } from "./utils/utils";
+import { Game } from "./utils/types";
 
 const Container = styled.div`
   @media (max-width: 700px) {
@@ -40,8 +42,9 @@ const WhiteBox = styled.div`
 `;
 
 function Challenges() {
+  console.log("looking for challenges");
   const { address } = useAccount();
-  const [attestations, setAttestations] = useState<Attestation[]>([]);
+  const [challengeObjects, setChallengeObjects] = useState<Game[]>([]);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
@@ -51,12 +54,15 @@ function Challenges() {
     }
 
     async function getAtts() {
-      setAttestations([]);
+      setChallengeObjects([]);
 
       setLoading(true);
-      // const challengeAttestations = await getAvailableChallenges(address!);
+      const newChallenges = await axios.post<Game[]>(
+        `${baseURL}/incomingChallenges`,
+        { address: address }
+      );
 
-      // setAttestations(challengeAttestations);
+      setChallengeObjects(newChallenges.data);
       setLoading(false);
     }
     getAtts();
@@ -69,9 +75,9 @@ function Challenges() {
       <AttestationHolder>
         <WhiteBox>
           {loading && <div>Loading...</div>}
-          {attestations.length > 0 || loading ? (
-            attestations.map((attestation, i) => (
-              <ChallengeAttestation attestation={attestation} />
+          {challengeObjects.length > 0 || loading ? (
+            challengeObjects.map((gameObj, i) => (
+              <ChallengeAttestation game={gameObj} />
             ))
           ) : (
             <div>No one here yet</div>

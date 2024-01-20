@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { useAccount } from "wagmi";
 import {
+  baseURL,
+  CHOICE_UNKNOWN,
   CUSTOM_SCHEMAS,
   EASContractAddress,
   submitSignedAttestation,
@@ -20,7 +22,8 @@ import { ethers } from "ethers";
 import dayjs from "dayjs";
 import { useSigner } from "./utils/wagmi-utils";
 import { useStore } from "./useStore";
-import { AcceptedChallenge, GameCommit } from "./utils/types";
+import { AcceptedChallenge, Game, GameCommit } from "./utils/types";
+import axios from "axios";
 
 const Container = styled.div`
   @media (max-width: 700px) {
@@ -69,34 +72,26 @@ function Challenges() {
   const { challengeId } = useParams();
   const [attesting, setAttesting] = useState(false);
   const signer = useSigner();
-  const gameCommits: GameCommit[] = useStore((state) => state.gameCommits);
   const [tick, setTick] = useState(0);
   const [waiting, setWaiting] = useState(true);
+  const [game, setGame] = useState<Game>();
 
-  const acceptedChallenges: AcceptedChallenge[] = useStore(
-    (state) => state.acceptedChallenges
-  );
-
-  const setMyChoice = useStore((state) => state.setMyChoice);
-
-  const setOpponentChoice = useStore((state) => state.setOpponentChoice);
-
+  const gameCommits = useStore((state) => state.gameCommits);
   const thisGameCommit = gameCommits.find(
-    (gc) => gc.challengeUID === challengeId
-  );
-
-  const thisAcceptedChallenge = acceptedChallenges.find(
-    (ac) => ac.UID === challengeId
+    (commit: GameCommit) => commit.challengeUID === challengeId
   );
 
   const committed = !!thisGameCommit;
 
-  console.log("gameCommits", gameCommits);
-  console.log("played", committed);
   invariant(challengeId, "Challenge ID should be defined");
 
   const update = async () => {
     //query server for game status
+    const gameRes = await axios.post<Game>(`${baseURL}/gameStatus`, {
+      uid: challengeId,
+    });
+    console.log(gameRes.data);
+    setGame(gameRes.data);
   };
 
   //watch for game updates
@@ -145,7 +140,7 @@ function Challenges() {
       const signedOffchainAttestation = await offchain.signOffchainAttestation(
         {
           schema: CUSTOM_SCHEMAS.REVEAL_GAME_CHOICE,
-          recipient: thisAcceptedChallenge!.opponentAddress,
+          recipient: committed ? game!.player2 : game!.player1,
           refUID: challengeId,
           data: encoded,
           time: BigInt(dayjs().unix()),
@@ -165,9 +160,6 @@ function Challenges() {
       const res = await submitSignedAttestation(pkg);
 
       if (!res.data.error) {
-        // setTimeout(() => {
-        //   navigate(`/challenge/${signedOffchainAttestation.uid}}`);
-        // }, 500);
       } else {
         console.error(res.data.error);
       }
@@ -185,18 +177,20 @@ function Challenges() {
 
         {committed ? (
           <>
-            {thisAcceptedChallenge!.opponentChoice >= 0 ? (
-              <>Your opponent has revealed</>
+            {game?.player1Choice !== CHOICE_UNKNOWN ? (
+              <>You (player1) have revealed</>
+            ) : game?.player2Choice !== CHOICE_UNKNOWN ? (
+              <>Your opponent (player2) has revealed </> //will add logic to make player 1 auto reveal tomorrow
             ) : (
-              <>Waiting for your opponent to reveal</>
+              <>Nobody has revealed yet</>
             )}
           </>
         ) : (
           <>
-            {thisAcceptedChallenge!.opponentChoice >= 0 ? (
-              <> Your opponent has revealed</>
-            ) : thisAcceptedChallenge!.playerChoice >= 0 ? (
-              <>Waiting for opponent to reveal</>
+            {game?.player1Choice !== CHOICE_UNKNOWN ? (
+              <> Your opponent (player1) has revealed</>
+            ) : game?.player2Choice !== CHOICE_UNKNOWN ? (
+              <> You (player2) have revealed, Waiting for opponent to reveal</>
             ) : (
               <RPSContainer>
                 <FaHandRock

@@ -85,3 +85,15 @@ export type AcceptedChallenge = {
   playerChoice: number;
   opponentChoice: number;
 };
+
+export type Game = {
+  commit: string;
+  uid: string;
+  player1: string;
+  player2: string;
+  player1Choice: number;
+  player2Choice: number;
+  player1RevealDeadline: number;
+  player2RevealDeadline: number;
+  status: number;
+};
