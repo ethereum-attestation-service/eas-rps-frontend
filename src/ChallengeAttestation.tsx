@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { ButtonStandard } from "./styles/buttons";
 import { useState } from "react";
 import { useNavigate } from "react-router";
+import { useStore } from "./useStore";
 
 type Props = {
   attestation: Attestation;
@@ -21,13 +22,24 @@ const RPSHolder = styled.div``;
 
 export function ChallengeAttestation({ attestation }: Props) {
   const navigate = useNavigate();
+  const addAcceptedChallenge = useStore((state) => state.addAcceptedChallenge);
 
   return (
     <Container>
       <UID>UID: {attestation.id}</UID>
-      <Challenger>Challanger: {attestation.attester}</Challenger>
+      <Challenger>Challenger: {attestation.attester}</Challenger>
 
-      <ButtonStandard onClick={() => navigate(`/challenge/${attestation.id}`)}>
+      <ButtonStandard
+        onClick={() => {
+          addAcceptedChallenge({
+            UID: attestation.id,
+            opponentAddress: attestation.attester,
+            playerRevealed: false,
+            opponentRevealed: false,
+          });
+          navigate(`/challenge/${attestation.id}`);
+        }}
+      >
         Accept Challenge
       </ButtonStandard>
     </Container>

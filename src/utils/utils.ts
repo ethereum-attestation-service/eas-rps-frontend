@@ -83,13 +83,14 @@ export const activeChainConfig = EAS_CHAIN_CONFIGS.find(
   (config) => config.chainId === CHAINID
 );
 
-export const baseURL = `https://${activeChainConfig!.subdomain}easscan.org`;
+export const baseURL = `http://localhost:8080`;
 
 invariant(activeChainConfig, "No chain config found for chain ID");
 export const EASContractAddress = activeChainConfig.contractAddress;
 
 export const EASVersion = activeChainConfig.version;
 export const timeFormatString = "MM/DD/YYYY h:mm:ss a";
+
 export async function getAddressForENS(name: string) {
   try {
     const provider = new ethers.JsonRpcProvider(
@@ -105,6 +106,7 @@ export async function getAddressForENS(name: string) {
     return null;
   }
 }
+
 export async function getENSName(address: string) {
   try {
     const provider = new ethers.JsonRpcProvider(
@@ -119,6 +121,7 @@ export async function getENSName(address: string) {
     return null;
   }
 }
+
 export async function getAttestation(uid: string): Promise<Attestation | null> {
   const response = await axios.post<AttestationResult>(
     `${baseURL}/graphql`,
@@ -139,6 +142,7 @@ export async function getAttestation(uid: string): Promise<Attestation | null> {
   );
   return response.data.data.attestation;
 }
+
 export async function getAttestationsForAddress(address: string) {
   const response = await axios.post<MyAttestationResult>(
     `${baseURL}/graphql`,
@@ -179,6 +183,7 @@ export async function getAttestationsForAddress(address: string) {
   );
   return response.data.data.attestations;
 }
+
 export async function getConfirmationAttestationsForUIDs(refUids: string[]) {
   const response = await axios.post<MyAttestationResult>(
     `${baseURL}/graphql`,
@@ -210,6 +215,7 @@ export async function getConfirmationAttestationsForUIDs(refUids: string[]) {
   );
   return response.data.data.attestations;
 }
+
 export async function getENSNames(addresses: string[]) {
   const response = await axios.post<EnsNamesResult>(
     `${baseURL}/graphql`,
@@ -237,83 +243,14 @@ export async function getENSNames(addresses: string[]) {
 export async function submitSignedAttestation(
   pkg: AttestationShareablePackageObject
 ) {
+  console.log("pkg", pkg);
   const data: StoreAttestationRequest = {
     filename: `eas.txt`,
     textJson: JSON.stringify(pkg),
   };
 
   return await axios.post<StoreIPFSActionReturn>(
-    `${baseURL}/offchain/store`,
+    `${baseURL}/newAttestation`,
     data
   );
-}
-
-export async function getConnections(address: `0x${string}`) {
-  const tmpAttestations = await getAttestationsForAddress(address);
-
-  const addresses = new Set<string>();
-
-  tmpAttestations.forEach((att) => {
-    addresses.add(att.attester);
-    addresses.add(att.recipient);
-  });
-
-  let resolvedAttestations: ResolvedAttestation[] = [];
-
-  const ensNames = await getENSNames(Array.from(addresses));
-
-  const uids = tmpAttestations.map((att) => att.id);
-
-  const confirmations = await getConfirmationAttestationsForUIDs(uids);
-
-  tmpAttestations.forEach((att) => {
-    const amIAttester = att.attester.toLowerCase() === address.toLowerCase();
-
-    const otherGuy = amIAttester ? att.recipient : att.attester;
-
-    const relatedConfirmation = confirmations.find((conf) => {
-      return (
-        conf.refUID === att.id &&
-        ((amIAttester &&
-          conf.attester.toLowerCase() === otherGuy.toLowerCase()) ||
-          (!amIAttester &&
-            conf.attester.toLowerCase() === address.toLowerCase()))
-      );
-    });
-
-    resolvedAttestations.push({
-      ...att,
-      confirmation: relatedConfirmation,
-      name:
-        ensNames.find(
-          (name) => name.id.toLowerCase() === otherGuy.toLowerCase()
-        )?.name || otherGuy,
-    });
-  });
-  return resolvedAttestations;
-}
-
-export async function getAvailableChallenges() {
-  const response = await axios.post<AvailableChallengesResult>(
-    "https://sepolia.easscan.org/graphql",
-    {
-      query:
-        "query Query($where: AttestationWhereInput) {\n  attestations(where: $where) {\n    attester\n    data\n    decodedDataJson\n    expirationTime\n    id\n    ipfsHash\n    isOffchain\n    recipient\n    revocable\n    refUID\n    revocationTime\n    revoked\n  \n    schemaId\n    time\n    timeCreated\n    txid\n  }\n}",
-      variables: {
-        where: {
-          schemaId: {
-            equals:
-              "0x64b1bac6f531c64a6aa372b1239111fe41a60003dcda62bfa967bc6e4c4d91e0",
-          },
-        },
-      },
-    },
-    {
-      headers: {
-        "content-type": "application/json",
-      },
-    }
-  );
-
-  return response.data.data.attestations;
 }

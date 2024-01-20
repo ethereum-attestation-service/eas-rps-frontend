@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { useAccount } from "wagmi";
 import {
@@ -20,7 +20,7 @@ import { ethers } from "ethers";
 import dayjs from "dayjs";
 import { useSigner } from "./utils/wagmi-utils";
 import { useStore } from "./useStore";
-import { GameCommit } from "./utils/types";
+import { AcceptedChallenge, GameCommit } from "./utils/types";
 
 const Container = styled.div`
   @media (max-width: 700px) {
@@ -70,33 +70,69 @@ function Challenges() {
   const [attesting, setAttesting] = useState(false);
   const signer = useSigner();
   const gameCommits: GameCommit[] = useStore((state) => state.gameCommits);
-  const addGameCommit = useStore((state) => state.addGameCommit);
+  const [tick, setTick] = useState(0);
+  const [waiting, setWaiting] = useState(true);
 
-  const playedMove = gameCommits.some((gc) => gc.challengeUID === challengeId);
+  const acceptedChallenges: AcceptedChallenge[] = useStore(
+    (state) => state.acceptedChallenges
+  );
+
+  const setMyChoice = useStore((state) => state.setMyChoice);
+
+  const setOpponentChoice = useStore((state) => state.setOpponentChoice);
+
+  const thisGameCommit = gameCommits.find(
+    (gc) => gc.challengeUID === challengeId
+  );
+
+  const thisAcceptedChallenge = acceptedChallenges.find(
+    (ac) => ac.UID === challengeId
+  );
+
+  const committed = !!thisGameCommit;
 
   console.log("gameCommits", gameCommits);
+  console.log("played", committed);
   invariant(challengeId, "Challenge ID should be defined");
 
-  const playRPS = async (choice: number) => {
+  const update = async () => {
+    //query server for game status
+  };
+
+  //watch for game updates
+
+  useEffect(() => {
+    if (waiting) {
+      update();
+      setTimeout(() => {
+        setTick(tick + 1);
+      }, 10000);
+    }
+  }, [tick]);
+
+  const reveal = async (choice?: number) => {
     invariant(address, "Address should be defined");
 
     setAttesting(true);
     try {
-      const schemaEncoder = new SchemaEncoder("bytes32 commitHash");
-
-      // create random bytes32 salt
-      const salt = ethers.randomBytes(32);
-      const saltHex = ethers.hexlify(salt);
-
-      const hashedChoice = ethers.solidityPackedKeccak256(
-        ["uint256", "bytes32"],
-        [choice, saltHex]
+      const schemaEncoder = new SchemaEncoder(
+        "uint256 revealGameChoice,bytes32 salt,bytes32 commitUID"
       );
 
-      console.log("hashedChoice", hashedChoice);
+      // Load salt and choice from store
+      const saltHex = committed ? thisGameCommit!.salt : ethers.ZeroHash;
+      if (committed) {
+        choice = thisGameCommit!.choice;
+      }
 
       const encoded = schemaEncoder.encodeData([
-        { name: "commitHash", type: "bytes32", value: hashedChoice },
+        { name: "revealGameChoice", type: "uint256", value: choice! },
+        { name: "salt", type: "bytes32", value: saltHex },
+        {
+          name: "commitUID",
+          type: "bytes32",
+          value: committed ? challengeId : ethers.ZeroHash,
+        },
       ]);
 
       const eas = new EAS(EASContractAddress);
@@ -108,8 +144,8 @@ function Challenges() {
 
       const signedOffchainAttestation = await offchain.signOffchainAttestation(
         {
-          schema: CUSTOM_SCHEMAS.COMMIT_HASH,
-          recipient: ethers.ZeroAddress,
+          schema: CUSTOM_SCHEMAS.REVEAL_GAME_CHOICE,
+          recipient: thisAcceptedChallenge!.opponentAddress,
           refUID: challengeId,
           data: encoded,
           time: BigInt(dayjs().unix()),
@@ -132,12 +168,6 @@ function Challenges() {
         // setTimeout(() => {
         //   navigate(`/challenge/${signedOffchainAttestation.uid}}`);
         // }, 500);
-
-        addGameCommit({
-          salt: saltHex,
-          choice: choice,
-          challengeUID: challengeId,
-        });
       } else {
         console.error(res.data.error);
       }
@@ -153,26 +183,40 @@ function Challenges() {
       <WhiteBox>
         <UID>Challenge UID: {challengeId}</UID>
 
-        {playedMove ? (
-          <>Already played</>
+        {committed ? (
+          <>
+            {thisAcceptedChallenge!.opponentChoice >= 0 ? (
+              <>Your opponent has revealed</>
+            ) : (
+              <>Waiting for your opponent to reveal</>
+            )}
+          </>
         ) : (
-          <RPSContainer>
-            <FaHandRock
-              size={50}
-              color={theme.primary["indigo-500"]}
-              onClick={() => playRPS(0)}
-            />
-            <FaHandPaper
-              size={50}
-              color={theme.primary["indigo-500"]}
-              onClick={() => playRPS(1)}
-            />
-            <FaHandScissors
-              size={50}
-              color={theme.primary["indigo-500"]}
-              onClick={() => playRPS(2)}
-            />
-          </RPSContainer>
+          <>
+            {thisAcceptedChallenge!.opponentChoice >= 0 ? (
+              <> Your opponent has revealed</>
+            ) : thisAcceptedChallenge!.playerChoice >= 0 ? (
+              <>Waiting for opponent to reveal</>
+            ) : (
+              <RPSContainer>
+                <FaHandRock
+                  size={50}
+                  color={theme.primary["indigo-500"]}
+                  onClick={() => reveal(0)}
+                />
+                <FaHandPaper
+                  size={50}
+                  color={theme.primary["indigo-500"]}
+                  onClick={() => reveal(1)}
+                />
+                <FaHandScissors
+                  size={50}
+                  color={theme.primary["indigo-500"]}
+                  onClick={() => reveal(2)}
+                />
+              </RPSContainer>
+            )}
+          </>
         )}
       </WhiteBox>
     </Container>

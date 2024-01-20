@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import GradientBar from "./components/GradientBar";
 import { useAccount } from "wagmi";
-import { getAvailableChallenges } from "./utils/utils";
 import { Attestation } from "./utils/types";
 import { useNavigate } from "react-router";
 import { ChallengeAttestation } from "./ChallengeAttestation";
@@ -55,9 +54,9 @@ function Challenges() {
       setAttestations([]);
 
       setLoading(true);
-      const challengeAttestations = await getAvailableChallenges();
+      // const challengeAttestations = await getAvailableChallenges(address!);
 
-      setAttestations(challengeAttestations);
+      // setAttestations(challengeAttestations);
       setLoading(false);
     }
     getAtts();
