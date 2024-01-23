@@ -5,6 +5,7 @@ import type {
   AvailableChallengesResult,
   EASChainConfig,
   EnsNamesResult,
+  Game,
   MyAttestationResult,
 } from "./types";
 import {
@@ -27,18 +28,12 @@ BigInt.prototype.toJSON = function () {
 export const alchemyApiKey = process.env.REACT_APP_ALCHEMY_API_KEY;
 
 export const CUSTOM_SCHEMAS = {
-  MET_IRL_SCHEMA:
-    "0xc59265615401143689cbfe73046a922c975c99d97e4c248070435b1104b2dea7",
-  CONFIRM_SCHEMA:
-    "0x4eb603f49d68888d7f8b1fadd351b35a252f287ba465408ceb2b1e1e1efd90d5",
-  CREATE_GAME_CHALLENGE:
-    "0x64b1bac6f531c64a6aa372b1239111fe41a60003dcda62bfa967bc6e4c4d91e0",
-  CREATE_GAME_TYPE:
-    "0x312601bf4dbd15e56f2d53bcb58d96e85b9ace9e4ceb93bc0e741661ce27b400",
   COMMIT_HASH:
     "0x2328029cfa84b9ea42f4e0e8fa24fbf66da07ceec0a925dd27370b9617b32d59",
-  REVEAL_GAME_CHOICE:
-    "0xd37b0be1e85999415d1a3a1e5706772f477a7798edb520b28462bd29e150509a",
+  CREATE_GAME_CHALLENGE:
+    "0x64b1bac6f531c64a6aa372b1239111fe41a60003dcda62bfa967bc6e4c4d91e0",
+  DECLINE_GAME_CHALLENGE:
+    "0x27e160d185f1d97202897bd3ed697906398b70a8d08b0d22bc2cfffdf561e3e9",
 };
 
 export const RPS_GAME_UID =
@@ -143,79 +138,6 @@ export async function getAttestation(uid: string): Promise<Attestation | null> {
   return response.data.data.attestation;
 }
 
-export async function getAttestationsForAddress(address: string) {
-  const response = await axios.post<MyAttestationResult>(
-    `${baseURL}/graphql`,
-    {
-      query:
-        "query Attestations($where: AttestationWhereInput, $orderBy: [AttestationOrderByWithRelationInput!]) {\n  attestations(where: $where, orderBy: $orderBy) {\n    attester\n    revocationTime\n    expirationTime\n    time\n    recipient\n    id\n    data\n  }\n}",
-
-      variables: {
-        where: {
-          schemaId: {
-            equals: CUSTOM_SCHEMAS.MET_IRL_SCHEMA,
-          },
-          OR: [
-            {
-              attester: {
-                equals: address,
-              },
-            },
-            {
-              recipient: {
-                equals: address,
-              },
-            },
-          ],
-        },
-        orderBy: [
-          {
-            time: "desc",
-          },
-        ],
-      },
-    },
-    {
-      headers: {
-        "content-type": "application/json",
-      },
-    }
-  );
-  return response.data.data.attestations;
-}
-
-export async function getConfirmationAttestationsForUIDs(refUids: string[]) {
-  const response = await axios.post<MyAttestationResult>(
-    `${baseURL}/graphql`,
-    {
-      query:
-        "query Attestations($where: AttestationWhereInput, $orderBy: [AttestationOrderByWithRelationInput!]) {\n  attestations(where: $where, orderBy: $orderBy) {\n    attester\n    revocationTime\n    expirationTime\n    time\n    recipient\n    id\n    data\n  refUID\n  }\n}",
-
-      variables: {
-        where: {
-          schemaId: {
-            equals: CUSTOM_SCHEMAS.CONFIRM_SCHEMA,
-          },
-          refUID: {
-            in: refUids,
-          },
-        },
-        orderBy: [
-          {
-            time: "desc",
-          },
-        ],
-      },
-    },
-    {
-      headers: {
-        "content-type": "application/json",
-      },
-    }
-  );
-  return response.data.data.attestations;
-}
-
 export async function getENSNames(addresses: string[]) {
   const response = await axios.post<EnsNamesResult>(
     `${baseURL}/graphql`,
@@ -255,11 +177,6 @@ export async function submitSignedAttestation(
   );
 }
 
-export const CHOICE_ROCK = 0;
-export const CHOICE_PAPER = 1;
-
-export const CHOICE_SCISSORS = 2;
-
 export const CHOICE_UNKNOWN = 3;
 
 export const STATUS_DRAW = 0;
@@ -268,3 +185,10 @@ export const STATUS_PLAYER2_WIN = 2;
 
 export const STATUS_UNKNOWN = 3;
 export const STATUS_INVALID = 4;
+
+export function getGameStatus(game: Game) {
+  if (game.choice1 === CHOICE_UNKNOWN || game.choice2 === CHOICE_UNKNOWN) {
+    return STATUS_UNKNOWN;
+  }
+  return (3 + game.choice1 - game.choice2) % 3;
+}

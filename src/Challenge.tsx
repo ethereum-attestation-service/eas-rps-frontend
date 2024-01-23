@@ -6,6 +6,12 @@ import {
   CHOICE_UNKNOWN,
   CUSTOM_SCHEMAS,
   EASContractAddress,
+  getGameStatus,
+  RPS_GAME_UID,
+  STATUS_DRAW,
+  STATUS_PLAYER1_WIN,
+  STATUS_PLAYER2_WIN,
+  STATUS_UNKNOWN,
   submitSignedAttestation,
 } from "./utils/utils";
 
@@ -17,6 +23,8 @@ import {
   AttestationShareablePackageObject,
   EAS,
   SchemaEncoder,
+  ZERO_ADDRESS,
+  ZERO_BYTES32,
 } from "@ethereum-attestation-service/eas-sdk";
 import { ethers } from "ethers";
 import dayjs from "dayjs";
@@ -24,6 +32,7 @@ import { useSigner } from "./utils/wagmi-utils";
 import { useStore } from "./useStore";
 import { AcceptedChallenge, Game, GameCommit } from "./utils/types";
 import axios from "axios";
+import { Button } from "./Home";
 
 const Container = styled.div`
   @media (max-width: 700px) {
@@ -77,9 +86,12 @@ function Challenges() {
   const [game, setGame] = useState<Game>();
 
   const gameCommits = useStore((state) => state.gameCommits);
+
   const thisGameCommit = gameCommits.find(
-    (commit: GameCommit) => commit.challengeUID === challengeId
+    (commit) => commit.challengeUID === challengeId
   );
+
+  const addGameCommit = useStore((state) => state.addGameCommit);
 
   const committed = !!thisGameCommit;
 
@@ -105,29 +117,29 @@ function Challenges() {
     }
   }, [tick]);
 
-  const reveal = async (choice?: number) => {
+  const commit = async (choice: number) => {
     invariant(address, "Address should be defined");
 
+    console.log("signer", signer);
+    console.log("me", address);
     setAttesting(true);
     try {
-      const schemaEncoder = new SchemaEncoder(
-        "uint256 revealGameChoice,bytes32 salt,bytes32 commitUID"
+      const schemaEncoder = new SchemaEncoder("bytes32 commitHash");
+
+      console.log(choice, address);
+      // create random bytes32 salt
+      const salt = ethers.randomBytes(32);
+      const saltHex = ethers.hexlify(salt);
+
+      const hashedChoice = ethers.solidityPackedKeccak256(
+        ["uint256", "bytes32"],
+        [choice, saltHex]
       );
 
-      // Load salt and choice from store
-      const saltHex = committed ? thisGameCommit!.salt : ethers.ZeroHash;
-      if (committed) {
-        choice = thisGameCommit!.choice;
-      }
+      console.log("hashedChoice", hashedChoice);
 
       const encoded = schemaEncoder.encodeData([
-        { name: "revealGameChoice", type: "uint256", value: choice! },
-        { name: "salt", type: "bytes32", value: saltHex },
-        {
-          name: "commitUID",
-          type: "bytes32",
-          value: committed ? challengeId : ethers.ZeroHash,
-        },
+        { name: "commitHash", type: "bytes32", value: hashedChoice },
       ]);
 
       const eas = new EAS(EASContractAddress);
@@ -139,8 +151,8 @@ function Challenges() {
 
       const signedOffchainAttestation = await offchain.signOffchainAttestation(
         {
-          schema: CUSTOM_SCHEMAS.REVEAL_GAME_CHOICE,
-          recipient: committed ? game!.player2 : game!.player1,
+          schema: CUSTOM_SCHEMAS.COMMIT_HASH,
+          recipient: ZERO_ADDRESS,
           refUID: challengeId,
           data: encoded,
           time: BigInt(dayjs().unix()),
@@ -160,6 +172,11 @@ function Challenges() {
       const res = await submitSignedAttestation(pkg);
 
       if (!res.data.error) {
+        addGameCommit({
+          salt: saltHex,
+          choice: choice,
+          challengeUID: challengeId,
+        });
       } else {
         console.error(res.data.error);
       }
@@ -170,48 +187,70 @@ function Challenges() {
     setAttesting(false);
   };
 
+  const RPSOptions = () => {
+    return (
+      <RPSContainer>
+        <FaHandRock
+          size={50}
+          color={theme.primary["indigo-500"]}
+          onClick={() => commit(0)}
+        />
+        <FaHandPaper
+          size={50}
+          color={theme.primary["indigo-500"]}
+          onClick={() => commit(1)}
+        />
+        <FaHandScissors
+          size={50}
+          color={theme.primary["indigo-500"]}
+          onClick={() => commit(2)}
+        />
+      </RPSContainer>
+    );
+  };
+
+  const status = game ? getGameStatus(game) : STATUS_UNKNOWN;
+
+  if (!game) {
+    return <div>no game here</div>;
+  }
   return (
     <Container>
       <WhiteBox>
         <UID>Challenge UID: {challengeId}</UID>
-
-        {committed ? (
+        {game.player1 === address ? (
           <>
-            {game?.player1Choice !== CHOICE_UNKNOWN ? (
-              <>You (player1) have revealed</>
-            ) : game?.player2Choice !== CHOICE_UNKNOWN ? (
-              <>Your opponent (player2) has revealed </> //will add logic to make player 1 auto reveal tomorrow
+            {status !== STATUS_UNKNOWN ? (
+              <>
+                {status === STATUS_PLAYER1_WIN
+                  ? "You won"
+                  : status === STATUS_DRAW
+                  ? "Tied"
+                  : "Lost"}
+              </>
+            ) : game.commit1 !== ZERO_BYTES32 ? (
+              <>Waiting for opponent...</>
             ) : (
-              <>Nobody has revealed yet</>
+              <RPSOptions />
             )}
           </>
-        ) : (
+        ) : game.player2 === address ? (
           <>
-            {game?.player1Choice !== CHOICE_UNKNOWN ? (
-              <> Your opponent (player1) has revealed</>
-            ) : game?.player2Choice !== CHOICE_UNKNOWN ? (
-              <> You (player2) have revealed, Waiting for opponent to reveal</>
+            {status !== STATUS_UNKNOWN ? (
+              <>
+                {status === STATUS_PLAYER2_WIN
+                  ? "You won"
+                  : status === STATUS_DRAW
+                  ? "Tied"
+                  : "Lost"}
+              </>
+            ) : game.commit2 !== ZERO_BYTES32 ? (
+              <> Waiting for opponent...</>
             ) : (
-              <RPSContainer>
-                <FaHandRock
-                  size={50}
-                  color={theme.primary["indigo-500"]}
-                  onClick={() => reveal(0)}
-                />
-                <FaHandPaper
-                  size={50}
-                  color={theme.primary["indigo-500"]}
-                  onClick={() => reveal(1)}
-                />
-                <FaHandScissors
-                  size={50}
-                  color={theme.primary["indigo-500"]}
-                  onClick={() => reveal(2)}
-                />
-              </RPSContainer>
+              <RPSOptions />
             )}
           </>
-        )}
+        ) : null}
       </WhiteBox>
     </Container>
   );

@@ -37,7 +37,7 @@ const Container = styled.div`
   }
 `;
 
-const Button = styled.div`
+export const Button = styled.div`
   border-radius: 10px;
   border: 1px solid #cfb9ff;
   background: #333342;
@@ -107,7 +107,6 @@ function Home() {
   const { status, address: myAddress } = useAccount();
   const modal = useModal();
   const [address, setAddress] = useState("");
-  const [choice, setChoice] = useState(0);
   const signer = useSigner();
   const [attesting, setAttesting] = useState(false);
   const [ensResolvedAddress, setEnsResolvedAddress] = useState("Dakh.eth");
@@ -116,29 +115,17 @@ function Home() {
   const addGameCommit = useStore((state) => state.addGameCommit);
   const addAcceptedChallenge = useStore((state) => state.addAcceptedChallenge);
 
-  const issueChallengeCommit = async () => {
+  const issueChallenge = async () => {
     invariant(address, "Address should be defined");
 
     console.log("signer", signer);
     console.log("me", myAddress);
     setAttesting(true);
     try {
-      const schemaEncoder = new SchemaEncoder("bytes32 commitHash");
-
-      console.log(choice, address);
-      // create random bytes32 salt
-      const salt = ethers.randomBytes(32);
-      const saltHex = ethers.hexlify(salt);
-
-      const hashedChoice = ethers.solidityPackedKeccak256(
-        ["uint256", "bytes32"],
-        [choice, saltHex]
-      );
-
-      console.log("hashedChoice", hashedChoice);
+      const schemaEncoder = new SchemaEncoder("bool createGameChallenge");
 
       const encoded = schemaEncoder.encodeData([
-        { name: "commitHash", type: "bytes32", value: hashedChoice },
+        { name: "createGameChallenge", type: "bool", value: true },
       ]);
 
       const eas = new EAS(EASContractAddress);
@@ -150,7 +137,7 @@ function Home() {
 
       const signedOffchainAttestation = await offchain.signOffchainAttestation(
         {
-          schema: CUSTOM_SCHEMAS.COMMIT_HASH,
+          schema: CUSTOM_SCHEMAS.CREATE_GAME_CHALLENGE,
           recipient: address,
           refUID: RPS_GAME_UID,
           data: encoded,
@@ -172,11 +159,6 @@ function Home() {
 
       if (!res.data.error) {
         console.log(res);
-        addGameCommit({
-          salt: saltHex,
-          choice: choice,
-          challengeUID: res.data.offchainAttestationId,
-        });
 
         navigate(`/challenge/${signedOffchainAttestation.uid}`);
       } else {
@@ -232,17 +214,7 @@ function Home() {
           {ensResolvedAddress && <EnsLogo src={"/ens-logo.png"} />}
         </InputContainer>
         <InputContainer>
-          {["rock", "paper", "scissors"].map((choiceString, choiceIdx) => (
-            <Button
-              onClick={() => {
-                setChoice(choiceIdx);
-              }}
-            >
-              {choiceString}
-            </Button>
-          ))}
-
-          <Button onClick={issueChallengeCommit}>
+          <Button onClick={issueChallenge}>
             {attesting
               ? "Creating challenge..."
               : status === "connected"

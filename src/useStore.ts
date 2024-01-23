@@ -64,7 +64,7 @@ const reducer: StateCreator<InitialState & StoreMethods> = (set, get) => ({
 });
 
 export const useStore = create(
-  persist(reducer, {
+  persist<InitialState & StoreMethods>(reducer, {
     name: "eas-rps",
     onRehydrateStorage: () => (state: any) => state?.setHasHydrated(true),
   })
