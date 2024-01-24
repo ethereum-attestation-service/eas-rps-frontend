@@ -177,6 +177,7 @@ function Challenges() {
           choice: choice,
           challengeUID: challengeId,
         });
+        window.location.reload();
       } else {
         console.error(res.data.error);
       }

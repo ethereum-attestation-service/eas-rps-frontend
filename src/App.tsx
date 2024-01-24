@@ -5,6 +5,7 @@ import { Root } from "./Root";
 import Qr from "./Qr";
 import Challenges from "./Challenges";
 import Challenge from "./Challenge";
+import Games from "./Games";
 
 const router = createBrowserRouter([
   {
@@ -26,6 +27,10 @@ const router = createBrowserRouter([
       {
         path: "/challenge/:challengeId",
         element: <Challenge />,
+      },
+      {
+        path: "/challenge/:challengeId",
+        element: <Games />,
       },
     ],
   },
