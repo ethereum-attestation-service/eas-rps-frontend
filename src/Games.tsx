@@ -5,8 +5,14 @@ import { useAccount } from "wagmi";
 import { useNavigate } from "react-router";
 import { ChallengeAttestation } from "./ChallengeAttestation";
 import axios from "axios";
-import { baseURL } from "./utils/utils";
-import { Game } from "./utils/types";
+import {
+  baseURL,
+  CHOICE_UNKNOWN,
+  getGameStatus,
+  STATUS_PLAYER1_WIN,
+  STATUS_PLAYER2_WIN,
+} from "./utils/utils";
+import { Game, MyStats } from "./utils/types";
 
 const Container = styled.div`
   @media (max-width: 700px) {
@@ -43,7 +49,8 @@ const WhiteBox = styled.div`
 
 function Games() {
   const { address } = useAccount();
-  const [challengeObjects, setChallengeObjects] = useState<Game[]>([]);
+  const [finishedGames, setFinishedGames] = useState<Game[]>([]);
+  const [activeGames, setActiveGames] = useState<Game[]>([]);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
@@ -52,31 +59,66 @@ function Games() {
       return navigate("/");
     }
 
-    async function getAtts() {
-      setChallengeObjects([]);
+    async function getStats() {
+      setFinishedGames([]);
 
       setLoading(true);
-      const newChallenges = await axios.post<Game[]>(
-        `${baseURL}/incomingChallenges`,
-        { address: address }
+      const newChallenges = await axios.post<MyStats>(`${baseURL}/myStats`, {
+        address: address,
+      });
+
+      setFinishedGames(
+        newChallenges.data.games.filter(
+          (game) =>
+            game.choice1 !== CHOICE_UNKNOWN && game.choice2 !== CHOICE_UNKNOWN
+        )
       );
 
-      setChallengeObjects(newChallenges.data);
+      setActiveGames(
+        newChallenges.data.games.filter(
+          (game) =>
+            game.choice1 === CHOICE_UNKNOWN || game.choice2 === CHOICE_UNKNOWN
+        )
+      );
+
       setLoading(false);
     }
-    getAtts();
+
+    getStats();
   }, [address]);
 
   return (
     <Container>
       <GradientBar />
-      <NewConnection>Challenges</NewConnection>
+      <NewConnection>Games</NewConnection>
       <AttestationHolder>
         <WhiteBox>
           {loading && <div>Loading...</div>}
-          {challengeObjects.length > 0 || loading ? (
-            challengeObjects.map((gameObj, i) => (
-              <ChallengeAttestation game={gameObj} />
+          {finishedGames.length > 0 || loading ? (
+            finishedGames.map((gameObj, i) => (
+              <div>
+                {gameObj.player1 === address ? (
+                  <>
+                    {getGameStatus(gameObj) === STATUS_PLAYER1_WIN ? (
+                      <>You won against {gameObj.player2}</>
+                    ) : getGameStatus(gameObj) === STATUS_PLAYER2_WIN ? (
+                      <>You lost against {gameObj.player2}</>
+                    ) : (
+                      <>You tied against {gameObj.player2}</>
+                    )}
+                  </>
+                ) : gameObj.player2 === address ? (
+                  <>
+                    {getGameStatus(gameObj) === STATUS_PLAYER2_WIN ? (
+                      <>You won against {gameObj.player1}</>
+                    ) : getGameStatus(gameObj) === STATUS_PLAYER1_WIN ? (
+                      <>You lost against {gameObj.player1}</>
+                    ) : (
+                      <>You tied against {gameObj.player1}</>
+                    )}
+                  </>
+                ) : null}
+              </div>
             ))
           ) : (
             <div>No one here yet</div>
