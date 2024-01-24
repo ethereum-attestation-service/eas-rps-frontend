@@ -6,7 +6,7 @@ import { activeChainConfig } from "../utils/utils";
 import invariant from "tiny-invariant";
 import { useAccount } from "wagmi";
 import { FaQrcode } from "react-icons/fa";
-
+import { useAutoReveal } from "../hooks/useAutoReveal";
 const Outer = styled.div`
   font-family: "Nunito", sans-serif;
   background-color: #fff;
@@ -126,6 +126,7 @@ type MenuItemType = {
 export function Header() {
   const navigate = useNavigate();
   const { address } = useAccount();
+  useAutoReveal(address);
   const location = useLocation();
 
   let menuItems: MenuItemType[] = [
@@ -141,6 +142,11 @@ export function Header() {
       title: "Challenges",
       onClick: () => navigate("/challenges"),
       path: "/challenges",
+    });
+    menuItems.push({
+      title: "Games",
+      onClick: () => navigate("/games"),
+      path: "/games",
     });
   }
 

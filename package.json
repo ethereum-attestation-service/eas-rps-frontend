@@ -15,6 +15,7 @@
     "connectkit": "1.5.3",
     "dayjs": "^1.11.8",
     "ethers": "6.9.0",
+    "immer": "^10.0.3",
     "jdenticon": "^3.2.0",
     "qrcode": "^1.5.1",
     "qrcode.react": "^3.1.0",

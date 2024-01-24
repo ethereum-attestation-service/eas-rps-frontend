@@ -23,6 +23,7 @@ import { useNavigate } from "react-router";
 import axios from "axios";
 import dayjs from "dayjs";
 import { useSigner } from "./utils/wagmi-utils";
+import { useStore } from "./useStore";
 
 const Title = styled.div`
   color: #163a54;
@@ -36,7 +37,7 @@ const Container = styled.div`
   }
 `;
 
-const Button = styled.div`
+export const Button = styled.div`
   border-radius: 10px;
   border: 1px solid #cfb9ff;
   background: #333342;
@@ -111,6 +112,64 @@ function Home() {
   const [ensResolvedAddress, setEnsResolvedAddress] = useState("Dakh.eth");
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
+  const addGameCommit = useStore((state) => state.addGameCommit);
+  const addAcceptedChallenge = useStore((state) => state.addAcceptedChallenge);
+
+  const issueChallenge = async () => {
+    invariant(address, "Address should be defined");
+
+    console.log("signer", signer);
+    console.log("me", myAddress);
+    setAttesting(true);
+    try {
+      const schemaEncoder = new SchemaEncoder("bool createGameChallenge");
+
+      const encoded = schemaEncoder.encodeData([
+        { name: "createGameChallenge", type: "bool", value: true },
+      ]);
+
+      const eas = new EAS(EASContractAddress);
+
+      invariant(signer, "signer must be defined");
+      eas.connect(signer);
+
+      const offchain = await eas.getOffchain();
+
+      const signedOffchainAttestation = await offchain.signOffchainAttestation(
+        {
+          schema: CUSTOM_SCHEMAS.CREATE_GAME_CHALLENGE,
+          recipient: address,
+          refUID: RPS_GAME_UID,
+          data: encoded,
+          time: BigInt(dayjs().unix()),
+          revocable: false,
+          expirationTime: BigInt(0),
+          version: 1,
+          nonce: BigInt(0),
+        },
+        signer
+      );
+
+      const pkg: AttestationShareablePackageObject = {
+        signer: myAddress!,
+        sig: signedOffchainAttestation,
+      };
+
+      const res = await submitSignedAttestation(pkg);
+
+      if (!res.data.error) {
+        console.log(res);
+
+        navigate(`/challenge/${signedOffchainAttestation.uid}`);
+      } else {
+        console.error(res.data.error);
+      }
+    } catch (e) {
+      console.error(e);
+    }
+
+    setAttesting(false);
+  };
 
   useEffect(() => {
     const addressParam = searchParams.get("address");
@@ -137,17 +196,6 @@ function Home() {
     checkENS();
   }, [address]);
 
-  // useEffect(() => {
-  //   async function runGetConnections() {
-  //     invariant(myAddress, "myAddress must be defined");
-  //
-  //     const connections = await getConnections(myAddress);
-  //     setAttestations(connections);
-  //   }
-  //
-  //   runGetConnections();
-  // }, [myAddress]);
-
   return (
     <Container>
       <GradientBar />
@@ -165,86 +213,15 @@ function Home() {
           />
           {ensResolvedAddress && <EnsLogo src={"/ens-logo.png"} />}
         </InputContainer>
-        <Button
-          onClick={async () => {
-            if (status !== "connected") {
-              modal.setOpen(true);
-            } else {
-              setAttesting(true);
-              try {
-                const schemaEncoder = new SchemaEncoder(
-                  "bool createGameChallenge"
-                );
-
-                const encoded = schemaEncoder.encodeData([
-                  { name: "createGameChallenge", type: "bool", value: true },
-                ]);
-
-                const eas = new EAS(EASContractAddress);
-
-                invariant(signer, "signer must be defined");
-                eas.connect(signer);
-
-                const offchain = await eas.getOffchain();
-
-                const recipient = ensResolvedAddress
-                  ? ensResolvedAddress
-                  : address;
-
-                const signedOffchainAttestation =
-                  await offchain.signOffchainAttestation(
-                    {
-                      schema: CUSTOM_SCHEMAS.CREATE_GAME_CHALLENGE,
-                      recipient: recipient ? recipient : ethers.ZeroAddress,
-                      refUID: RPS_GAME_UID,
-                      data: encoded,
-                      time: BigInt(dayjs().unix()),
-                      revocable: false,
-                      expirationTime: BigInt(0),
-                      version: 1,
-                      nonce: BigInt(0),
-                    },
-                    signer
-                  );
-
-                const pkg: AttestationShareablePackageObject = {
-                  signer: myAddress,
-                  sig: signedOffchainAttestation,
-                };
-
-                const res = await submitSignedAttestation(pkg);
-
-                if (!res.data.error) {
-                  try {
-                    // Update ENS names
-                    await Promise.all([
-                      axios.get(`${baseURL}/api/getENS/${myAddress}`),
-                      axios.get(`${baseURL}/api/getENS/${recipient}`),
-                    ]);
-                  } catch (e) {
-                    console.error("ens error:", e);
-                  }
-
-                  setTimeout(() => {
-                    navigate(`/challenge/${signedOffchainAttestation.uid}}`);
-                  }, 500);
-                } else {
-                  console.error(res.data.error);
-                }
-              } catch (e) {
-                console.error(e);
-              }
-
-              setAttesting(false);
-            }
-          }}
-        >
-          {attesting
-            ? "Creating challenge..."
-            : status === "connected"
-            ? "Create challenge"
-            : "Connect wallet"}
-        </Button>
+        <InputContainer>
+          <Button onClick={issueChallenge}>
+            {attesting
+              ? "Creating challenge..."
+              : status === "connected"
+              ? "Create challenge"
+              : "Connect wallet"}
+          </Button>
+        </InputContainer>
 
         {status === "connected" && (
           <>

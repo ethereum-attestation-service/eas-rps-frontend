@@ -41,8 +41,7 @@ const WhiteBox = styled.div`
   }
 `;
 
-function Challenges() {
-  console.log("looking for challenges");
+function Games() {
   const { address } = useAccount();
   const [challengeObjects, setChallengeObjects] = useState<Game[]>([]);
   const [loading, setLoading] = useState(false);
@@ -88,4 +87,4 @@ function Challenges() {
   );
 }
 
-export default Challenges;
+export default Games;
