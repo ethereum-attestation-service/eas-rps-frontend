@@ -13,6 +13,7 @@ import {
   STATUS_PLAYER2_WIN,
 } from "./utils/utils";
 import { Game, MyStats } from "./utils/types";
+import { Button } from "./Home";
 
 const Container = styled.div`
   @media (max-width: 700px) {
@@ -94,6 +95,24 @@ function Games() {
       <AttestationHolder>
         <WhiteBox>
           {loading && <div>Loading...</div>}
+          {activeGames.length > 0 || loading ? (
+            activeGames.map((gameObj, i) => (
+              <div>
+                <Button
+                  onClick={() => {
+                    navigate(`/challenge/${gameObj.uid}`);
+                  }}
+                >
+                  Game against{" "}
+                  {gameObj.player1 === address
+                    ? gameObj.player2
+                    : gameObj.player1}
+                </Button>
+              </div>
+            ))
+          ) : (
+            <div>No one here yet</div>
+          )}
           {finishedGames.length > 0 || loading ? (
             finishedGames.map((gameObj, i) => (
               <div>
