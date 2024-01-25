@@ -113,7 +113,7 @@ function Challenges() {
       update();
       setTimeout(() => {
         setTick(tick + 1);
-      }, 10000);
+      }, 5000);
     }
   }, [tick]);
 

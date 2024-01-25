@@ -43,6 +43,6 @@ export function useAutoReveal(myAddress: string | undefined) {
     }
     setTimeout(() => {
       setTick(tick + 1);
-    }, 500);
+    }, 5000);
   }, [myAddress, tick]);
 }

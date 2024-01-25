@@ -97,3 +97,8 @@ export type Game = {
   salt1: number;
   salt2: number;
 };
+
+export type MyStats = {
+  games: Game[];
+  elo: number;
+};
