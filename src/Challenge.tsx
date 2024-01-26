@@ -120,8 +120,6 @@ function Challenges() {
   const commit = async (choice: number) => {
     invariant(address, "Address should be defined");
 
-    console.log("signer", signer);
-    console.log("me", address);
     setAttesting(true);
     try {
       const schemaEncoder = new SchemaEncoder("bytes32 commitHash");
@@ -218,6 +216,15 @@ function Challenges() {
   return (
     <Container>
       <WhiteBox>
+        <Button>
+          <a
+            style={{ color: "white", textDecoration: "none" }}
+            href={`data:text/plain,${JSON.stringify(game)}`}
+            download="receipt.eas-rps.txt"
+          >
+            Download game receipt
+          </a>
+        </Button>
         <UID>Challenge UID: {challengeId}</UID>
         {game.player1 === address ? (
           <>
@@ -225,9 +232,9 @@ function Challenges() {
               <>
                 {status === STATUS_PLAYER1_WIN
                   ? "You won"
-                  : status === STATUS_DRAW
-                  ? "Tied"
-                  : "Lost"}
+                  : status === STATUS_PLAYER2_WIN
+                  ? "You lost"
+                  : "You tied"}
               </>
             ) : game.commit1 !== ZERO_BYTES32 ? (
               <>Waiting for opponent...</>
@@ -239,11 +246,11 @@ function Challenges() {
           <>
             {status !== STATUS_UNKNOWN ? (
               <>
-                {status === STATUS_PLAYER2_WIN
+                {status === STATUS_PLAYER1_WIN
+                  ? "You lost"
+                  : status === STATUS_PLAYER2_WIN
                   ? "You won"
-                  : status === STATUS_DRAW
-                  ? "Tied"
-                  : "Lost"}
+                  : "You tied"}
               </>
             ) : game.commit2 !== ZERO_BYTES32 ? (
               <> Waiting for opponent...</>
@@ -251,7 +258,28 @@ function Challenges() {
               <RPSOptions />
             )}
           </>
-        ) : null}
+        ) : (
+          <>
+            {status !== STATUS_UNKNOWN ? (
+              <>
+                {status === STATUS_PLAYER1_WIN
+                  ? `${game.player1} won`
+                  : status === STATUS_PLAYER2_WIN
+                  ? `${game.player2} won`
+                  : `Tie`}
+              </>
+            ) : (
+              <>
+                {game.commit1 === ZERO_BYTES32 ? (
+                  <div>Waiting for {game.player1}...</div>
+                ) : null}
+                {game.commit2 === ZERO_BYTES32 ? (
+                  <div>Waiting for {game.player2}...</div>
+                ) : null}
+              </>
+            )}
+          </>
+        )}
       </WhiteBox>
     </Container>
   );

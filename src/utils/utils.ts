@@ -78,8 +78,8 @@ export const activeChainConfig = EAS_CHAIN_CONFIGS.find(
   (config) => config.chainId === CHAINID
 );
 
-// export const baseURL = `http://localhost:8080`;
-export const baseURL = `http://eas-rps.dakh.com`;
+export const baseURL = `http://localhost:8080`;
+// export const baseURL = `http://eas-rps.dakh.com`;
 
 invariant(activeChainConfig, "No chain config found for chain ID");
 export const EASContractAddress = activeChainConfig.contractAddress;
