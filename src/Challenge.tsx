@@ -48,6 +48,7 @@ import { AcceptedChallenge, Game, GameCommit } from "./utils/types";
 import axios from "axios";
 import Lottie from "react-lottie";
 import { Identicon } from "./components/Identicon";
+import PlayerCard from "./components/PlayerCard";
 // import { button } from "./Home";
 
 const Container = styled.div`
@@ -82,26 +83,6 @@ const GameContainer = styled.div`
   justify-content: center;
 `;
 
-const PlayerCard = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  background: #f3f3f3;
-  padding: 10px;
-  margin: 10px 0;
-  border-radius: 15px;
-  background: #fff;
-
-  box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
-`;
-
-const PlayerInfo = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin: 0 10px;
-`;
-
 type WaitingTextProps = { isPlayer1: boolean };
 
 const WaitingText = styled.div<WaitingTextProps>`
@@ -117,27 +98,12 @@ const WaitingText = styled.div<WaitingTextProps>`
   line-height: 34px; /* 121.429% */
 `;
 
-const PlayerName = styled.div`
-  font-size: 18px;
-  font-weight: bold;
-  color: #333;
-`;
-
-const PlayerScore = styled.div`
-  font-size: 36px;
-  font-weight: bold;
-  color: #000;
-`;
-
-const PlayerAddress = styled.div`
-  font-size: 14px;
-  color: #666;
-  word-break: break-all;
-`;
-
 const HandSelection = styled.div`
   display: flex;
   justify-content: center;
+  align-items: center;
+  gap: 12px;
+  margin-top: 20px;
 `;
 
 const HandOption = styled.div`
@@ -150,6 +116,7 @@ const HandOption = styled.div`
   display: flex;
   justify-content: center;
   cursor: pointer;
+  align-items: center;
 `;
 
 const HandOptionImage = styled.img`
@@ -313,16 +280,11 @@ function Challenge() {
 
   return (
     <GameContainer>
-      <PlayerCard>
-        <Identicon address={game.player2} size={56} />
-        <PlayerInfo>
-          <PlayerName>{opponentENSName}</PlayerName>
-          {opponentENSName !== game.player2 ? (
-            <PlayerAddress>{game.player2}</PlayerAddress>
-          ) : null}
-        </PlayerInfo>
-        <PlayerScore>1100</PlayerScore>
-      </PlayerCard>
+      <PlayerCard
+        address={game.player2}
+        ensName={opponentENSName}
+        score={1100}
+      />
       <PlayerStatus>
         {game.commit2 === ZERO_BYTES32 ? (
           <WaitingText isPlayer1={false}>Waiting For Opponent...</WaitingText>
@@ -401,16 +363,7 @@ function Challenge() {
         )}
       </PlayerStatus>
 
-      <PlayerCard>
-        <Identicon address={game.player1} size={56} />
-        <PlayerInfo>
-          <PlayerName>{myENSName}</PlayerName>
-          {myENSName !== game.player1 ? (
-            <PlayerAddress>{game.player1}</PlayerAddress>
-          ) : null}
-        </PlayerInfo>
-        <PlayerScore>1400</PlayerScore>
-      </PlayerCard>
+      <PlayerCard address={game.player1} ensName={myENSName} score={1100} />
     </GameContainer>
   );
 }
