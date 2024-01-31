@@ -6,28 +6,27 @@ type ContainerProps = {
 };
 
 const Container = styled.div<ContainerProps>`
+  background-color: #fff;
   width: ${({ size }) => size}px;
   height: ${({ size }) => size}px;
-  cursor: pointer;
 `;
 
 type Props = {
   address: string;
   size: number;
   className?: string;
-  onClick?: () => void;
 };
 
-export function Identicon({ address, size, className, onClick }: Props) {
-  const icon = jdenticon.toSvg(address, size, { padding: 0 });
+export function Identicon({ address, size, className }: Props) {
+  const icon = jdenticon.toSvg(address, size);
 
   if (!address || !icon) return null;
 
   return (
-    <Container size={size} className={className} onClick={onClick}>
+    <Container size={size} className={className}>
       <img
         alt={"Identicon"}
-        style={{ borderRadius: 100 }}
+        style={{ borderRadius: 8 }}
         src={`data:image/svg+xml;utf8,${encodeURIComponent(icon)}`}
       />
     </Container>

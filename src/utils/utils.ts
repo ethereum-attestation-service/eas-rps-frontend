@@ -178,6 +178,10 @@ export async function submitSignedAttestation(
   );
 }
 
+export const CHOICE_ROCK = 0;
+export const CHOICE_PAPER = 1;
+export const CHOICE_SCISSORS = 2;
+
 export const CHOICE_UNKNOWN = 3;
 
 export const STATUS_DRAW = 0;

@@ -4,29 +4,38 @@ import { ButtonBase } from "../../styles/buttons";
 import { theme } from "../../utils/theme";
 
 const StyledButton = styled.button`
-  ${ButtonBase};
+    ${ButtonBase};
 
-  min-width: 150px;
-  background-color: ${theme.neutrals["cool-grey-050"]};
-  border: 1px solid ${theme.neutrals["cool-grey-100"]}
-  padding: 10px 25px;
+    min-width: 150px;
+    background-color: ${theme.neutrals["cool-grey-050"]};
+    border: 1px solid ${theme.neutrals["cool-grey-100"]}
+    padding: 10px 25px;
 
-  transition: 200ms ease;
-  &:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 6px 10px -4px ${theme.primary["indigo-100"]};
-  }
-  &:active {
-    transform: translateY(-3px);
-    box-shadow: 0 6px 10px -4px ${theme.primary["indigo-100"]};
-  }
+    transition: 200ms ease;
+
+    &:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 6px 10px -4px ${theme.primary["indigo-100"]};
+    }
+
+    &:active {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 10px -4px ${theme.primary["indigo-100"]};
+    }
 `;
 
-export const CustomConnectButton = () => {
+export const CustomConnectButton = (params?: {
+  style?: React.CSSProperties;
+  text?: string;
+}) => {
   return (
     <ConnectKitButton.Custom>
       {({ isConnected, show, truncatedAddress, ensName }) => {
-        return (
+        return params?.style ? (
+          <div onClick={show} style={params.style}>
+            {params.text}
+          </div>
+        ) : (
           <StyledButton onClick={show}>
             {isConnected ? ensName ?? truncatedAddress : "Connect Wallet"}
           </StyledButton>

@@ -13,7 +13,7 @@ import {
   STATUS_PLAYER2_WIN,
 } from "./utils/utils";
 import { Game, MyStats } from "./utils/types";
-import { Button } from "./Home";
+// import { Button } from "./Home";
 
 const Container = styled.div`
   @media (max-width: 700px) {
@@ -98,7 +98,7 @@ function Games() {
           {activeGames.length > 0 || loading ? (
             activeGames.map((gameObj, i) => (
               <div>
-                <Button
+                <button
                   onClick={() => {
                     navigate(`/challenge/${gameObj.uid}`);
                   }}
@@ -107,7 +107,7 @@ function Games() {
                   {gameObj.player1 === address
                     ? gameObj.player2
                     : gameObj.player1}
-                </Button>
+                </button>
               </div>
             ))
           ) : (

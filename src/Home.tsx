@@ -3,6 +3,8 @@ import styled from "styled-components";
 import GradientBar from "./components/GradientBar";
 import { useAccount } from "wagmi";
 import { useModal } from "connectkit";
+import newChallengeFists from "./assets/newChallengeFists.png";
+
 import {
   baseURL,
   CUSTOM_SCHEMAS,
@@ -24,83 +26,49 @@ import axios from "axios";
 import dayjs from "dayjs";
 import { useSigner } from "./utils/wagmi-utils";
 import { useStore } from "./useStore";
-
-const Title = styled.div`
-  color: #163a54;
-  font-size: 22px;
-  font-family: Montserrat, sans-serif;
-`;
+import Start from "./Start";
 
 const Container = styled.div`
-  @media (max-width: 700px) {
-    width: 100%;
-  }
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  padding: 20px; // or whatever value gives the desired spacing
+  background-color: #fef6e4;
 `;
 
-export const Button = styled.div`
-  border-radius: 10px;
-  border: 1px solid #cfb9ff;
-  background: #333342;
-  width: 100%;
-  padding: 20px 10px;
-  box-sizing: border-box;
+const StartButton = styled.div`
+  border-radius: 8px;
+  background: rgba(46, 196, 182, 0.33);
   color: #fff;
+  text-align: center;
+  font-family: Nunito;
   font-size: 18px;
-  font-family: Montserrat, sans-serif;
   font-weight: 700;
-  cursor: pointer;
+  line-height: 34px;
+  width: 326px;
+  height: 71px;
+  margin: 20px 0; // Adds space above and below the button
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;
 
-const SubText = styled(Link)`
-  display: block;
-  cursor: pointer;
-  text-decoration: underline;
-  color: #ababab;
-  margin-top: 20px;
+const FistsImage = styled.img`
+  width: 293px;
+  height: 221px;
+  flex-shrink: 0;
 `;
 
-const InputContainer = styled.div`
-  position: relative;
-  height: 90px;
-`;
-
-const EnsLogo = styled.img`
-  position: absolute;
-  left: 14px;
-  top: 28px;
-  width: 30px;
-`;
-
-const InputBlock = styled.input`
-  position: absolute;
-  top: 0;
-  left: 0;
-  border-radius: 10px;
-  border: 1px solid rgba(19, 30, 38, 0.33);
-  background: rgba(255, 255, 255, 0.5);
-  color: #131e26;
-  font-size: 18px;
-  font-family: Chalkboard, sans-serif;
-  padding: 20px 10px;
+const BigText = styled.div`
   text-align: center;
-  margin-top: 12px;
-  box-sizing: border-box;
-  width: 100%;
-`;
-
-const WhiteBox = styled.div`
-  box-shadow: 0 4px 33px rgba(168, 198, 207, 0.15);
-  background-color: #fff;
-  padding: 36px;
-  max-width: 590px;
-  border-radius: 10px;
-  margin: 40px auto 0;
-  text-align: center;
-  box-sizing: border-box;
-
-  @media (max-width: 700px) {
-    width: 100%;
-  }
+  font-family: Ubuntu;
+  font-size: 24px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 40px; /* 166.667% */
+  padding: 20px 0;
 `;
 
 function Home() {
@@ -112,12 +80,24 @@ function Home() {
   const [ensResolvedAddress, setEnsResolvedAddress] = useState("Dakh.eth");
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const addGameCommit = useStore((state) => state.addGameCommit);
-  const addAcceptedChallenge = useStore((state) => state.addAcceptedChallenge);
+
+  const styles = {
+    input: {
+      textAlign: "center" as "center",
+      fontFamily: "Ubuntu",
+      fontSize: "14px",
+      fontStyle: "normal",
+      fontWeight: 400,
+      lineHeight: "40px" /* 285.714% */,
+      width: "311px",
+      height: "65px",
+      border: "none",
+    },
+  };
 
   const issueChallenge = async () => {
     invariant(address, "Address should be defined");
-
+    const recipient = ensResolvedAddress || address;
     console.log("signer", signer);
     console.log("me", myAddress);
     setAttesting(true);
@@ -138,7 +118,7 @@ function Home() {
       const signedOffchainAttestation = await offchain.signOffchainAttestation(
         {
           schema: CUSTOM_SCHEMAS.CREATE_GAME_CHALLENGE,
-          recipient: address,
+          recipient: recipient,
           refUID: RPS_GAME_UID,
           data: encoded,
           time: BigInt(dayjs().unix()),
@@ -182,7 +162,7 @@ function Home() {
     async function checkENS() {
       if (address.includes(".eth")) {
         const tmpAddress = await getAddressForENS(address);
-
+        console.log("tmpAddress", tmpAddress);
         if (tmpAddress) {
           setEnsResolvedAddress(tmpAddress);
         } else {
@@ -197,40 +177,45 @@ function Home() {
   }, [address]);
 
   return (
-    <Container>
+    <>
       <GradientBar />
-      <WhiteBox>
-        <Title>Create challenge</Title>
-
-        <InputContainer>
-          <InputBlock
-            autoCorrect={"off"}
-            autoComplete={"off"}
-            autoCapitalize={"off"}
-            placeholder={"Address/ENS"}
-            value={address}
-            onChange={(e) => setAddress(e.target.value)}
-          />
-          {ensResolvedAddress && <EnsLogo src={"/ens-logo.png"} />}
-        </InputContainer>
-        <InputContainer>
-          <Button onClick={issueChallenge}>
-            {attesting
-              ? "Creating challenge..."
-              : status === "connected"
-              ? "Create challenge"
-              : "Connect wallet"}
-          </Button>
-        </InputContainer>
-
-        {status === "connected" && (
-          <>
-            <SubText to={"/qr"}>Show my QR code</SubText>
-            <SubText to={"/connections"}>Connections</SubText>
-          </>
-        )}
-      </WhiteBox>
-    </Container>
+      {status === "connected" ? (
+        <>
+          <Container>
+            <FistsImage src={newChallengeFists} />
+            <BigText>Who are you battling?</BigText>
+            <input
+              style={styles.input}
+              type="text"
+              placeholder="Type in address or ENS name..."
+              value={address}
+              onChange={(e) => setAddress(e.target.value)}
+              autoCorrect={"off"}
+              autoComplete={"off"}
+              autoCapitalize={"off"}
+            />
+            <BigText>Optional Stakes...</BigText>
+            <textarea
+              style={{ ...styles.input, height: "90px", resize: "none" }}
+              placeholder="What happens if someone wins? Remember, it's only as good as their
+              word."
+            />
+            <StartButton
+              style={
+                ethers.isAddress(ensResolvedAddress || address)
+                  ? { backgroundColor: "green", cursor: "pointer" }
+                  : {}
+              }
+              onClick={issueChallenge}
+            >
+              Start Battle
+            </StartButton>
+          </Container>
+        </>
+      ) : (
+        <Start />
+      )}
+    </>
   );
 }
 
