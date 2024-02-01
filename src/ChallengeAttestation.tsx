@@ -1,4 +1,4 @@
-import { Game } from "./utils/types";
+import { Game, IncomingChallenge } from "./utils/types";
 import styled from "styled-components";
 import { ButtonStandard } from "./styles/buttons";
 import { useNavigate } from "react-router";
@@ -14,16 +14,28 @@ import {
   CUSTOM_SCHEMAS,
   EASContractAddress,
   RPS_GAME_UID,
+  getENSName,
   submitSignedAttestation,
 } from "./utils/utils";
 import dayjs from "dayjs";
 import { useSigner } from "./utils/wagmi-utils";
+import PlayerCard from "./components/PlayerCard";
 
 type Props = {
-  game: Game;
+  game: IncomingChallenge;
+  player1ENS: string;
 };
 
-const Container = styled.div``;
+const Container = styled.div`
+  border-radius: 10px;
+  background: #fff;
+  width: 70%;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 20px;
+`;
 const UID = styled.div`
   font-size: 12px;
 `;
@@ -32,7 +44,103 @@ const Challenger = styled.div`
   margin-bottom: 10px;
 `;
 
-export function ChallengeAttestation({ game: g }: Props) {
+const AcceptButton = styled.div`
+  border-radius: 5px;
+  border: 1px solid #00ebc7;
+  background: #fff;
+  width: 335px;
+  height: 65px;
+  flex-shrink: 0;
+  color: #272343;
+  text-align: center;
+  font-family: "Space Grotesk";
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  margin: 20px;
+`;
+
+const DeclineLink = styled.div`
+  color: #272343;
+  font-family: "Space Grotesk";
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  text-decoration-line: underline;
+  cursor: pointer;
+  margin-bottom: 20px;
+`;
+
+const LineBreak = styled.div`
+  height: 1px;
+  width: 80%;
+  background: rgba(57, 53, 84, 0.15);
+  margin: 10px;
+`;
+
+const BoldNumber = styled.div`
+  color: #272343;
+  text-align: right;
+  font-family: "Space Grotesk";
+  font-size: 18px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+  margin-left: 20px;
+  margin-right: 10px;
+`;
+
+const NumberDescriptor = styled.div`
+  color: #272343;
+  font-family: "Space Grotesk";
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  margin-left: 10px;
+  margin-right: 20px;
+`;
+
+const StatsContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+`;
+
+const StakesContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: left;
+`;
+
+const StakesDescriptor = styled.div`
+  color: rgba(39, 35, 67, 0.4);
+  font-family: Nunito;
+  font-size: 14px;
+  font-style: italic;
+  font-weight: 400;
+  line-height: normal;
+`;
+
+const Stakes = styled.div`
+  color: #272343;
+  font-family: Nunito;
+  font-size: 18px;
+  font-style: italic;
+  font-weight: 700;
+  line-height: normal;
+`;
+
+export function ChallengeAttestation({ game: g, player1ENS }: Props) {
   const navigate = useNavigate();
   const signer = useSigner();
 
@@ -75,8 +183,7 @@ export function ChallengeAttestation({ game: g }: Props) {
 
       if (!res.data.error) {
         console.log(res);
-
-        navigate(`/`);
+        window.location.reload();
       } else {
         console.error(res.data.error);
       }
@@ -87,24 +194,44 @@ export function ChallengeAttestation({ game: g }: Props) {
 
   return (
     <Container>
-      <UID>UID: {g.uid}</UID>
-      <Challenger>Challenger: {g.player1}</Challenger>
+      <PlayerCard
+        address={g.player1Object.address}
+        score={g.player1Object.elo}
+        ensName={player1ENS || g.player1Object.address}
+      />
+      <LineBreak />
+      <StatsContainer>
+        <BoldNumber>{g.gameCount}</BoldNumber>
+        <NumberDescriptor>Games Played</NumberDescriptor>
+        <BoldNumber>{g.winstreak}</BoldNumber>
+        <NumberDescriptor>Win Streak</NumberDescriptor>
+      </StatsContainer>
 
-      <ButtonStandard
+      <LineBreak />
+      {g.stakes && (
+        <>
+          <StakesContainer>
+            <StakesDescriptor>What's at Stake...</StakesDescriptor>
+            <Stakes>{g.stakes}</Stakes>
+          </StakesContainer>
+          <LineBreak />
+        </>
+      )}
+      <AcceptButton
         onClick={() => {
           navigate(`/challenge/${g.uid}`);
         }}
       >
-        Accept
-      </ButtonStandard>
+        Accept This Battle
+      </AcceptButton>
 
-      <ButtonStandard
+      <DeclineLink
         onClick={async () => {
           await decline(g.uid);
         }}
       >
-        Decline
-      </ButtonStandard>
+        Decline This Battle
+      </DeclineLink>
     </Container>
   );
 }

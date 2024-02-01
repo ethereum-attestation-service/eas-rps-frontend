@@ -5,46 +5,35 @@ import { useAccount } from "wagmi";
 import { useNavigate } from "react-router";
 import { ChallengeAttestation } from "./ChallengeAttestation";
 import axios from "axios";
-import { baseURL } from "./utils/utils";
-import { Game } from "./utils/types";
+import { baseURL, getENSName } from "./utils/utils";
+import { Game, IncomingChallenge } from "./utils/types";
 
 const Container = styled.div`
-  @media (max-width: 700px) {
-    width: 100%;
-  }
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100vw;
+  background-color: #fef6e4;
+  min-height: 100vh;
 `;
 
-const AttestationHolder = styled.div``;
-
-const NewConnection = styled.div`
-  color: #333342;
+const Title = styled.div`
+  color: #272343;
   text-align: center;
-  font-size: 25px;
-  font-family: Montserrat, sans-serif;
-  font-style: italic;
+  font-family: Ubuntu;
+  font-size: 36px;
+  font-style: normal;
   font-weight: 700;
-  margin-top: 20px;
-`;
-
-const WhiteBox = styled.div`
-  box-shadow: 0 4px 33px rgba(168, 198, 207, 0.15);
-  background-color: #fff;
-  padding: 20px;
-  width: 590px;
-  border-radius: 10px;
-  margin: 40px auto 0;
-  text-align: center;
-  box-sizing: border-box;
-
-  @media (max-width: 700px) {
-    width: 100%;
-  }
+  line-height: 34px; /* 94.444% */
+  padding: 30px;
 `;
 
 function Challenges() {
-  console.log("looking for challenges");
   const { address } = useAccount();
-  const [challengeObjects, setChallengeObjects] = useState<Game[]>([]);
+  const [challengeObjects, setChallengeObjects] = useState<IncomingChallenge[]>(
+    []
+  );
+  const [ensList, setEnsList] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
@@ -57,33 +46,36 @@ function Challenges() {
       setChallengeObjects([]);
 
       setLoading(true);
-      const newChallenges = await axios.post<Game[]>(
+      const newChallenges = await axios.post<IncomingChallenge[]>(
         `${baseURL}/incomingChallenges`,
         { address: address }
       );
 
       setChallengeObjects(newChallenges.data);
+      const ensNames = await Promise.all(
+        newChallenges.data.map(
+          async (c) => await getENSName(c.player1Object.address)
+        )
+      );
+      setEnsList(ensNames.map((ens) => ens || ""));
       setLoading(false);
     }
+
     getAtts();
   }, [address]);
 
   return (
     <Container>
       <GradientBar />
-      <NewConnection>Challenges</NewConnection>
-      <AttestationHolder>
-        <WhiteBox>
-          {loading && <div>Loading...</div>}
-          {challengeObjects.length > 0 || loading ? (
-            challengeObjects.map((gameObj, i) => (
-              <ChallengeAttestation game={gameObj} />
-            ))
-          ) : (
-            <div>No one here yet</div>
-          )}
-        </WhiteBox>
-      </AttestationHolder>
+      <Title>Incoming Battles</Title>
+      {loading && <div>Loading...</div>}
+      {challengeObjects.length > 0 || loading ? (
+        challengeObjects.map((gameObj, i) => (
+          <ChallengeAttestation game={gameObj} player1ENS={ensList[i]} />
+        ))
+      ) : (
+        <div>No one here yet</div>
+      )}
     </Container>
   );
 }

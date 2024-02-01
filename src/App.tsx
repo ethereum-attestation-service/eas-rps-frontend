@@ -6,6 +6,7 @@ import Qr from "./Qr";
 import Challenges from "./Challenges";
 import Challenge from "./Challenge";
 import Games from "./Games";
+import Summary from "./Summary";
 
 const router = createBrowserRouter([
   {
@@ -13,7 +14,7 @@ const router = createBrowserRouter([
     element: <Root />,
     children: [
       {
-        path: "/",
+        path: "/:preComputedRecipient?",
         element: <Home />,
       },
       {
@@ -27,6 +28,10 @@ const router = createBrowserRouter([
       {
         path: "/challenge/:challengeId",
         element: <Challenge />,
+      },
+      {
+        path: "/summary/:challengeId",
+        element: <Summary />,
       },
       {
         path: "/games",

@@ -44,7 +44,12 @@ import { ethers } from "ethers";
 import dayjs from "dayjs";
 import { useSigner } from "./utils/wagmi-utils";
 import { useStore } from "./useStore";
-import { AcceptedChallenge, Game, GameCommit } from "./utils/types";
+import {
+  AcceptedChallenge,
+  Game,
+  GameCommit,
+  GameWithPlayers,
+} from "./utils/types";
 import axios from "axios";
 import Lottie from "react-lottie";
 import { Identicon } from "./components/Identicon";
@@ -71,14 +76,40 @@ const Vs = styled.div`
   padding: 20px;
 `;
 
-const GameContainer = styled.div`
+const Button = styled.button`
+  border-radius: 8px;
+  border: 1px solid #ff9f1c;
+  background: #ff9f1c;
+  margin: 10px 0;
+  cursor: pointer;
+  color: #fff;
+  text-align: center;
+  font-family: Nunito;
+  font-size: 18px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 34px; /* 188.889% */
+  width: 357px;
+  height: 40px;
+  flex-shrink: 0;
+`;
+
+type GameStatusProps = { status: number };
+
+const GameContainer = styled.div<GameStatusProps>`
   display: flex;
   flex-direction: column;
   align-items: center;
   width: 100%;
   height: 100vh;
-  background-color: #fef6e4;
-  border-radius: 20px;
+  background-color: ${({ status }) =>
+    status === STATUS_PLAYER1_WIN
+      ? "rgba(46, 196, 182, 0.33)"
+      : status === STATUS_PLAYER2_WIN
+      ? "rgba(255, 0, 28, 0.33)"
+      : status === STATUS_DRAW
+      ? "rgba(255, 220, 0, 0.33)"
+      : "#fef6e4"};
   padding: 20px;
   justify-content: center;
 `;
@@ -144,11 +175,9 @@ function Challenge() {
   const { address } = useAccount();
   const navigate = useNavigate();
   const { challengeId } = useParams();
-  const [attesting, setAttesting] = useState(false);
   const signer = useSigner();
   const [tick, setTick] = useState(0);
-  const [waiting, setWaiting] = useState(true);
-  const [game, setGame] = useState<Game>();
+  const [game, setGame] = useState<GameWithPlayers>();
   const [myENSName, setMyENSName] = useState<string>("");
   const [opponentENSName, setOpponentENSName] = useState<string>("");
 
@@ -160,13 +189,11 @@ function Challenge() {
 
   const addGameCommit = useStore((state) => state.addGameCommit);
 
-  const committed = !!thisGameCommit;
-
   invariant(challengeId, "Challenge ID should be defined");
 
   const update = async () => {
     //query server for game status
-    const gameRes = await axios.post<Game>(`${baseURL}/gameStatus`, {
+    const gameRes = await axios.post<GameWithPlayers>(`${baseURL}/gameStatus`, {
       uid: challengeId,
     });
     // swap players if we are player 2
@@ -182,6 +209,9 @@ function Challenge() {
       const tmpSalt = gameRes.data.salt2;
       gameRes.data.salt2 = gameRes.data.salt1;
       gameRes.data.salt1 = tmpSalt;
+      const tmpPlayerObject = gameRes.data.player2Object;
+      gameRes.data.player2Object = gameRes.data.player1Object;
+      gameRes.data.player1Object = tmpPlayerObject;
     }
     setGame(gameRes.data);
     setMyENSName(
@@ -195,18 +225,15 @@ function Challenge() {
   //watch for game updates
 
   useEffect(() => {
-    if (waiting) {
-      update();
-      setTimeout(() => {
-        setTick(tick + 1);
-      }, 5000);
-    }
+    update();
+    setTimeout(() => {
+      setTick(tick + 1);
+    }, 5000);
   }, [tick]);
 
   const commit = async (choice: number) => {
     invariant(address, "Address should be defined");
 
-    setAttesting(true);
     try {
       const schemaEncoder = new SchemaEncoder("bytes32 commitHash");
 
@@ -268,8 +295,6 @@ function Challenge() {
     } catch (e) {
       console.error(e);
     }
-
-    setAttesting(false);
   };
 
   const status = game ? getGameStatus(game) : STATUS_UNKNOWN;
@@ -279,11 +304,11 @@ function Challenge() {
   }
 
   return (
-    <GameContainer>
+    <GameContainer status={status}>
       <PlayerCard
         address={game.player2}
         ensName={opponentENSName}
-        score={1100}
+        score={game.player2Object.elo}
       />
       <PlayerStatus>
         {game.commit2 === ZERO_BYTES32 ? (
@@ -311,7 +336,24 @@ function Challenge() {
         )}
       </PlayerStatus>
 
-      <Vs>VS</Vs>
+      <Vs>
+        {status === STATUS_PLAYER1_WIN
+          ? "YOU WON"
+          : status === STATUS_PLAYER2_WIN
+          ? "YOU LOST"
+          : status === STATUS_DRAW
+          ? "DRAW"
+          : "VS"}
+      </Vs>
+      {status !== STATUS_UNKNOWN && (
+        <Button
+          onClick={() => {
+            navigate(`/summary/${challengeId}`);
+          }}
+        >
+          Continue to Summary
+        </Button>
+      )}
 
       <PlayerStatus>
         {game.commit1 === ZERO_BYTES32 ? (
@@ -363,7 +405,11 @@ function Challenge() {
         )}
       </PlayerStatus>
 
-      <PlayerCard address={game.player1} ensName={myENSName} score={1100} />
+      <PlayerCard
+        address={game.player1}
+        ensName={myENSName}
+        score={game.player1Object.elo}
+      />
     </GameContainer>
   );
 }

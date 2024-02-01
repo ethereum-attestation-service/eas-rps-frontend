@@ -21,7 +21,7 @@ import {
 import invariant from "tiny-invariant";
 import { ethers } from "ethers";
 import { Link, useSearchParams } from "react-router-dom";
-import { useNavigate } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import axios from "axios";
 import dayjs from "dayjs";
 import { useSigner } from "./utils/wagmi-utils";
@@ -74,10 +74,13 @@ const BigText = styled.div`
 function Home() {
   const { status, address: myAddress } = useAccount();
   const modal = useModal();
-  const [address, setAddress] = useState("");
+  const { preComputedRecipient } = useParams();
+
+  const [address, setAddress] = useState(preComputedRecipient || "");
+  const [stakes, setStakes] = useState("");
   const signer = useSigner();
   const [attesting, setAttesting] = useState(false);
-  const [ensResolvedAddress, setEnsResolvedAddress] = useState("Dakh.eth");
+  const [ensResolvedAddress, setEnsResolvedAddress] = useState("");
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
 
@@ -102,10 +105,10 @@ function Home() {
     console.log("me", myAddress);
     setAttesting(true);
     try {
-      const schemaEncoder = new SchemaEncoder("bool createGameChallenge");
+      const schemaEncoder = new SchemaEncoder("string stakes");
 
       const encoded = schemaEncoder.encodeData([
-        { name: "createGameChallenge", type: "bool", value: true },
+        { name: "stakes", type: "string", value: stakes },
       ]);
 
       const eas = new EAS(EASContractAddress);
@@ -199,6 +202,8 @@ function Home() {
               style={{ ...styles.input, height: "90px", resize: "none" }}
               placeholder="What happens if someone wins? Remember, it's only as good as their
               word."
+              value={stakes}
+              onChange={(e) => setStakes(e.target.value)}
             />
             <StartButton
               style={

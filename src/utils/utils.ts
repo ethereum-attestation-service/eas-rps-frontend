@@ -31,7 +31,7 @@ export const CUSTOM_SCHEMAS = {
   COMMIT_HASH:
     "0x2328029cfa84b9ea42f4e0e8fa24fbf66da07ceec0a925dd27370b9617b32d59",
   CREATE_GAME_CHALLENGE:
-    "0x64b1bac6f531c64a6aa372b1239111fe41a60003dcda62bfa967bc6e4c4d91e0",
+    "0x8f60d8dbd47e0a6953b0b1fd640359d249ba8f14c15c02bc5c6b642b0b888f37",
   DECLINE_GAME_CHALLENGE:
     "0x27e160d185f1d97202897bd3ed697906398b70a8d08b0d22bc2cfffdf561e3e9",
 };
@@ -80,6 +80,7 @@ export const activeChainConfig = EAS_CHAIN_CONFIGS.find(
 
 export const baseURL = `http://localhost:8080`;
 // export const baseURL = `http://eas-rps.dakh.com`;
+export const clientURL = `http://localhost:3000`;
 
 invariant(activeChainConfig, "No chain config found for chain ID");
 export const EASContractAddress = activeChainConfig.contractAddress;
@@ -197,3 +198,20 @@ export function getGameStatus(game: Game) {
   }
   return (3 + game.choice1 - game.choice2) % 3;
 }
+
+export function choiceToText(choice: number) {
+  switch (choice) {
+    case CHOICE_ROCK:
+      return "ROCK";
+    case CHOICE_PAPER:
+      return "PAPER";
+    case CHOICE_SCISSORS:
+      return "SCISSORS";
+    default:
+      return "UNKNOWN";
+  }
+}
+
+export const addPlusIfPositive = (num: number) => {
+  return num > 0 ? `+${num}` : num;
+};
