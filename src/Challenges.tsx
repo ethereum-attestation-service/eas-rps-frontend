@@ -7,6 +7,7 @@ import { ChallengeAttestation } from "./ChallengeAttestation";
 import axios from "axios";
 import { baseURL, getENSName } from "./utils/utils";
 import { Game, IncomingChallenge } from "./utils/types";
+import Page from "./Page";
 
 const Container = styled.div`
   display: flex;
@@ -65,18 +66,20 @@ function Challenges() {
   }, [address]);
 
   return (
-    <Container>
-      <GradientBar />
-      <Title>Incoming Battles</Title>
-      {loading && <div>Loading...</div>}
-      {challengeObjects.length > 0 || loading ? (
-        challengeObjects.map((gameObj, i) => (
-          <ChallengeAttestation game={gameObj} player1ENS={ensList[i]} />
-        ))
-      ) : (
-        <div>No one here yet</div>
-      )}
-    </Container>
+    <Page>
+      <Container>
+        <GradientBar />
+        <Title>Incoming Battles</Title>
+        {loading && <div>Loading...</div>}
+        {challengeObjects.length > 0 || loading ? (
+          challengeObjects.map((gameObj, i) => (
+            <ChallengeAttestation game={gameObj} player1ENS={ensList[i]} />
+          ))
+        ) : (
+          <div>No one here yet</div>
+        )}
+      </Container>
+    </Page>
   );
 }
 

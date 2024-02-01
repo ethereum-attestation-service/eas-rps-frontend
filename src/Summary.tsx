@@ -17,6 +17,7 @@ import {
 import { Game } from "./utils/types";
 import axios from "axios";
 import { useAccount } from "wagmi";
+import Page from "./Page";
 // Styled components
 const SummaryContainer = styled.div`
   display: flex;
@@ -222,86 +223,88 @@ function Summary() {
   const status = game ? getGameStatus(game) : STATUS_UNKNOWN;
   console.log("status", status);
   return (
-    <SummaryContainer>
-      {address === game?.player1 ? (
-        <VictoryMessage won={status === STATUS_PLAYER1_WIN}>
-          {status === STATUS_PLAYER1_WIN
-            ? "You won!"
-            : status === STATUS_PLAYER2_WIN
-            ? "You lost!"
-            : "It's a tie!"}
-        </VictoryMessage>
-      ) : address === game?.player2 ? (
-        <VictoryMessage won={status === STATUS_PLAYER2_WIN}>
-          {status === STATUS_PLAYER2_WIN
-            ? "You won!"
-            : status === STATUS_PLAYER1_WIN
-            ? "You lost!"
-            : "It's a tie!"}
-        </VictoryMessage>
-      ) : null}
+    <Page>
+      <SummaryContainer>
+        {address === game?.player1 ? (
+          <VictoryMessage won={status === STATUS_PLAYER1_WIN}>
+            {status === STATUS_PLAYER1_WIN
+              ? "You won!"
+              : status === STATUS_PLAYER2_WIN
+              ? "You lost!"
+              : "It's a tie!"}
+          </VictoryMessage>
+        ) : address === game?.player2 ? (
+          <VictoryMessage won={status === STATUS_PLAYER2_WIN}>
+            {status === STATUS_PLAYER2_WIN
+              ? "You won!"
+              : status === STATUS_PLAYER1_WIN
+              ? "You lost!"
+              : "It's a tie!"}
+          </VictoryMessage>
+        ) : null}
 
-      {address === game?.player1 || address === game?.player2 ? (
-        <Points>
-          <PointsNum
-            won={
-              (address === game?.player1 && status === STATUS_PLAYER1_WIN) ||
-              (address === game?.player2 && status === STATUS_PLAYER2_WIN)
-            }
-          >
-            {addPlusIfPositive(
-              (address === game?.player1
-                ? game?.eloChange1
-                : game?.eloChange2) || 0
-            )}
-          </PointsNum>
-          <div style={{ width: 5 }} />
-          <PointsWord>points</PointsWord>
-        </Points>
-      ) : null}
-      <ResultContainer>
-        {/*<BiArrowFromBottom color={"#000"} size={24} />*/}
-        <ResultTitle>Roshambo Result</ResultTitle>
-        <PlayerResult
-          address={game?.player1 || ""}
-          ensName={player1ENS}
-          choice={game?.choice1 || 0}
-          won={status === STATUS_PLAYER1_WIN}
-        />
-        <PlayerResult
-          address={game?.player2 || ""}
-          ensName={player2ENS}
-          choice={game?.choice2 || 0}
-          won={status === STATUS_PLAYER2_WIN}
-        />
-        <LineBreak />
-        <StakeTitle>What was at stake...</StakeTitle>
-        <StakeBet>{game?.stakes}</StakeBet>
-        <LineBreak />
-        <GameInfoContainer>
-          <img
-            src={easLogo}
-            style={{ width: 28, height: 28, display: "flex", margin: 20 }}
+        {address === game?.player1 || address === game?.player2 ? (
+          <Points>
+            <PointsNum
+              won={
+                (address === game?.player1 && status === STATUS_PLAYER1_WIN) ||
+                (address === game?.player2 && status === STATUS_PLAYER2_WIN)
+              }
+            >
+              {addPlusIfPositive(
+                (address === game?.player1
+                  ? game?.eloChange1
+                  : game?.eloChange2) || 0
+              )}
+            </PointsNum>
+            <div style={{ width: 5 }} />
+            <PointsWord>points</PointsWord>
+          </Points>
+        ) : null}
+        <ResultContainer>
+          {/*<BiArrowFromBottom color={"#000"} size={24} />*/}
+          <ResultTitle>Roshambo Result</ResultTitle>
+          <PlayerResult
+            address={game?.player1 || ""}
+            ensName={player1ENS}
+            choice={game?.choice1 || 0}
+            won={status === STATUS_PLAYER1_WIN}
           />
-          <GameUIDContainer>
-            <GameUIDTitle>Game UID:</GameUIDTitle>
-            <GameUID>{game?.uid}</GameUID>
-          </GameUIDContainer>
-        </GameInfoContainer>
-      </ResultContainer>
-      {address === game?.player1 || address === game?.player2 ? (
-        <Button
-          onClick={() => {
-            navigate(
-              `/${address === game?.player1 ? game?.player2 : game?.player1}`
-            );
-          }}
-        >
-          Rematch
-        </Button>
-      ) : null}
-      <UnderlinedLink href={"/challenges"}>Back to Battles</UnderlinedLink>
-    </SummaryContainer>
+          <PlayerResult
+            address={game?.player2 || ""}
+            ensName={player2ENS}
+            choice={game?.choice2 || 0}
+            won={status === STATUS_PLAYER2_WIN}
+          />
+          <LineBreak />
+          <StakeTitle>What was at stake...</StakeTitle>
+          <StakeBet>{game?.stakes}</StakeBet>
+          <LineBreak />
+          <GameInfoContainer>
+            <img
+              src={easLogo}
+              style={{ width: 28, height: 28, display: "flex", margin: 20 }}
+            />
+            <GameUIDContainer>
+              <GameUIDTitle>Game UID:</GameUIDTitle>
+              <GameUID>{game?.uid}</GameUID>
+            </GameUIDContainer>
+          </GameInfoContainer>
+        </ResultContainer>
+        {address === game?.player1 || address === game?.player2 ? (
+          <Button
+            onClick={() => {
+              navigate(
+                `/${address === game?.player1 ? game?.player2 : game?.player1}`
+              );
+            }}
+          >
+            Rematch
+          </Button>
+        ) : null}
+        <UnderlinedLink href={"/challenges"}>Back to Battles</UnderlinedLink>
+      </SummaryContainer>
+    </Page>
   );
 }
 

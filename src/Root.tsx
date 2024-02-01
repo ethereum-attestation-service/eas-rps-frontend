@@ -7,6 +7,7 @@ import "./App.css";
 import invariant from "tiny-invariant";
 import { activeChainConfig, alchemyApiKey } from "./utils/utils";
 import { WrongChainModal } from "./components/WrongChainModal";
+import FixedFooter from "./FixedFooter";
 
 invariant(activeChainConfig, "Chain config is not set");
 
@@ -90,8 +91,9 @@ export function Root() {
             enforceSupportedChains: false,
           }}
         >
-          <Header />
+          {/*<Header />*/}
           <Outlet />
+          {/*<FixedFooter />*/}
         </ConnectKitProvider>
         <WrongChainModal />
       </WagmiConfig>

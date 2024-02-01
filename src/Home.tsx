@@ -27,6 +27,8 @@ import dayjs from "dayjs";
 import { useSigner } from "./utils/wagmi-utils";
 import { useStore } from "./useStore";
 import Start from "./Start";
+import Page from "./Page";
+import MiniHeader from "./MiniHeader";
 
 const Container = styled.div`
   display: flex;
@@ -183,8 +185,9 @@ function Home() {
     <>
       <GradientBar />
       {status === "connected" ? (
-        <>
+        <Page>
           <Container>
+            <MiniHeader selected={1} />
             <FistsImage src={newChallengeFists} />
             <BigText>Who are you battling?</BigText>
             <input
@@ -211,12 +214,16 @@ function Home() {
                   ? { backgroundColor: "green", cursor: "pointer" }
                   : {}
               }
-              onClick={issueChallenge}
+              onClick={
+                ethers.isAddress(ensResolvedAddress || address)
+                  ? issueChallenge
+                  : () => {}
+              }
             >
               Start Battle
             </StartButton>
           </Container>
-        </>
+        </Page>
       ) : (
         <Start />
       )}

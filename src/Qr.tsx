@@ -7,6 +7,8 @@ import { QRCodeSVG } from "qrcode.react";
 import { Link } from "react-router-dom";
 import PlayerCard from "./components/PlayerCard";
 import axios from "axios";
+import Page from "./Page";
+import MiniHeader from "./MiniHeader";
 
 const Container = styled.div`
   display: flex;
@@ -85,42 +87,46 @@ function Home() {
   }, [address]);
 
   return (
-    <Container>
-      <div
-        style={{
-          width: "70%",
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-        }}
-      >
-        <PlayerCard
-          address={address || ""}
-          ensName={ens ? ens : address || ""}
-          score={elo}
-        />
-      </div>
+    <Page>
+      <Container>
+        <MiniHeader selected={0} />
 
-      <QrCard>
-        {address && (
-          <QRCodeSVG
-            value={`https://metirl.org/${ens ? ens : address}`}
-            includeMargin={true}
-            size={300}
-          />
-        )}
-        <CopyButton
-          onClick={async () => {
-            window.navigator.clipboard.writeText(
-              `${clientURL}/${ens || address}`
-            );
+        <div
+          style={{
+            width: "70%",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
           }}
         >
-          Copy Challenge Link
-        </CopyButton>
-        <ChallengeLink>{`${clientURL}/${ens || address}`}</ChallengeLink>
-      </QrCard>
-    </Container>
+          <PlayerCard
+            address={address || ""}
+            ensName={ens ? ens : address || ""}
+            score={elo}
+          />
+        </div>
+
+        <QrCard>
+          {address && (
+            <QRCodeSVG
+              value={`https://metirl.org/${ens ? ens : address}`}
+              includeMargin={true}
+              size={300}
+            />
+          )}
+          <CopyButton
+            onClick={async () => {
+              window.navigator.clipboard.writeText(
+                `${clientURL}/${ens || address}`
+              );
+            }}
+          >
+            Copy Challenge Link
+          </CopyButton>
+          <ChallengeLink>{`${clientURL}/${ens || address}`}</ChallengeLink>
+        </QrCard>
+      </Container>
+    </Page>
   );
 }
 
