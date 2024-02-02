@@ -114,6 +114,10 @@ export type GameWithPlayers = Game & {
   player2Object: { address: string; elo: number };
 };
 
+export type GameWithPlayersAndAttestations = GameWithPlayers & {
+  relevantAttestations: { packageObjString: string }[];
+};
+
 export type MyStats = {
   games: Game[];
   elo: number;

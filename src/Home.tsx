@@ -34,7 +34,6 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
   height: 100vh;
   padding: 20px; // or whatever value gives the desired spacing
   background-color: #fef6e4;
@@ -44,7 +43,6 @@ const StartButton = styled.div`
   border-radius: 8px;
   background: rgba(46, 196, 182, 0.33);
   color: #fff;
-  text-align: center;
   font-family: Nunito;
   font-size: 18px;
   font-weight: 700;

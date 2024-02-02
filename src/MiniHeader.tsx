@@ -6,7 +6,7 @@ const Container = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: 10%;
+  gap: 5%;
   margin: 20px;
   justify-content: center;
 `;
@@ -34,13 +34,7 @@ export default function MiniHeader({ selected }: { selected: number }) {
         <HeaderItem
           selected={selected === index}
           onClick={() =>
-            navigate(
-              index === 0
-                ? "/qr"
-                : index === 1
-                ? "/newChallenge"
-                : "/leaderboard"
-            )
+            navigate(index === 0 ? "/qr" : index === 1 ? "/" : "/leaderboard")
           }
         >
           {name}

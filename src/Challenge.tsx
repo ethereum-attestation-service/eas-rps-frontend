@@ -54,24 +54,14 @@ import axios from "axios";
 import Lottie from "react-lottie";
 import { Identicon } from "./components/Identicon";
 import PlayerCard from "./components/PlayerCard";
-// import { button } from "./Home";
 
-const Container = styled.div`
-  @media (max-width: 700px) {
-    width: 100%;
-  }
-`;
-
-const UID = styled.div`
-  font-size: 12px;
-`;
-
-const Vs = styled.div`
+type finishedProps = { finished: boolean };
+const Vs = styled.div<finishedProps>`
   text-align: center;
-  font-family: "Racing Sans One";
-  font-size: 80px;
+  font-family: ${({ finished }) => (finished ? "Ubuntu" : "Racing Sans One")};
+  font-size: ${({ finished }) => (finished ? "50px" : "80px")};
   font-style: normal;
-  font-weight: 400;
+  font-weight: ${({ finished }) => (finished ? 700 : 400)};
   line-height: 34px; /* 42.5% */
   padding: 20px;
 `;
@@ -111,6 +101,7 @@ const GameContainer = styled.div<GameStatusProps>`
       ? "rgba(255, 220, 0, 0.33)"
       : "#fef6e4"};
   padding: 20px;
+  box-sizing: border-box;
   justify-content: center;
 `;
 
@@ -127,6 +118,7 @@ const WaitingText = styled.div<WaitingTextProps>`
   font-style: italic;
   font-weight: 700;
   line-height: 34px; /* 121.429% */
+  padding: 20px;
 `;
 
 const HandSelection = styled.div`
@@ -336,7 +328,7 @@ function Challenge() {
         )}
       </PlayerStatus>
 
-      <Vs>
+      <Vs finished={status !== STATUS_UNKNOWN}>
         {status === STATUS_PLAYER1_WIN
           ? "YOU WON"
           : status === STATUS_PLAYER2_WIN
@@ -359,7 +351,6 @@ function Challenge() {
         {game.commit1 === ZERO_BYTES32 ? (
           <>
             <WaitingText isPlayer1={true}>Waiting For You...</WaitingText>
-            <div></div>
             <HandSelection>
               <HandOption
                 onClick={() => {

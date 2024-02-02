@@ -14,10 +14,18 @@ import {
   getENSName,
   getGameStatus,
 } from "./utils/utils";
-import { Game } from "./utils/types";
+import {
+  Game,
+  GameWithPlayers,
+  GameWithPlayersAndAttestations,
+} from "./utils/types";
 import axios from "axios";
 import { useAccount } from "wagmi";
 import Page from "./Page";
+import {
+  AttestationShareablePackageObject,
+  createOffchainURL,
+} from "@ethereum-attestation-service/eas-sdk";
 // Styled components
 const SummaryContainer = styled.div`
   display: flex;
@@ -26,14 +34,13 @@ const SummaryContainer = styled.div`
   width: 100vw;
   background-color: #fef6e4;
   padding: 20px;
-  justify-content: center;
-  height: 100vh;
+  box-sizing: border-box;
 `;
 
 const LineBreak = styled.div`
   height: 1px;
   width: 80%;
-  background: rgba(57, 53, 84, 0.15);
+  background-color: rgba(57, 53, 84, 0.15);
   margin: 10px;
 `;
 
@@ -81,19 +88,17 @@ const PointsWord = styled.span`
 
 const ResultContainer = styled.div`
   border-radius: 10px;
-  width: 357px;
-  height: 515px;
+  width: 100%;
   flex-shrink: 0;
   border: 1px solid rgba(57, 53, 84, 0.2);
   background: #fff;
   box-shadow: 10px 10px 25px 5px rgba(210, 201, 190, 0.25);
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  margin: 20px 0;
 `;
 
-const ResultTitle = styled.div`
+const BoxTitle = styled.div`
   color: #272343;
   text-align: center;
   font-family: "Space Grotesk";
@@ -122,22 +127,23 @@ const StakeBet = styled.div`
   line-height: normal;
 `;
 
-const GameUID = styled.div`
+const GameUID = styled.a`
   color: #272343;
   font-family: "Space Grotesk";
-  font-size: 10px;
+  font-size: 14px;
   font-style: normal;
   font-weight: 400;
   line-height: normal;
   overflow-wrap: anywhere;
+  text-decoration: none;
 `;
 
-const GameUIDTitle = styled.div`
-  color: #000;
+const AttestationTitle = styled.div`
+  color: rgba(76, 58, 78, 0.9);
   font-family: "Space Grotesk";
   font-size: 12px;
   font-style: normal;
-  font-weight: 700;
+  font-weight: 500;
   line-height: normal;
 `;
 
@@ -163,7 +169,7 @@ const Button = styled.button`
   font-style: normal;
   font-weight: 700;
   line-height: 34px; /* 188.889% */
-  width: 357px;
+  width: 100%;
   height: 71px;
   flex-shrink: 0;
 `;
@@ -175,7 +181,7 @@ const UnderlinedLink = styled.a`
   font-size: 18px;
   font-style: normal;
   font-weight: 400;
-  line-height: 34px; /* 188.889% */
+  line-height: 34px;
   text-decoration-line: underline;
 `;
 
@@ -185,10 +191,11 @@ const GameInfoContainer = styled.div`
   width: 100%;
   align-items: center;
   justify-content: center;
+  border-top: 1px solid rgba(57, 53, 84, 0.15);
 `;
 
 function Summary() {
-  const [game, setGame] = useState<Game>();
+  const [game, setGame] = useState<GameWithPlayersAndAttestations>();
   const [player1ENS, setPlayer1ENS] = useState<string>("");
   const [player2ENS, setPlayer2ENS] = useState<string>("");
   const [tick, setTick] = useState<number>(0);
@@ -198,9 +205,12 @@ function Summary() {
 
   const update = async () => {
     //query server for game status
-    const gameRes = await axios.post<Game>(`${baseURL}/gameStatus`, {
-      uid: challengeId,
-    });
+    const gameRes = await axios.post<GameWithPlayersAndAttestations>(
+      `${baseURL}/gameStatus`,
+      {
+        uid: challengeId,
+      }
+    );
 
     setGame(gameRes.data);
     setPlayer1ENS(
@@ -221,7 +231,18 @@ function Summary() {
   }, [tick]);
 
   const status = game ? getGameStatus(game) : STATUS_UNKNOWN;
-  console.log("status", status);
+  if (!game) return null;
+
+  const gameAttestationObjects: AttestationShareablePackageObject[] =
+    game.relevantAttestations.map((attestation) =>
+      JSON.parse(attestation.packageObjString)
+    );
+
+  const attestationDescriptions = [
+    "Game Attestation",
+    "Player 1 Commit",
+    "Player 2 Commit",
+  ];
   return (
     <Page>
       <SummaryContainer>
@@ -263,7 +284,7 @@ function Summary() {
         ) : null}
         <ResultContainer>
           {/*<BiArrowFromBottom color={"#000"} size={24} />*/}
-          <ResultTitle>Roshambo Result</ResultTitle>
+          <BoxTitle>Roshambo Result</BoxTitle>
           <PlayerResult
             address={game?.player1 || ""}
             ensName={player1ENS}
@@ -277,19 +298,38 @@ function Summary() {
             won={status === STATUS_PLAYER2_WIN}
           />
           <LineBreak />
-          <StakeTitle>What was at stake...</StakeTitle>
-          <StakeBet>{game?.stakes}</StakeBet>
-          <LineBreak />
-          <GameInfoContainer>
-            <img
-              src={easLogo}
-              style={{ width: 28, height: 28, display: "flex", margin: 20 }}
-            />
-            <GameUIDContainer>
-              <GameUIDTitle>Game UID:</GameUIDTitle>
-              <GameUID>{game?.uid}</GameUID>
-            </GameUIDContainer>
-          </GameInfoContainer>
+          {game?.stakes && (
+            <>
+              <StakeTitle>What was at stake...</StakeTitle>
+              <StakeBet>{game?.stakes}</StakeBet>
+              <LineBreak />
+            </>
+          )}
+        </ResultContainer>
+
+        <ResultContainer>
+          <BoxTitle> Game Receipt </BoxTitle>
+          {gameAttestationObjects.map((attestation, index) => (
+            <GameInfoContainer>
+              <img
+                src={easLogo}
+                style={{ width: 28, height: 28, display: "flex", margin: 20 }}
+              />
+              <GameUIDContainer>
+                <AttestationTitle>
+                  {attestationDescriptions[index]}
+                </AttestationTitle>
+                <GameUID
+                  href={`https://sepolia.easscan.org${createOffchainURL(
+                    attestation
+                  )}`}
+                  target="_blank"
+                >
+                  {attestation.sig.uid}
+                </GameUID>
+              </GameUIDContainer>
+            </GameInfoContainer>
+          ))}
         </ResultContainer>
         {address === game?.player1 || address === game?.player2 ? (
           <Button

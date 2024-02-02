@@ -91,9 +91,8 @@ export function Root() {
             enforceSupportedChains: false,
           }}
         >
-          {/*<Header />*/}
+          <Header />
           <Outlet />
-          {/*<FixedFooter />*/}
         </ConnectKitProvider>
         <WrongChainModal />
       </WagmiConfig>

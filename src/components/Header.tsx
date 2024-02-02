@@ -5,8 +5,10 @@ import { CustomConnectButton } from "./ui/CustomConnectKit";
 import { activeChainConfig } from "../utils/utils";
 import invariant from "tiny-invariant";
 import { useAccount } from "wagmi";
-import { FaQrcode } from "react-icons/fa";
+import { FaQrcode, FaBars } from "react-icons/fa";
 import { useAutoReveal } from "../hooks/useAutoReveal";
+import { useState } from "react";
+
 const Outer = styled.div`
   font-family: "Nunito", sans-serif;
   background-color: #fff;
@@ -70,6 +72,13 @@ const Right = styled.div`
   }
 `;
 
+const HamburgerContainer = styled.div`
+  cursor: pointer;
+  @media only screen and (min-width: 600px) {
+    display: none;
+  }
+`;
+
 const Links = styled.div`
   display: flex;
   align-items: center;
@@ -128,6 +137,7 @@ export function Header() {
   const { address } = useAccount();
   useAutoReveal(address);
   const location = useLocation();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   let menuItems: MenuItemType[] = [
     {
@@ -165,13 +175,6 @@ export function Header() {
             </LogoContainer>
             <Left>
               <Links>
-                {address && (
-                  <QR
-                    size={20}
-                    color={"#BD9EFF"}
-                    onClick={() => navigate("/qr")}
-                  />
-                )}
                 {menuItems.map((menuItem, i) => (
                   <MenuItem
                     key={i}
@@ -187,6 +190,12 @@ export function Header() {
             </Left>
             <Right>
               <CustomConnectButton />
+              <HamburgerContainer>
+                <FaBars
+                  size={24}
+                  onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                />
+              </HamburgerContainer>
             </Right>
           </MainNavigation>
         </Container>

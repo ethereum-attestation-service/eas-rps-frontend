@@ -14,15 +14,15 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 100vw;
+  width: 100%;
   background-color: #fef6e4;
+  box-sizing: border-box;
   padding: 20px;
   height: 100vh;
 `;
 
 const QrCard = styled.div`
-  width: 45%;
-  height: 450px;
+  width: 80%;
   flex-shrink: 0;
   border-radius: 15px;
   background: #fff;
@@ -30,6 +30,7 @@ const QrCard = styled.div`
   flex-direction: column;
   align-items: center;
   box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+  margin-top: 20px;
 `;
 
 const CopyButton = styled.div`
@@ -40,7 +41,7 @@ const CopyButton = styled.div`
   font-style: normal;
   font-weight: 700;
   line-height: 34px; /* 242.857% */
-  width: 289px;
+  width: 80%;
   height: 39px;
   flex-shrink: 0;
   cursor: pointer;
@@ -90,28 +91,18 @@ function Home() {
     <Page>
       <Container>
         <MiniHeader selected={0} />
-
-        <div
-          style={{
-            width: "70%",
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-          }}
-        >
-          <PlayerCard
-            address={address || ""}
-            ensName={ens ? ens : address || ""}
-            score={elo}
-          />
-        </div>
+        <PlayerCard
+          address={address || ""}
+          ensName={ens ? ens : address || ""}
+          score={elo}
+        />
 
         <QrCard>
           {address && (
             <QRCodeSVG
               value={`https://metirl.org/${ens ? ens : address}`}
               includeMargin={true}
-              size={300}
+              size={200}
             />
           )}
           <CopyButton

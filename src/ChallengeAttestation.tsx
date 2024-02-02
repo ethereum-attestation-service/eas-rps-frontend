@@ -48,7 +48,7 @@ const AcceptButton = styled.div`
   border-radius: 5px;
   border: 1px solid #00ebc7;
   background: #fff;
-  width: 335px;
+  width: 80%;
   height: 65px;
   flex-shrink: 0;
   color: #272343;

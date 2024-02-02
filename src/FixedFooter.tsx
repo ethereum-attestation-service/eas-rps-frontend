@@ -53,7 +53,11 @@ const FixedFooter: React.FC = () => {
         <HiOutlineSparkles />
         <ItemText>Incoming</ItemText>
       </FooterItem>
-      <FooterItem>
+      <FooterItem
+        onClick={() => {
+          navigate("/games");
+        }}
+      >
         <BiTime />
         <ItemText>History</ItemText>
       </FooterItem>
