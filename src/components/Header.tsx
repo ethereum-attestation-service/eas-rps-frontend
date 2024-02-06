@@ -74,7 +74,8 @@ const Right = styled.div`
 
 const HamburgerContainer = styled.div`
   cursor: pointer;
-  @media only screen and (min-width: 600px) {
+  margin-left: 12px;
+  @media only screen and (min-width: 700px) {
     display: none;
   }
 `;
@@ -120,6 +121,7 @@ const MenuItem = styled.div<MenuItemProps>`
   line-height: 20px;
   cursor: pointer;
   color: #333342;
+  text-align: center;
 
   :hover {
     background-color: ${({ active }) => (active ? "#F1F4F9" : "#f1f4f966")};
@@ -185,8 +187,6 @@ export function Header() {
                   </MenuItem>
                 ))}
               </Links>
-
-              <MobileLinks></MobileLinks>
             </Left>
             <Right>
               <CustomConnectButton />
@@ -199,6 +199,18 @@ export function Header() {
             </Right>
           </MainNavigation>
         </Container>
+        <MobileLinks>
+          {isMobileMenuOpen &&
+            menuItems.map((menuItem, i) => (
+              <MenuItem
+                key={i}
+                onClick={menuItem.onClick}
+                active={menuItem.path === location.pathname}
+              >
+                {menuItem.title}
+              </MenuItem>
+            ))}
+        </MobileLinks>
       </Outer>
     </>
   );

@@ -7,6 +7,7 @@ import newChallengeFists from "./assets/newChallengeFists.png";
 
 import {
   baseURL,
+  challengeLinks,
   CUSTOM_SCHEMAS,
   EASContractAddress,
   getAddressForENS,
@@ -46,8 +47,7 @@ const StartButton = styled.div`
   font-family: Nunito;
   font-size: 18px;
   font-weight: 700;
-  line-height: 34px;
-  width: 326px;
+  width: 100%;
   height: 71px;
   margin: 20px 0; // Adds space above and below the button
   display: flex;
@@ -67,10 +67,38 @@ const BigText = styled.div`
   font-size: 24px;
   font-style: normal;
   font-weight: 700;
-  line-height: 40px; /* 166.667% */
+  color: rgb(80, 80, 80);
   padding: 20px 0;
 `;
 
+// styled component with above styles
+const Input = styled.input`
+  text-align: center;
+  font-family: Ubuntu;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  width: 100%;
+  height: 65px;
+  border: 1px solid #eee;
+  border-radius: 4px;
+  outline: none;
+`;
+
+const TextArea = styled.textarea`
+  text-align: center;
+  font-family: Ubuntu;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  width: 100%;
+  border: 1px solid #eee;
+  resize: none;
+  box-sizing: border-box;
+  padding: 20px;
+  border-radius: 4px;
+  outline: none;
+`;
 function Home() {
   const { status, address: myAddress } = useAccount();
   const modal = useModal();
@@ -185,11 +213,10 @@ function Home() {
       {status === "connected" ? (
         <Page>
           <Container>
-            <MiniHeader selected={1} />
+            <MiniHeader links={challengeLinks} selected={1} />
             <FistsImage src={newChallengeFists} />
             <BigText>Who are you battling?</BigText>
-            <input
-              style={styles.input}
+            <Input
               type="text"
               placeholder="Type in address or ENS name..."
               value={address}
@@ -199,8 +226,7 @@ function Home() {
               autoCapitalize={"off"}
             />
             <BigText>Optional Stakes...</BigText>
-            <textarea
-              style={{ ...styles.input, height: "90px", resize: "none" }}
+            <TextArea
               placeholder="What happens if someone wins? Remember, it's only as good as their
               word."
               value={stakes}

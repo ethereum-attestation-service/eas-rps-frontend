@@ -10,7 +10,6 @@ import {
   CUSTOM_SCHEMAS,
   EASContractAddress,
   getGameStatus,
-  getENSName,
   RPS_GAME_UID,
   STATUS_DRAW,
   STATUS_PLAYER1_WIN,
@@ -78,8 +77,6 @@ const Button = styled.button`
   font-size: 18px;
   font-style: normal;
   font-weight: 700;
-  line-height: 34px; /* 188.889% */
-  width: 357px;
   height: 40px;
   flex-shrink: 0;
 `;
@@ -90,8 +87,6 @@ const GameContainer = styled.div<GameStatusProps>`
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 100%;
-  height: 100vh;
   background-color: ${({ status }) =>
     status === STATUS_PLAYER1_WIN
       ? "rgba(46, 196, 182, 0.33)"
@@ -102,7 +97,7 @@ const GameContainer = styled.div<GameStatusProps>`
       : "#fef6e4"};
   padding: 20px;
   box-sizing: border-box;
-  justify-content: center;
+  min-height: 100vh;
 `;
 
 type WaitingTextProps = { isPlayer1: boolean };
@@ -126,7 +121,7 @@ const HandSelection = styled.div`
   justify-content: center;
   align-items: center;
   gap: 12px;
-  margin-top: 20px;
+  margin: 20px;
 `;
 
 const HandOption = styled.div`
@@ -155,7 +150,6 @@ const LottieContainer = styled.div`
 const PlayerStatus = styled.div`
   display: flex;
   width: 100%;
-  height: 400px;
   text-align: center;
   justify-content: center;
   align-content: center;
@@ -170,8 +164,6 @@ function Challenge() {
   const signer = useSigner();
   const [tick, setTick] = useState(0);
   const [game, setGame] = useState<GameWithPlayers>();
-  const [myENSName, setMyENSName] = useState<string>("");
-  const [opponentENSName, setOpponentENSName] = useState<string>("");
 
   const gameCommits = useStore((state) => state.gameCommits);
 
@@ -206,12 +198,6 @@ function Challenge() {
       gameRes.data.player1Object = tmpPlayerObject;
     }
     setGame(gameRes.data);
-    setMyENSName(
-      (await getENSName(gameRes.data.player1)) || gameRes.data.player1
-    );
-    setOpponentENSName(
-      (await getENSName(gameRes.data.player2)) || gameRes.data.player2
-    );
   };
 
   //watch for game updates
@@ -297,11 +283,7 @@ function Challenge() {
 
   return (
     <GameContainer status={status}>
-      <PlayerCard
-        address={game.player2}
-        ensName={opponentENSName}
-        score={game.player2Object.elo}
-      />
+      <PlayerCard address={game.player2} score={game.player2Object.elo} />
       <PlayerStatus>
         {game.commit2 === ZERO_BYTES32 ? (
           <WaitingText isPlayer1={false}>Waiting For Opponent...</WaitingText>
@@ -396,11 +378,7 @@ function Challenge() {
         )}
       </PlayerStatus>
 
-      <PlayerCard
-        address={game.player1}
-        ensName={myENSName}
-        score={game.player1Object.elo}
-      />
+      <PlayerCard address={game.player1} score={game.player1Object.elo} />
     </GameContainer>
   );
 }

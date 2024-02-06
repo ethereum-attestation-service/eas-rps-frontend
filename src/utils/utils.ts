@@ -215,3 +215,14 @@ export function choiceToText(choice: number) {
 export const addPlusIfPositive = (num: number) => {
   return num > 0 ? `+${num}` : num;
 };
+
+export const challengeLinks = [
+  { name: "QR Code", url: "/qr" },
+  { name: "New Challenge", url: "/" },
+  { name: "Leaderboard", url: "/leaderboard" },
+];
+
+export const gameLinks = [
+  { name: "Ongoing Games", url: "/ongoing" },
+  { name: "Game History", url: "/games" },
+];

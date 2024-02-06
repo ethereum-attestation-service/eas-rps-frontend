@@ -39,9 +39,9 @@ const SummaryContainer = styled.div`
 
 const LineBreak = styled.div`
   height: 1px;
-  width: 80%;
   background-color: rgba(57, 53, 84, 0.15);
   margin: 10px;
+  width: 100%;
 `;
 
 type WonProps = { won: boolean };
@@ -96,6 +96,7 @@ const ResultContainer = styled.div`
   display: flex;
   flex-direction: column;
   margin: 20px 0;
+  align-items: center;
 `;
 
 const BoxTitle = styled.div`
@@ -108,6 +109,14 @@ const BoxTitle = styled.div`
   line-height: normal;
   padding: 20px;
 `;
+
+// const StakesContainer = styled.div`
+//   display: flex;
+//   flex-direction: column;
+//   align-items: center;
+//   justify-content: center;
+//   width: 100%;
+// `;
 
 const StakeTitle = styled.div`
   color: rgba(39, 35, 67, 0.66);

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import GradientBar from "./components/GradientBar";
 import { useAccount } from "wagmi";
-import { baseURL, clientURL, getENSName } from "./utils/utils";
+import { baseURL, challengeLinks, clientURL, getENSName } from "./utils/utils";
 import { QRCodeSVG } from "qrcode.react";
 import { Link } from "react-router-dom";
 import PlayerCard from "./components/PlayerCard";
@@ -90,12 +90,8 @@ function Home() {
   return (
     <Page>
       <Container>
-        <MiniHeader selected={0} />
-        <PlayerCard
-          address={address || ""}
-          ensName={ens ? ens : address || ""}
-          score={elo}
-        />
+        <MiniHeader links={challengeLinks} selected={0} />
+        <PlayerCard address={address || ""} score={elo} />
 
         <QrCard>
           {address && (

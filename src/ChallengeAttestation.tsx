@@ -23,13 +23,12 @@ import PlayerCard from "./components/PlayerCard";
 
 type Props = {
   game: IncomingChallenge;
-  player1ENS: string;
+  isChallenge?: boolean;
 };
 
 const Container = styled.div`
   border-radius: 10px;
   background: #fff;
-  width: 70%;
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
@@ -80,9 +79,9 @@ const DeclineLink = styled.div`
 
 const LineBreak = styled.div`
   height: 1px;
-  width: 80%;
   background: rgba(57, 53, 84, 0.15);
   margin: 10px;
+  width: 100%;
 `;
 
 const BoldNumber = styled.div`
@@ -113,6 +112,7 @@ const StatsContainer = styled.div`
   flex-direction: row;
   align-items: center;
   justify-content: center;
+  width: 100%;
 `;
 
 const StakesContainer = styled.div`
@@ -140,7 +140,7 @@ const Stakes = styled.div`
   line-height: normal;
 `;
 
-export function ChallengeAttestation({ game: g, player1ENS }: Props) {
+export function ChallengeAttestation({ game: g, isChallenge }: Props) {
   const navigate = useNavigate();
   const signer = useSigner();
 
@@ -197,15 +197,18 @@ export function ChallengeAttestation({ game: g, player1ENS }: Props) {
       <PlayerCard
         address={g.player1Object.address}
         score={g.player1Object.elo}
-        ensName={player1ENS || g.player1Object.address}
       />
-      <LineBreak />
-      <StatsContainer>
-        <BoldNumber>{g.gameCount}</BoldNumber>
-        <NumberDescriptor>Games Played</NumberDescriptor>
-        <BoldNumber>{g.winstreak}</BoldNumber>
-        <NumberDescriptor>Win Streak</NumberDescriptor>
-      </StatsContainer>
+      {isChallenge && (
+        <>
+          <LineBreak />
+          <StatsContainer>
+            <BoldNumber>{g.gameCount}</BoldNumber>
+            <NumberDescriptor>Games Played</NumberDescriptor>
+            <BoldNumber>{g.winstreak}</BoldNumber>
+            <NumberDescriptor>Win Streak</NumberDescriptor>
+          </StatsContainer>
+        </>
+      )}
 
       <LineBreak />
       {g.stakes && (
@@ -222,7 +225,7 @@ export function ChallengeAttestation({ game: g, player1ENS }: Props) {
           navigate(`/challenge/${g.uid}`);
         }}
       >
-        Accept This Battle
+        {isChallenge ? "Accept This Battle" : "View Battle"}
       </AcceptButton>
 
       <DeclineLink

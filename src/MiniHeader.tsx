@@ -20,24 +20,29 @@ const HeaderItem = styled.div<SelectedProps>`
   font-size: 10px;
   font-style: normal;
   font-weight: 800;
-  line-height: 34px; /* 340% */
   background-color: ${({ selected }) => (selected ? "#FFBF69" : "transparent")};
   border-radius: 10px;
   cursor: pointer;
+  padding: 8px 12px;
+  white-space: nowrap;
 `;
-export default function MiniHeader({ selected }: { selected: number }) {
+export default function MiniHeader({
+  selected,
+  links,
+}: {
+  selected: number;
+  links: { name: string; url: string }[];
+}) {
   const navigate = useNavigate();
 
   return (
     <Container>
-      {["BATTLE CODE", "NEW CHALLENGE", "LEADERBOARD"].map((name, index) => (
+      {links.map((link, index) => (
         <HeaderItem
           selected={selected === index}
-          onClick={() =>
-            navigate(index === 0 ? "/qr" : index === 1 ? "/" : "/leaderboard")
-          }
+          onClick={() => navigate(link.url)}
         >
-          {name}
+          {link.name.toUpperCase()}
         </HeaderItem>
       ))}
     </Container>

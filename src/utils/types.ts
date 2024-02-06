@@ -104,7 +104,7 @@ export type Game = {
 export type IncomingChallenge = {
   uid: string;
   stakes: string;
-  player1Object: { address: string; elo: number };
+  player1Object: { address: string; elo: number | string };
   winstreak: number;
   gameCount: number;
 };

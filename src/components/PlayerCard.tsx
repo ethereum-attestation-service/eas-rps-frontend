@@ -1,5 +1,7 @@
 import { Identicon } from "./Identicon";
 import styled from "styled-components";
+import { useEffect, useState } from "react";
+import { getENSName } from "../utils/utils";
 
 const PlayerName = styled.div`
   font-size: 18px;
@@ -47,11 +49,23 @@ const PlayerInfo = styled.div`
 
 type Props = {
   address: string;
-  ensName: string;
-  score: number;
+  score: number | string;
 };
 
-export default function PlayerCard({ address, ensName, score }: Props) {
+export default function PlayerCard({ address, score }: Props) {
+  const [ensName, setEnsName] = useState<string>("");
+
+  const updateENS = async () => {
+    setEnsName((await getENSName(address)) || address);
+    // setEnsName("kirmayer.eth" || address);
+  };
+
+  useEffect(() => {
+    if (address) {
+      updateENS();
+    }
+  }, []);
+
   return (
     <CardContainer>
       <Identicon address={address} size={56} />

@@ -7,6 +7,7 @@ import Challenges from "./Challenges";
 import Challenge from "./Challenge";
 import Games from "./Games";
 import Summary from "./Summary";
+import Ongoing from "./Ongoing";
 
 const router = createBrowserRouter([
   {
@@ -36,6 +37,10 @@ const router = createBrowserRouter([
       {
         path: "/games",
         element: <Games />,
+      },
+      {
+        path: "/ongoing",
+        element: <Ongoing />,
       },
     ],
   },
