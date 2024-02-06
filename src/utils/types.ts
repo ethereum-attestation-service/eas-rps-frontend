@@ -1,3 +1,5 @@
+import exp from "node:constants";
+
 export type EASChainConfig = {
   chainId: number;
   chainName: string;
@@ -120,5 +122,10 @@ export type GameWithPlayersAndAttestations = GameWithPlayers & {
 
 export type MyStats = {
   games: Game[];
+  elo: number;
+};
+
+export type Player = {
+  address: string;
   elo: number;
 };

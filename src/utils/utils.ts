@@ -219,10 +219,15 @@ export const addPlusIfPositive = (num: number) => {
 export const challengeLinks = [
   { name: "QR Code", url: "/qr" },
   { name: "New Challenge", url: "/" },
-  { name: "Leaderboard", url: "/leaderboard" },
+  { name: "Leaderboard", url: "/leaderboard/global" },
 ];
 
 export const gameLinks = [
   { name: "Ongoing Games", url: "/ongoing" },
   { name: "Game History", url: "/games" },
+];
+
+export const leaderboardLinks = [
+  { name: "Global", url: "/leaderboard/global" },
+  { name: "Local", url: "/leaderboard/local" },
 ];
