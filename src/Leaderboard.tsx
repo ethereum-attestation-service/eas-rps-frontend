@@ -109,6 +109,7 @@ export default function Leaderboard() {
     const res = await axios.post<Player[]>(`${baseURL}/${type}Leaderboard`, {
       address,
     });
+
     setLeaderboard(res.data);
   }
 

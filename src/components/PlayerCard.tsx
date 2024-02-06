@@ -64,7 +64,7 @@ export default function PlayerCard({ address, score }: Props) {
     if (address) {
       updateENS();
     }
-  }, []);
+  }, [address]);
 
   return (
     <CardContainer>
