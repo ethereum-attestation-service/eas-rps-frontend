@@ -9,6 +9,7 @@ import Games from "./Games";
 import Summary from "./Summary";
 import Ongoing from "./Ongoing";
 import Leaderboard from "./Leaderboard";
+import ForceGraph from "./ForceGraph";
 
 const router = createBrowserRouter([
   {
@@ -46,6 +47,10 @@ const router = createBrowserRouter([
       {
         path: "/leaderboard/:type",
         element: <Leaderboard />,
+      },
+      {
+        path: "/graph",
+        element: <ForceGraph />,
       },
     ],
   },
