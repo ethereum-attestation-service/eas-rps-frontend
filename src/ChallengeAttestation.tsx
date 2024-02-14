@@ -35,13 +35,6 @@ const Container = styled.div`
   align-items: center;
   margin: 20px;
 `;
-const UID = styled.div`
-  font-size: 12px;
-`;
-const Challenger = styled.div`
-  font-size: 12px;
-  margin-bottom: 10px;
-`;
 
 const AcceptButton = styled.div`
   border-radius: 5px;
@@ -168,8 +161,6 @@ export function ChallengeAttestation({ game: g, isChallenge }: Props) {
           time: BigInt(dayjs().unix()),
           revocable: false,
           expirationTime: BigInt(0),
-          version: 1,
-          nonce: BigInt(0),
         },
         signer
       );
@@ -185,7 +176,7 @@ export function ChallengeAttestation({ game: g, isChallenge }: Props) {
         console.log(res);
         window.location.reload();
       } else {
-        console.error(res.data.error);
+        alert(res.data.error);
       }
     } catch (e) {
       console.error(e);
@@ -195,8 +186,14 @@ export function ChallengeAttestation({ game: g, isChallenge }: Props) {
   return (
     <Container>
       <PlayerCard
+        style={{
+          border: "none",
+          boxShadow: "none",
+          backgroundColor: "transparent",
+        }}
         address={g.player1Object.address}
         score={g.player1Object.elo}
+        overrideENSWith={""}
       />
       {isChallenge && (
         <>
@@ -225,7 +222,7 @@ export function ChallengeAttestation({ game: g, isChallenge }: Props) {
           navigate(`/challenge/${g.uid}`);
         }}
       >
-        {isChallenge ? "Accept This Battle" : "View Battle"}
+        View Battle
       </AcceptButton>
 
       <DeclineLink

@@ -2,6 +2,7 @@ import { Identicon } from "./Identicon";
 import styled from "styled-components";
 import { useEffect, useState } from "react";
 import { getENSName } from "../utils/utils";
+import { MaxWidthDiv } from "./MaxWidthDiv";
 
 const PlayerName = styled.div`
   font-size: 18px;
@@ -25,23 +26,21 @@ const PlayerAddress = styled.div`
   overflow-wrap: anywhere;
 `;
 
-const CardContainer = styled.div`
+const CardContainer = styled(MaxWidthDiv)`
   display: flex;
   flex-direction: row;
   align-items: center;
-  padding: 10px;
-  border-radius: 15px;
-  width: 80%;
-  background: #fff;
-  justify-content: center;
-
-  box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+  padding: 20px;
+  box-sizing: border-box;
+  width: 100%;
+  justify-content: space-between;
+  border-radius: 10px;
+  border: 1px solid rgba(57, 53, 84, 0.1);
+  background-color: #fff;
+  box-shadow: 10px 10px 10px 0px rgba(57, 53, 84, 0.05);
 `;
 
 const PlayerInfo = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
   margin: 0 10px;
   overflow-wrap: anywhere;
   max-width: 50%;
@@ -50,13 +49,20 @@ const PlayerInfo = styled.div`
 type Props = {
   address: string;
   score: number | string;
+  overrideENSWith: string;
+  style?: React.CSSProperties;
 };
 
-export default function PlayerCard({ address, score }: Props) {
+export default function PlayerCard({
+  address,
+  score,
+  overrideENSWith,
+  style,
+}: Props) {
   const [ensName, setEnsName] = useState<string>("");
 
   const updateENS = async () => {
-    setEnsName((await getENSName(address)) || address);
+    setEnsName((await getENSName(address)) || overrideENSWith);
     // setEnsName("kirmayer.eth" || address);
   };
 
@@ -67,11 +73,11 @@ export default function PlayerCard({ address, score }: Props) {
   }, [address]);
 
   return (
-    <CardContainer>
+    <CardContainer style={style}>
       <Identicon address={address} size={56} />
       <PlayerInfo>
         <PlayerName>{ensName}</PlayerName>
-        {ensName !== address ? <PlayerAddress>{address}</PlayerAddress> : null}
+        <PlayerAddress>{address}</PlayerAddress>
       </PlayerInfo>
       <PlayerScore>{score}</PlayerScore>
     </CardContainer>

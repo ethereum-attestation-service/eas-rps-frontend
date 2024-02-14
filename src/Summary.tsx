@@ -13,6 +13,7 @@ import {
   baseURL,
   getENSName,
   getGameStatus,
+  CUSTOM_SCHEMAS,
 } from "./utils/utils";
 import {
   Game,
@@ -26,6 +27,7 @@ import {
   AttestationShareablePackageObject,
   createOffchainURL,
 } from "@ethereum-attestation-service/eas-sdk";
+import { MaxWidthDiv } from "./components/MaxWidthDiv";
 // Styled components
 const SummaryContainer = styled.div`
   display: flex;
@@ -86,7 +88,7 @@ const PointsWord = styled.span`
   margin-top: 20%;
 `;
 
-const ResultContainer = styled.div`
+const ResultContainer = styled(MaxWidthDiv)`
   border-radius: 10px;
   width: 100%;
   flex-shrink: 0;
@@ -165,7 +167,7 @@ const GameUIDContainer = styled.div`
   margin: 20px;
 `;
 
-const Button = styled.button`
+const Button = styled(MaxWidthDiv)`
   border-radius: 8px;
   border: 1px solid #ff9f1c;
   background: #ff9f1c;
@@ -181,6 +183,9 @@ const Button = styled.button`
   width: 100%;
   height: 71px;
   flex-shrink: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;
 
 const UnderlinedLink = styled.a`
@@ -195,8 +200,8 @@ const UnderlinedLink = styled.a`
 `;
 
 const GameInfoContainer = styled.div`
-  display: flex;
-  flex-direction: row;
+  display: grid;
+  grid-template-columns: 1fr 3fr;
   width: 100%;
   align-items: center;
   justify-content: center;
@@ -246,12 +251,18 @@ function Summary() {
     game.relevantAttestations.map((attestation) =>
       JSON.parse(attestation.packageObjString)
     );
+  console.log("att objects", gameAttestationObjects);
 
-  const attestationDescriptions = [
-    "Game Attestation",
-    "Player 1 Commit",
-    "Player 2 Commit",
-  ];
+  const attestationDescriptions = gameAttestationObjects.map((attestation) => {
+    switch (attestation.sig.message.schema) {
+      case CUSTOM_SCHEMAS.CREATE_GAME_CHALLENGE:
+        return "Create Game Challenge";
+      case CUSTOM_SCHEMAS.COMMIT_HASH:
+        return `${attestation.signer} Commits to a Choice`;
+      case CUSTOM_SCHEMAS.FINALIZE_GAME:
+        return "EAS Authorizes the Winner of this Game";
+    }
+  });
   return (
     <Page>
       <SummaryContainer>

@@ -30,14 +30,15 @@ import { useStore } from "./useStore";
 import Start from "./Start";
 import Page from "./Page";
 import MiniHeader from "./MiniHeader";
+import { usePrivy } from "@privy-io/react-auth";
+import { globalMaxWidth } from "./components/MaxWidthDiv";
 
 const Container = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
   height: 100vh;
-  padding: 20px; // or whatever value gives the desired spacing
-  background-color: #fef6e4;
+  padding: 0 20px 20px 20px;
 `;
 
 const StartButton = styled.div`
@@ -53,11 +54,12 @@ const StartButton = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  max-width: ${globalMaxWidth};
 `;
 
 const FistsImage = styled.img`
-  width: 293px;
-  height: 221px;
+  width: 133px;
+  height: 100px;
   flex-shrink: 0;
 `;
 
@@ -83,6 +85,7 @@ const Input = styled.input`
   border: 1px solid #eee;
   border-radius: 4px;
   outline: none;
+  max-width: ${globalMaxWidth};
 `;
 
 const TextArea = styled.textarea`
@@ -98,7 +101,9 @@ const TextArea = styled.textarea`
   padding: 20px;
   border-radius: 4px;
   outline: none;
+  max-width: ${globalMaxWidth};
 `;
+
 function Home() {
   const { status, address: myAddress } = useAccount();
   const modal = useModal();
@@ -155,8 +160,6 @@ function Home() {
           time: BigInt(dayjs().unix()),
           revocable: false,
           expirationTime: BigInt(0),
-          version: 1,
-          nonce: BigInt(0),
         },
         signer
       );
@@ -173,7 +176,7 @@ function Home() {
 
         navigate(`/challenge/${signedOffchainAttestation.uid}`);
       } else {
-        console.error(res.data.error);
+        alert(res.data.error);
       }
     } catch (e) {
       console.error(e);
@@ -235,7 +238,7 @@ function Home() {
             <StartButton
               style={
                 ethers.isAddress(ensResolvedAddress || address)
-                  ? { backgroundColor: "green", cursor: "pointer" }
+                  ? { backgroundColor: "#2EC4B6", cursor: "pointer" }
                   : {}
               }
               onClick={

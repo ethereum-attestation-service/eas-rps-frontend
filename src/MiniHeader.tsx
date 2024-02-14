@@ -2,30 +2,40 @@ import { useNavigate } from "react-router";
 import styled from "styled-components";
 
 const Container = styled.div`
-  width: 80%;
+  width: auto;
   display: flex;
   flex-direction: row;
+  -webkit-box-align: center;
   align-items: center;
-  gap: 5%;
-  margin: 20px;
+  -webkit-box-pack: center;
   justify-content: center;
+  background-color: rgba(57, 53, 84, 0.05);
+  padding: 15px 30px;
+  box-sizing: border-box;
+  margin: 0 20px 20px 20px;
+  border-radius: 25px;
+  backdrop-filter: blur(25px);
 `;
 
 type SelectedProps = { selected: boolean };
 
 const HeaderItem = styled.div<SelectedProps>`
-  color: #1e1e1e;
-  text-align: center;
-  font-family: Nunito;
-  font-size: 10px;
-  font-style: normal;
-  font-weight: 800;
+  color: ${({ selected }) => (selected ? "#fff" : "#272343")};
   background-color: ${({ selected }) => (selected ? "#FFBF69" : "transparent")};
-  border-radius: 10px;
+  border-radius: 25px;
   cursor: pointer;
-  padding: 8px 12px;
+  padding: 12px 22px;
   white-space: nowrap;
+  text-align: center;
+  text-shadow: ${({ selected }) =>
+    selected ? "4px 4px 10px rgba(39, 35, 67, 0.51)" : "none"};
+  font-family: "Space Grotesk";
+  font-size: ${({ selected }) => (selected ? "1rem" : "0.8rem")};
+  font-style: normal;
+  font-weight: ${({ selected }) => (selected ? 700 : 400)};
+  line-height: normal;
 `;
+
 export default function MiniHeader({
   selected,
   links,
@@ -42,7 +52,7 @@ export default function MiniHeader({
           selected={selected === index}
           onClick={() => navigate(link.url)}
         >
-          {link.name.toUpperCase()}
+          {link.name}
         </HeaderItem>
       ))}
     </Container>

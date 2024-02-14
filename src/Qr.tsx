@@ -15,37 +15,38 @@ const Container = styled.div`
   flex-direction: column;
   align-items: center;
   width: 100%;
-  background-color: #fef6e4;
   box-sizing: border-box;
-  padding: 20px;
+  padding: 0 20px 20px 20px;
   height: 100vh;
 `;
 
 const QrCard = styled.div`
-  width: 80%;
-  flex-shrink: 0;
+  width: 100%;
   border-radius: 15px;
   background: #fff;
   display: flex;
   flex-direction: column;
   align-items: center;
-  box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+  box-shadow: 10px 10px 5px 0px rgba(57, 53, 84, 0.05);
   margin-top: 20px;
 `;
 
 const CopyButton = styled.div`
-  color: #393554;
-  text-align: center;
+  color: rgb(57, 53, 84);
+  display: flex;
+  align-items: center;
+  justify-content: center;
   font-family: "Space Grotesk";
   font-size: 14px;
   font-style: normal;
   font-weight: 700;
-  line-height: 34px; /* 242.857% */
-  width: 80%;
+  width: 300px;
   height: 39px;
   flex-shrink: 0;
+  border-radius: 8px;
   cursor: pointer;
   background: rgba(200, 179, 245, 0.15);
+  padding: 10px 20px;
 `;
 
 const ChallengeLink = styled.div`
@@ -57,6 +58,13 @@ const ChallengeLink = styled.div`
   font-weight: 400;
   overflow-wrap: anywhere;
   padding: 20px;
+`;
+
+const QrCodeContainer = styled.div`
+  width: 100%;
+  text-align: center;
+  height: auto;
+  padding-top: 0.75rem;
 `;
 
 function Home() {
@@ -91,16 +99,23 @@ function Home() {
     <Page>
       <Container>
         <MiniHeader links={challengeLinks} selected={0} />
-        <PlayerCard address={address || ""} score={elo} />
+        <PlayerCard
+          address={address || ""}
+          score={elo}
+          overrideENSWith={"Your Address"}
+        />
 
         <QrCard>
-          {address && (
-            <QRCodeSVG
-              value={`https://metirl.org/${ens ? ens : address}`}
-              includeMargin={true}
-              size={200}
-            />
-          )}
+          <QrCodeContainer>
+            {address && (
+              <QRCodeSVG
+                value={`https://metirl.org/${ens ? ens : address}`}
+                includeMargin={true}
+                size={300}
+              />
+            )}
+          </QrCodeContainer>
+
           <CopyButton
             onClick={async () => {
               window.navigator.clipboard.writeText(

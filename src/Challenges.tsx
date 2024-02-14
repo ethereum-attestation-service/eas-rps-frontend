@@ -14,7 +14,6 @@ const Container = styled.div`
   flex-direction: column;
   align-items: center;
   width: 100vw;
-  background-color: #fef6e4;
   min-height: 100vh;
 `;
 
@@ -39,7 +38,7 @@ function Challenges() {
 
   useEffect(() => {
     if (!address) {
-      return navigate("/");
+      return;
     }
 
     async function getAtts() {
@@ -65,11 +64,9 @@ function Challenges() {
         <Title>Incoming Battles</Title>
         {loading && <div>Loading...</div>}
         {challengeObjects.length > 0 || loading ? (
-          challengeObjects
-            .map((gameObj) => (
-              <ChallengeAttestation game={gameObj} isChallenge={true} />
-            ))
-            .reverse()
+          challengeObjects.map((gameObj) => (
+            <ChallengeAttestation game={gameObj} isChallenge={true} />
+          ))
         ) : (
           <div>No one here yet</div>
         )}

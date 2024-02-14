@@ -2,17 +2,11 @@ import invariant from "tiny-invariant";
 import type {
   Attestation,
   AttestationResult,
-  AvailableChallengesResult,
   EASChainConfig,
   EnsNamesResult,
   Game,
-  MyAttestationResult,
 } from "./types";
-import {
-  ResolvedAttestation,
-  StoreAttestationRequest,
-  StoreIPFSActionReturn,
-} from "./types";
+import { StoreAttestationRequest, StoreIPFSActionReturn } from "./types";
 import dayjs from "dayjs";
 import duration from "dayjs/plugin/duration";
 import relativeTime from "dayjs/plugin/relativeTime";
@@ -34,6 +28,8 @@ export const CUSTOM_SCHEMAS = {
     "0x8f60d8dbd47e0a6953b0b1fd640359d249ba8f14c15c02bc5c6b642b0b888f37",
   DECLINE_GAME_CHALLENGE:
     "0x27e160d185f1d97202897bd3ed697906398b70a8d08b0d22bc2cfffdf561e3e9",
+  FINALIZE_GAME:
+    "0x74421276d2c56437784aec6f2ede7d837c2196897b16c0c73fa84865ce9ee565",
 };
 
 export const RPS_GAME_UID =
@@ -231,3 +227,7 @@ export const leaderboardLinks = [
   { name: "Global", url: "/leaderboard/global" },
   { name: "Local", url: "/leaderboard/local" },
 ];
+
+export function formatAttestationLongValueV2(address: string) {
+  return address.substring(0, 8) + "•••" + address.slice(-8);
+}

@@ -65,7 +65,7 @@ function Games() {
 
   useEffect(() => {
     if (!address) {
-      return navigate("/");
+      return;
     }
 
     async function getStats() {
@@ -138,6 +138,7 @@ function Games() {
               <PlayerCard
                 address={isPlayer1 ? gameObj.player2 : gameObj.player1}
                 score={gameResults ? gameResults[i] : ""}
+                overrideENSWith={""}
               />
             </BattleContainer>
           );

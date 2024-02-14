@@ -10,7 +10,7 @@ const CardContainer = styled.div`
   align-items: center;
   box-sizing: border-box;
   max-width: 100vw;
-  margin: 20px;
+  margin: 4rem 1rem 1rem 1rem;
 `;
 
 const Name = styled.div`
@@ -73,13 +73,19 @@ const StatValue = styled.div`
   line-height: normal;
 `;
 
+const StyledIdenticon = styled(Identicon)`
+  margin-top: -3rem;
+  border-radius: 50px;
+  padding: 15px;
+`;
+
 type Stats = { wins: number; losses: number; draws: number; streak: number };
 type Props = { address: string; ensName: string; stats: Stats };
 
 export default function UserHistoryCard({ address, ensName, stats }: Props) {
   return (
     <CardContainer>
-      <Identicon address={address} size={50} />
+      <StyledIdenticon address={address} size={75} />
       <Name>{ensName}</Name>
       {ensName !== address && <Address>{address}</Address>}
       <LineBreak />

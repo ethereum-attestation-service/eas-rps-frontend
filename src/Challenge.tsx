@@ -94,7 +94,7 @@ const GameContainer = styled.div<GameStatusProps>`
       ? "rgba(255, 0, 28, 0.33)"
       : status === STATUS_DRAW
       ? "rgba(255, 220, 0, 0.33)"
-      : "#fef6e4"};
+      : "none"};
   padding: 20px;
   box-sizing: border-box;
   min-height: 100vh;
@@ -167,6 +167,7 @@ function Challenge() {
 
   const gameCommits = useStore((state) => state.gameCommits);
 
+  console.log("gc", gameCommits);
   const thisGameCommit = gameCommits.find(
     (commit) => commit.challengeUID === challengeId
   );
@@ -247,8 +248,6 @@ function Challenge() {
           time: BigInt(dayjs().unix()),
           revocable: false,
           expirationTime: BigInt(0),
-          version: 1,
-          nonce: BigInt(0),
         },
         signer
       );
@@ -268,7 +267,7 @@ function Challenge() {
         });
         window.location.reload();
       } else {
-        console.error(res.data.error);
+        alert(res.data.error);
       }
     } catch (e) {
       console.error(e);
@@ -283,7 +282,11 @@ function Challenge() {
 
   return (
     <GameContainer status={status}>
-      <PlayerCard address={game.player2} score={game.player2Object.elo} />
+      <PlayerCard
+        address={game.player2}
+        score={game.player2Object.elo}
+        overrideENSWith={"Opponent"}
+      />
       <PlayerStatus>
         {game.commit2 === ZERO_BYTES32 ? (
           <WaitingText isPlayer1={false}>Waiting For Opponent...</WaitingText>
@@ -364,9 +367,15 @@ function Challenge() {
                 loop: true,
                 autoplay: true,
                 animationData:
-                  thisGameCommit?.choice === CHOICE_ROCK
+                  game.choice1 === CHOICE_UNKNOWN
+                    ? thisGameCommit?.choice === CHOICE_ROCK
+                      ? rockLottieOrange
+                      : thisGameCommit?.choice === CHOICE_PAPER
+                      ? paperLottieOrange
+                      : scissorsLottieOrange
+                    : game.choice1 === CHOICE_ROCK
                     ? rockLottieOrange
-                    : thisGameCommit?.choice === CHOICE_PAPER
+                    : game.choice1 === CHOICE_PAPER
                     ? paperLottieOrange
                     : scissorsLottieOrange,
                 rendererSettings: {
@@ -378,7 +387,11 @@ function Challenge() {
         )}
       </PlayerStatus>
 
-      <PlayerCard address={game.player1} score={game.player1Object.elo} />
+      <PlayerCard
+        address={game.player1}
+        score={game.player1Object.elo}
+        overrideENSWith={"You"}
+      />
     </GameContainer>
   );
 }

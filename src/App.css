@@ -2,11 +2,12 @@ body {
   font-family: Nunito, sans-serif;
   padding: 0;
   margin: 0;
-  background-color: #fef6e4;
   text-align: left;
   height: 100%;
   min-height: 100vh;
+  background: #fef6e4 url("./assets/brick-pattern-rps.png");
 }
+/* Use background: #fef6e4 url(./path-to-image) for background image*/
 
 main {
   position: relative;

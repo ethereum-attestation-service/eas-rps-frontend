@@ -39,8 +39,8 @@ const PlayerAddress = styled.div`
 type ContainerProps = { won: boolean };
 
 const CardContainer = styled.div<ContainerProps>`
-  display: flex;
-  flex-direction: row;
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr;
   align-items: center;
   background-color: ${({ won }) => (won ? "rgba(46, 196, 182, 0.33)" : "#FFF")};
   padding: 1rem 0.5rem;
@@ -58,6 +58,12 @@ const PlayerInfo = styled.div`
   white-space: normal;
 `;
 
+const IdenticonContainer = styled.div`
+  justify-content: center;
+  display: flex;
+  flex-direction: row;
+`;
+
 type Props = {
   address: string;
   ensName: string;
@@ -68,7 +74,9 @@ type Props = {
 export default function PlayerResult({ address, ensName, choice, won }: Props) {
   return (
     <CardContainer won={won}>
-      <Identicon address={address} size={56} />
+      <IdenticonContainer>
+        <Identicon address={address} size={56} />
+      </IdenticonContainer>
       <PlayerInfo>
         <PlayerName>{ensName}</PlayerName>
         {ensName !== address ? <PlayerAddress>{address}</PlayerAddress> : null}

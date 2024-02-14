@@ -1,19 +1,19 @@
 import styled from "styled-components";
 import { useLocation, useNavigate } from "react-router";
 import { theme } from "../utils/theme";
-import { CustomConnectButton } from "./ui/CustomConnectKit";
-import { activeChainConfig } from "../utils/utils";
+// import { CustomConnectButton } from "./ui/CustomConnectKit";
+import PrivyConnectButton from "./PrivyConnectButton";
+import { activeChainConfig, clientURL } from "../utils/utils";
 import invariant from "tiny-invariant";
 import { useAccount } from "wagmi";
 import { FaQrcode, FaBars } from "react-icons/fa";
 import { useAutoReveal } from "../hooks/useAutoReveal";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { ProfileModal } from "./ProfileModal";
 
 const Outer = styled.div`
   font-family: "Nunito", sans-serif;
-  background-color: #fff;
   user-select: none;
-  border-bottom: 1px solid ${theme.neutrals["cool-grey-100"]};
 
   padding: 1rem 3rem;
   color: #000;
@@ -140,16 +140,15 @@ export function Header() {
   useAutoReveal(address);
   const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  let menuItems: MenuItemType[] = [];
 
-  let menuItems: MenuItemType[] = [
-    {
+  if (address) {
+    menuItems.push({
       title: "Home",
       onClick: () => navigate("/"),
       path: "/",
-    },
-  ];
-
-  if (address) {
+    });
     menuItems.push({
       title: "Challenges",
       onClick: () => navigate("/challenges"),
@@ -164,6 +163,8 @@ export function Header() {
 
   invariant(activeChainConfig, "activeChainConfig is not set");
 
+  console.log("href", window.location.href);
+
   return (
     <>
       <Outer>
@@ -172,7 +173,7 @@ export function Header() {
             <LogoContainer>
               <Logo onClick={() => navigate("/")}>
                 <LogoImage src="/logo.png" />
-                <LogoText>EAS-RPS</LogoText>
+                <LogoText>RPS</LogoText>
               </Logo>
             </LogoContainer>
             <Left>
@@ -189,7 +190,13 @@ export function Header() {
               </Links>
             </Left>
             <Right>
-              <CustomConnectButton />
+              {window.location.href !== `${clientURL}/` || address ? (
+                <PrivyConnectButton
+                  handleClickWhileConnected={() => {
+                    setIsModalOpen(true);
+                  }}
+                />
+              ) : null}
               <HamburgerContainer>
                 <FaBars
                   size={24}
@@ -212,6 +219,13 @@ export function Header() {
             ))}
         </MobileLinks>
       </Outer>
+      {isModalOpen ? (
+        <ProfileModal
+          handleClose={() => {
+            setIsModalOpen(false);
+          }}
+        />
+      ) : null}
     </>
   );
 }

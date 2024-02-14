@@ -2,6 +2,18 @@ import React from "react";
 import Lottie from "react-lottie";
 import animationData from "./assets/rps-home.json";
 import { CustomConnectButton } from "./components/ui/CustomConnectKit";
+import { usePrivy } from "@privy-io/react-auth";
+import { usePrivyWagmi } from "@privy-io/wagmi-connector";
+import styled from "styled-components";
+
+const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  height: calc(100vh - 80px);
+  justify-content: space-between;
+`;
 
 const styles = {
   wholeContainer: {
@@ -9,17 +21,19 @@ const styles = {
     flexDirection: "column" as "column",
     alignItems: "center",
     padding: "20px",
-    backgroundColor: "#FFF7E0",
-    height: "100vh",
+    height: "80vh",
+    justifyContent: "space-between",
   },
   fistsContainer: {},
   roshamboText: {
     color: "#272343",
     fontFamily: "Bangers",
-    fontSize: "90px",
+    fontSize: "5rem",
     fontStyle: "normal",
     fontWeight: "400",
-    lineHeight: "normal",
+    lineHeight: 0.9,
+    textAlign: "center" as "center",
+    marginTop: "-5rem",
   },
   button: {
     backgroundColor: "#C8B3F5",
@@ -43,10 +57,22 @@ const styles = {
   },
 };
 
+const RoshamboHeader = styled.div`
+  margin-top: -5rem;
+  height: auto;
+`;
+const Descriptor = styled.p`
+  text-align: center;
+`;
+
 export default function Start() {
+  const { login, user } = usePrivy();
+  const { wallet } = usePrivyWagmi();
+  console.log(user);
+
   return (
     <div style={styles.wholeContainer}>
-      <div className="roshambo-header">
+      <RoshamboHeader>
         <Lottie
           options={{
             loop: true,
@@ -57,13 +83,14 @@ export default function Start() {
             },
           }}
         />
+      </RoshamboHeader>
+      <div>
+        <div style={styles.roshamboText}>ROCK PAPER SCISSORS</div>
+        <Descriptor>The classic game, built on Attestations.</Descriptor>
       </div>
-      <div style={styles.roshamboText}>ROSHAMBO</div>
-      <p>Eth-based rock paper scissors.</p>
-      <CustomConnectButton
-        style={styles.button}
-        text={"Join the Battleground"}
-      />
+      <div style={styles.button} onClick={login}>
+        Start Playing →
+      </div>
     </div>
   );
 }
