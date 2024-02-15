@@ -1,7 +1,7 @@
 import { Modal } from "./ui/Modal";
 import { useAccount } from "wagmi";
 import styled from "styled-components";
-import { FaCheck, FaCog, FaTimes } from "react-icons/fa";
+import { FaCheck, FaTimes } from "react-icons/fa";
 import { FiCopy } from "react-icons/fi";
 import { theme } from "../utils/theme";
 import { Identicon } from "./Identicon";
@@ -121,15 +121,18 @@ export function ProfileModal({ handleClose }: Props) {
             color={theme.neutrals["cool-grey-400"]}
             onClick={() => {
               setCopying(true);
-              navigator.clipboard.writeText(address);
+              navigator.clipboard.writeText(address).then();
               setTimeout(() => setCopying(false), 1000);
             }}
           />
         )}
       </AddressText>
       <DisconnectButton
-        onClick={() => {
-          logout();
+        onClick={async () => {
+          await logout();
+          handleClose();
+          navigate("/");
+          window.location.reload();
         }}
       >
         Disconnect

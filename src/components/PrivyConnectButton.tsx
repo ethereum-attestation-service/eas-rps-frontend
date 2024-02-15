@@ -4,6 +4,7 @@ import styled from "styled-components";
 import { ButtonBase } from "../styles/buttons";
 import { theme } from "../utils/theme";
 import { formatAttestationLongValueV2 } from "../utils/utils";
+import { useAccount } from "wagmi";
 
 const StyledButton = styled.button`
     ${ButtonBase};
@@ -31,14 +32,14 @@ type Props = { handleClickWhileConnected: () => void };
 export default function PrivyConnectButton({
   handleClickWhileConnected,
 }: Props) {
-  const { login, ready, authenticated, connectWallet } = usePrivy();
-  const { wallets } = useWallets();
-  const { wallet: activeWallet, setActiveWallet } = usePrivyWagmi();
+  const { login, user } = usePrivy();
+  const { wallet: activeWallet } = usePrivyWagmi();
+  const { address } = useAccount();
 
   return (
-    <StyledButton onClick={activeWallet ? handleClickWhileConnected : login}>
-      {activeWallet
-        ? formatAttestationLongValueV2(activeWallet.address)
+    <StyledButton onClick={user && address ? handleClickWhileConnected : login}>
+      {user && address
+        ? formatAttestationLongValueV2(address)
         : "Connect Wallet"}
     </StyledButton>
   );

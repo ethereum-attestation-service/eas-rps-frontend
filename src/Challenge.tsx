@@ -53,6 +53,7 @@ import axios from "axios";
 import Lottie from "react-lottie";
 import { Identicon } from "./components/Identicon";
 import PlayerCard from "./components/PlayerCard";
+import RotatedLottie from "./components/RotatedLottie";
 
 type finishedProps = { finished: boolean };
 const Vs = styled.div<finishedProps>`
@@ -67,8 +68,8 @@ const Vs = styled.div<finishedProps>`
 
 const Button = styled.button`
   border-radius: 8px;
-  border: 1px solid #ff9f1c;
-  background: #ff9f1c;
+  border: 1px solid #e18100;
+  background: #e18100;
   margin: 10px 0;
   cursor: pointer;
   color: #fff;
@@ -145,6 +146,7 @@ const HandOptionImage = styled.img`
 const LottieContainer = styled.div`
   width: 200px;
   height: 200px;
+  transform: rotate(45deg);
 `;
 
 const PlayerStatus = styled.div`
@@ -293,23 +295,7 @@ function Challenge() {
         ) : game.choice2 === CHOICE_UNKNOWN ? (
           <WaitingText isPlayer1={false}>Player Ready</WaitingText>
         ) : (
-          <LottieContainer>
-            <Lottie
-              options={{
-                loop: true,
-                autoplay: true,
-                animationData:
-                  game.choice2 === CHOICE_ROCK
-                    ? rockLottiePurple
-                    : game.choice2 === CHOICE_PAPER
-                    ? paperLottiePurple
-                    : scissorsLottiePurple,
-                rendererSettings: {
-                  preserveAspectRatio: "xMidYMid slice",
-                },
-              }}
-            />
-          </LottieContainer>
+          <RotatedLottie choice={game.choice2} isPlayer1={false} />
         )}
       </PlayerStatus>
 
@@ -361,29 +347,16 @@ function Challenge() {
             </HandSelection>
           </>
         ) : (
-          <LottieContainer>
-            <Lottie
-              options={{
-                loop: true,
-                autoplay: true,
-                animationData:
-                  game.choice1 === CHOICE_UNKNOWN
-                    ? thisGameCommit?.choice === CHOICE_ROCK
-                      ? rockLottieOrange
-                      : thisGameCommit?.choice === CHOICE_PAPER
-                      ? paperLottieOrange
-                      : scissorsLottieOrange
-                    : game.choice1 === CHOICE_ROCK
-                    ? rockLottieOrange
-                    : game.choice1 === CHOICE_PAPER
-                    ? paperLottieOrange
-                    : scissorsLottieOrange,
-                rendererSettings: {
-                  preserveAspectRatio: "xMidYMid slice",
-                },
-              }}
-            />
-          </LottieContainer>
+          <RotatedLottie
+            choice={
+              game.choice1 !== CHOICE_UNKNOWN
+                ? game.choice1
+                : thisGameCommit && thisGameCommit.choice !== CHOICE_UNKNOWN
+                ? thisGameCommit.choice
+                : CHOICE_UNKNOWN
+            }
+            isPlayer1={true}
+          />
         )}
       </PlayerStatus>
 

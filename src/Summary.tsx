@@ -34,7 +34,6 @@ const SummaryContainer = styled.div`
   flex-direction: column;
   align-items: center;
   width: 100vw;
-  background-color: #fef6e4;
   padding: 20px;
   box-sizing: border-box;
 `;
@@ -169,8 +168,8 @@ const GameUIDContainer = styled.div`
 
 const Button = styled(MaxWidthDiv)`
   border-radius: 8px;
-  border: 1px solid #ff9f1c;
-  background: #ff9f1c;
+  border: 1px solid #e18100;
+  background: #e18100;
   margin: 10px 0;
   cursor: pointer;
   color: #fff;
@@ -201,7 +200,7 @@ const UnderlinedLink = styled.a`
 
 const GameInfoContainer = styled.div`
   display: grid;
-  grid-template-columns: 1fr 3fr;
+  grid-template-columns: 1fr 15fr;
   width: 100%;
   align-items: center;
   justify-content: center;

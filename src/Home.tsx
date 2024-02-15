@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import GradientBar from "./components/GradientBar";
 import { useAccount } from "wagmi";
-import { useModal } from "connectkit";
 import newChallengeFists from "./assets/newChallengeFists.png";
 
 import {
@@ -39,6 +38,7 @@ const Container = styled.div`
   align-items: center;
   height: 100vh;
   padding: 0 20px 20px 20px;
+  box-sizing: border-box;
 `;
 
 const StartButton = styled.div`
@@ -104,9 +104,16 @@ const TextArea = styled.textarea`
   max-width: ${globalMaxWidth};
 `;
 
+const MiniHeaderContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  box-sizing: border-box;
+`;
+
 function Home() {
   const { status, address: myAddress } = useAccount();
-  const modal = useModal();
   const { preComputedRecipient } = useParams();
 
   const [address, setAddress] = useState(preComputedRecipient || "");
@@ -116,26 +123,12 @@ function Home() {
   const [ensResolvedAddress, setEnsResolvedAddress] = useState("");
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-
-  const styles = {
-    input: {
-      textAlign: "center" as "center",
-      fontFamily: "Ubuntu",
-      fontSize: "14px",
-      fontStyle: "normal",
-      fontWeight: 400,
-      lineHeight: "40px" /* 285.714% */,
-      width: "311px",
-      height: "65px",
-      border: "none",
-    },
-  };
+  const { user } = usePrivy();
 
   const issueChallenge = async () => {
     invariant(address, "Address should be defined");
     const recipient = ensResolvedAddress || address;
-    console.log("signer", signer);
-    console.log("me", myAddress);
+
     setAttesting(true);
     try {
       const schemaEncoder = new SchemaEncoder("string stakes");
@@ -213,10 +206,12 @@ function Home() {
   return (
     <>
       <GradientBar />
-      {status === "connected" ? (
+      {user && myAddress ? (
         <Page>
           <Container>
-            <MiniHeader links={challengeLinks} selected={1} />
+            <MiniHeaderContainer>
+              <MiniHeader links={challengeLinks} selected={1} />
+            </MiniHeaderContainer>
             <FistsImage src={newChallengeFists} />
             <BigText>Who are you battling?</BigText>
             <Input

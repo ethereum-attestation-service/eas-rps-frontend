@@ -2,12 +2,10 @@ import { useNavigate } from "react-router";
 import styled from "styled-components";
 
 const Container = styled.div`
-  width: auto;
+  width: 100%;
   display: flex;
   flex-direction: row;
-  -webkit-box-align: center;
   align-items: center;
-  -webkit-box-pack: center;
   justify-content: center;
   background-color: rgba(57, 53, 84, 0.05);
   padding: 15px 30px;
@@ -21,10 +19,10 @@ type SelectedProps = { selected: boolean };
 
 const HeaderItem = styled.div<SelectedProps>`
   color: ${({ selected }) => (selected ? "#fff" : "#272343")};
-  background-color: ${({ selected }) => (selected ? "#FFBF69" : "transparent")};
+  background-color: ${({ selected }) => (selected ? "#e18100" : "transparent")};
   border-radius: 25px;
   cursor: pointer;
-  padding: 12px 22px;
+  padding: 12px 15px;
   white-space: nowrap;
   text-align: center;
   text-shadow: ${({ selected }) =>

@@ -17,7 +17,7 @@ const Container = styled.div`
 `;
 
 const MiniHeaderContainer = styled.div`
-  width: 100%;
+  width: auto;
   display: flex;
   flex-direction: column;
   align-items: center;

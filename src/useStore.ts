@@ -9,12 +9,14 @@ type InitialState = {
   hasHydrated: boolean;
   gameCommits: GameCommit[];
   acceptedChallenges: AcceptedChallenge[];
+  isConnected: boolean;
 };
 
 type StoreMethods = {
   setHasHydrated: (hydrated: boolean) => void;
   addGameCommit: (commit: GameCommit) => void;
   addAcceptedChallenge: (challenge: AcceptedChallenge) => void;
+  setIsConnected: (connected: boolean) => void;
 };
 
 const initialState: InitialState = {
@@ -22,6 +24,7 @@ const initialState: InitialState = {
   hasHydrated: false,
   gameCommits: [],
   acceptedChallenges: [],
+  isConnected: false,
 };
 
 const reducer: StateCreator<InitialState & StoreMethods> = (set, get) => ({
@@ -35,32 +38,7 @@ const reducer: StateCreator<InitialState & StoreMethods> = (set, get) => ({
     set((state) => ({
       acceptedChallenges: [...state.acceptedChallenges, challenge],
     })),
-  setMyChoice: (uid: string, choice: number) =>
-    set((state) =>
-      produce(state, (draft) => {
-        const idx = state.acceptedChallenges.findIndex(
-          (ac: AcceptedChallenge) => ac.UID === uid
-        );
-        if (idx < 0) {
-          console.log("Challenge UID not found");
-        } else {
-          draft.acceptedChallenges[idx].playerChoice = choice;
-        }
-      })
-    ),
-  setOpponentChoice: (uid: string, choice: number) =>
-    set((state) =>
-      produce(state, (draft) => {
-        const idx = state.acceptedChallenges.findIndex(
-          (ac: AcceptedChallenge) => ac.UID === uid
-        );
-        if (idx < 0) {
-          console.log("Challenge UID not found");
-        } else {
-          draft.acceptedChallenges[idx].opponentChoice = choice;
-        }
-      })
-    ),
+  setIsConnected: (connected: boolean) => set({ isConnected: connected }),
 });
 
 export const useStore = create(

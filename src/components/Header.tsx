@@ -10,6 +10,7 @@ import { FaQrcode, FaBars } from "react-icons/fa";
 import { useAutoReveal } from "../hooks/useAutoReveal";
 import { useEffect, useState } from "react";
 import { ProfileModal } from "./ProfileModal";
+import { usePrivy } from "@privy-io/react-auth";
 
 const Outer = styled.div`
   font-family: "Nunito", sans-serif;
@@ -111,7 +112,6 @@ type MenuItemProps = {
 };
 
 const MenuItem = styled.div<MenuItemProps>`
-  background-color: ${({ active }) => (active ? "#F1F4F9" : "#FFF")};
   border-radius: 20px;
   padding: 12px 20px;
   font-family: "Montserrat", serif;
@@ -137,13 +137,14 @@ type MenuItemType = {
 export function Header() {
   const navigate = useNavigate();
   const { address } = useAccount();
+  const { user } = usePrivy();
   useAutoReveal(address);
   const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   let menuItems: MenuItemType[] = [];
 
-  if (address) {
+  if (user && address) {
     menuItems.push({
       title: "Home",
       onClick: () => navigate("/"),
@@ -162,8 +163,6 @@ export function Header() {
   }
 
   invariant(activeChainConfig, "activeChainConfig is not set");
-
-  console.log("href", window.location.href);
 
   return (
     <>

@@ -67,8 +67,6 @@ const Descriptor = styled.p`
 
 export default function Start() {
   const { login, user } = usePrivy();
-  const { wallet } = usePrivyWagmi();
-  console.log(user);
 
   return (
     <div style={styles.wholeContainer}>
