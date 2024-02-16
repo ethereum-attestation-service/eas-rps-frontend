@@ -22,7 +22,7 @@ export default function RotatedLottie({ choice, isPlayer1 }: Props) {
     <LottieContainer angle={choice === CHOICE_ROCK ? -45 : 45}>
       <Lottie
         options={{
-          loop: true,
+          loop: false,
           autoplay: true,
           animationData: isPlayer1
             ? choice === CHOICE_ROCK

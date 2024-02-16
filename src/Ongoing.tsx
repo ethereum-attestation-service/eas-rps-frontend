@@ -86,7 +86,7 @@ function Ongoing() {
   return (
     <Page>
       <Container>
-        <MiniHeader links={gameLinks} selected={0} />
+        <MiniHeader links={gameLinks} selected={1} />
 
         <Title>Ongoing Battles</Title>
         {loading && <div>Loading...</div>}

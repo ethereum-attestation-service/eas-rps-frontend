@@ -19,7 +19,7 @@ type SelectedProps = { selected: boolean };
 
 const HeaderItem = styled.div<SelectedProps>`
   color: ${({ selected }) => (selected ? "#fff" : "#272343")};
-  background-color: ${({ selected }) => (selected ? "#e18100" : "transparent")};
+  background-color: ${({ selected }) => (selected ? "#FF8E3C" : "transparent")};
   border-radius: 25px;
   cursor: pointer;
   padding: 12px 15px;

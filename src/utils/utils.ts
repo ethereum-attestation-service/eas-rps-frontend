@@ -219,8 +219,9 @@ export const challengeLinks = [
 ];
 
 export const gameLinks = [
-  { name: "Ongoing Games", url: "/ongoing" },
-  { name: "Game History", url: "/games" },
+  { name: "Incoming", url: "/challenges" },
+  { name: "Ongoing", url: "/ongoing" },
+  { name: "History", url: "/games" },
 ];
 
 export const leaderboardLinks = [

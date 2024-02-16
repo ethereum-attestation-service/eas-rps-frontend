@@ -10,7 +10,8 @@ const CardContainer = styled.div`
   align-items: center;
   box-sizing: border-box;
   max-width: 100vw;
-  margin: 4rem 1rem 1rem 1rem;
+  margin: 3rem 0;
+  padding: 1rem;
 `;
 
 const Name = styled.div`
@@ -46,11 +47,12 @@ const LineBreak = styled.div`
 
 const StatsContainer = styled.div`
   display: flex;
-  justify-content: space-between;
+  -webkit-box-pack: justify;
   width: 100%;
-  padding: 0 20px;
+  padding: 0px 20px;
   box-sizing: border-box;
-  flex-direction: row;
+  flex-flow: wrap;
+  justify-content: center;
 `;
 
 const StatName = styled.div`
@@ -79,6 +81,10 @@ const StyledIdenticon = styled(Identicon)`
   padding: 15px;
 `;
 
+const StatContainer = styled.div`
+  margin: 0 1rem;
+`;
+
 type Stats = { wins: number; losses: number; draws: number; streak: number };
 type Props = { address: string; ensName: string; stats: Stats };
 
@@ -91,10 +97,10 @@ export default function UserHistoryCard({ address, ensName, stats }: Props) {
       <LineBreak />
       <StatsContainer>
         {Object.entries(stats).map(([key, value]) => (
-          <div key={key}>
+          <StatContainer>
             <StatName>{key.charAt(0).toUpperCase() + key.slice(1)}</StatName>
             <StatValue>{value}</StatValue>
-          </div>
+          </StatContainer>
         ))}
       </StatsContainer>
     </CardContainer>

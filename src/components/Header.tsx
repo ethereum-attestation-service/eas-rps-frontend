@@ -210,7 +210,10 @@ export function Header() {
             menuItems.map((menuItem, i) => (
               <MenuItem
                 key={i}
-                onClick={menuItem.onClick}
+                onClick={() => {
+                  menuItem.onClick();
+                  setIsMobileMenuOpen(false);
+                }}
                 active={menuItem.path === location.pathname}
               >
                 {menuItem.title}

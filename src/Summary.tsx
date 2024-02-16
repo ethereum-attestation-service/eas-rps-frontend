@@ -14,6 +14,7 @@ import {
   getENSName,
   getGameStatus,
   CUSTOM_SCHEMAS,
+  choiceToText,
 } from "./utils/utils";
 import {
   Game,
@@ -28,7 +29,12 @@ import {
   createOffchainURL,
 } from "@ethereum-attestation-service/eas-sdk";
 import { MaxWidthDiv } from "./components/MaxWidthDiv";
+import Confetti from "react-confetti";
+import PlayerCard from "./components/PlayerCard";
 // Styled components
+
+type WonProps = { won: boolean };
+
 const SummaryContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -45,46 +51,45 @@ const LineBreak = styled.div`
   width: 100%;
 `;
 
-type WonProps = { won: boolean };
-
 const VictoryMessage = styled.div<WonProps>`
   font-family: Ubuntu;
-  margin: 10px 0;
   text-align: left;
-  -webkit-text-stroke-width: 1px;
+  -webkit-text-stroke-width: 2px;
   -webkit-text-stroke-color: ${({ won }) => (won ? "#00ebcf" : "#C8B3F5")};
   font-size: 26px;
   font-style: normal;
-  font-weight: 400;
+  font-weight: 700;
   line-height: normal;
-  width: 40%;
+  margin-bottom: -0.85rem;
 `;
 
 const Points = styled.div`
   display: flex;
   flex-direction: row;
+  justify-content: center;
+  align-items: baseline;
 `;
 
 const PointsNum = styled.span<WonProps>`
-  margin-bottom: 20px;
-  color: #272343;
   -webkit-text-stroke-width: 2px;
   -webkit-text-stroke-color: ${({ won }) => (won ? "#ff9f1c" : "#F582AE")};
+  color: rgb(39, 35, 67);
+  -webkit-text-stroke: 3px rgb(245, 130, 174);
   font-family: "Space Grotesk";
   font-size: 75px;
   font-style: normal;
   font-weight: 700;
+  text-shadow: 10px 10px 10px rgba(33, 28, 67, 0.25);
   line-height: normal;
 `;
 
 const PointsWord = styled.span`
-  color: #272343;
+  color: rgb(39, 35, 67);
   font-family: "Space Grotesk";
   font-size: 24px;
   font-style: normal;
   font-weight: 400;
   line-height: normal;
-  margin-top: 20%;
 `;
 
 const ResultContainer = styled(MaxWidthDiv)`
@@ -168,8 +173,8 @@ const GameUIDContainer = styled.div`
 
 const Button = styled(MaxWidthDiv)`
   border-radius: 8px;
-  border: 1px solid #e18100;
-  background: #e18100;
+  border: 1px solid #ff8e3c;
+  background: #ff8e3c;
   margin: 10px 0;
   cursor: pointer;
   color: #fff;
@@ -205,6 +210,15 @@ const GameInfoContainer = styled.div`
   align-items: center;
   justify-content: center;
   border-top: 1px solid rgba(57, 53, 84, 0.15);
+`;
+
+const VictoryMessageContainer = styled.div`
+  width: 100%;
+  box-sizing: border-box;
+  display: flex;
+  padding: 0 2rem;
+  flex-direction: column;
+  max-width: 400px;
 `;
 
 function Summary() {
@@ -255,70 +269,86 @@ function Summary() {
   const attestationDescriptions = gameAttestationObjects.map((attestation) => {
     switch (attestation.sig.message.schema) {
       case CUSTOM_SCHEMAS.CREATE_GAME_CHALLENGE:
-        return "Create Game Challenge";
+        return "Create Game";
       case CUSTOM_SCHEMAS.COMMIT_HASH:
-        return `${attestation.signer} Commits to a Choice`;
+        return "Player Move";
       case CUSTOM_SCHEMAS.FINALIZE_GAME:
-        return "EAS Authorizes the Winner of this Game";
+        return "EAS Game Summary";
     }
   });
+
+  const won =
+    (address === game?.player1 && status === STATUS_PLAYER1_WIN) ||
+    (address === game?.player2 && status === STATUS_PLAYER2_WIN);
   return (
     <Page>
       <SummaryContainer>
-        {address === game?.player1 ? (
-          <VictoryMessage won={status === STATUS_PLAYER1_WIN}>
-            {status === STATUS_PLAYER1_WIN
-              ? "You won!"
-              : status === STATUS_PLAYER2_WIN
-              ? "You lost!"
-              : "It's a tie!"}
-          </VictoryMessage>
-        ) : address === game?.player2 ? (
-          <VictoryMessage won={status === STATUS_PLAYER2_WIN}>
-            {status === STATUS_PLAYER2_WIN
-              ? "You won!"
-              : status === STATUS_PLAYER1_WIN
-              ? "You lost!"
-              : "It's a tie!"}
-          </VictoryMessage>
-        ) : null}
+        {won && (
+          <Confetti
+            recycle={false}
+            numberOfPieces={2000}
+            tweenDuration={10000}
+            initialVelocityY={20}
+          />
+        )}
+        <VictoryMessageContainer>
+          {address === game?.player1 ? (
+            <VictoryMessage won={status === STATUS_PLAYER1_WIN}>
+              {status === STATUS_PLAYER1_WIN
+                ? "You Won!"
+                : status === STATUS_PLAYER2_WIN
+                ? "You Lost!"
+                : "It's a tie!"}
+            </VictoryMessage>
+          ) : address === game?.player2 ? (
+            <VictoryMessage won={status === STATUS_PLAYER2_WIN}>
+              {status === STATUS_PLAYER2_WIN
+                ? "You Won!"
+                : status === STATUS_PLAYER1_WIN
+                ? "You Lost!"
+                : "It's a tie!"}
+            </VictoryMessage>
+          ) : null}
 
-        {address === game?.player1 || address === game?.player2 ? (
-          <Points>
-            <PointsNum
-              won={
-                (address === game?.player1 && status === STATUS_PLAYER1_WIN) ||
-                (address === game?.player2 && status === STATUS_PLAYER2_WIN)
-              }
-            >
-              {addPlusIfPositive(
-                (address === game?.player1
-                  ? game?.eloChange1
-                  : game?.eloChange2) || 0
-              )}
-            </PointsNum>
-            <div style={{ width: 5 }} />
-            <PointsWord>points</PointsWord>
-          </Points>
-        ) : null}
+          {address === game?.player1 || address === game?.player2 ? (
+            <Points>
+              <PointsNum
+                won={
+                  (address === game?.player1 &&
+                    status === STATUS_PLAYER1_WIN) ||
+                  (address === game?.player2 && status === STATUS_PLAYER2_WIN)
+                }
+              >
+                {addPlusIfPositive(
+                  (address === game?.player1
+                    ? game?.eloChange1
+                    : game?.eloChange2) || 0
+                )}
+              </PointsNum>
+              <div style={{ width: 5 }} />
+              <PointsWord>points</PointsWord>
+            </Points>
+          ) : null}
+        </VictoryMessageContainer>
         <ResultContainer>
           {/*<BiArrowFromBottom color={"#000"} size={24} />*/}
           <BoxTitle>Roshambo Result</BoxTitle>
-          <PlayerResult
-            address={game?.player1 || ""}
-            ensName={player1ENS}
-            choice={game?.choice1 || 0}
-            won={status === STATUS_PLAYER1_WIN}
-          />
-          <PlayerResult
-            address={game?.player2 || ""}
-            ensName={player2ENS}
-            choice={game?.choice2 || 0}
-            won={status === STATUS_PLAYER2_WIN}
-          />
           <LineBreak />
+          <PlayerCard
+            address={game?.player1 || ""}
+            score={choiceToText(game?.choice1 || 0)}
+            overrideENSWith={"Player A"}
+            style={{ border: "none" }}
+          />
+          <PlayerCard
+            address={game?.player2 || ""}
+            score={choiceToText(game?.choice2 || 0)}
+            overrideENSWith={"Player B"}
+            style={{ border: "none" }}
+          />
           {game?.stakes && (
             <>
+              <LineBreak />
               <StakeTitle>What was at stake...</StakeTitle>
               <StakeBet>{game?.stakes}</StakeBet>
               <LineBreak />

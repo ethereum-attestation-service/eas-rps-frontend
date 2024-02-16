@@ -123,7 +123,7 @@ function Games() {
 
   return (
     <Container>
-      <MiniHeader links={gameLinks} selected={1} />
+      <MiniHeader links={gameLinks} selected={2} />
       <UserHistoryCard
         address={address || ""}
         ensName={ensName || ""}
@@ -134,7 +134,11 @@ function Games() {
         finishedGames.slice(0, 5).map((gameObj, i) => {
           const isPlayer1 = gameObj.player1 === address;
           return (
-            <BattleContainer>
+            <BattleContainer
+              onClick={() => {
+                navigate(`/summary/${gameObj.uid}`);
+              }}
+            >
               <PlayerCard
                 address={isPlayer1 ? gameObj.player2 : gameObj.player1}
                 score={gameResults ? gameResults[i] : ""}
