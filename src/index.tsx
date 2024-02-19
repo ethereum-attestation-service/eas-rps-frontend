@@ -1,6 +1,12 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css";
+import "@fontsource/space-grotesk";
+import "@fontsource/space-grotesk/700.css";
+import "@fontsource/ubuntu";
+import "@fontsource/ubuntu/400.css";
+import "@fontsource/ubuntu/700.css";
+
 import reportWebVitals from "./reportWebVitals";
 import App from "./App";
 

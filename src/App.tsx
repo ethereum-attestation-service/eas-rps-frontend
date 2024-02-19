@@ -6,6 +6,10 @@ import Qr from "./Qr";
 import Challenges from "./Challenges";
 import Challenge from "./Challenge";
 import Games from "./Games";
+import Summary from "./Summary";
+import Ongoing from "./Ongoing";
+import Leaderboard from "./Leaderboard";
+import ForceGraph from "./ForceGraph";
 
 const router = createBrowserRouter([
   {
@@ -13,7 +17,7 @@ const router = createBrowserRouter([
     element: <Root />,
     children: [
       {
-        path: "/",
+        path: "/:preComputedRecipient?",
         element: <Home />,
       },
       {
@@ -29,8 +33,24 @@ const router = createBrowserRouter([
         element: <Challenge />,
       },
       {
+        path: "/summary/:challengeId",
+        element: <Summary />,
+      },
+      {
         path: "/games",
         element: <Games />,
+      },
+      {
+        path: "/ongoing",
+        element: <Ongoing />,
+      },
+      {
+        path: "/leaderboard/:type",
+        element: <Leaderboard />,
+      },
+      {
+        path: "/graph",
+        element: <ForceGraph />,
       },
     ],
   },

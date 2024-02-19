@@ -2,17 +2,11 @@ import invariant from "tiny-invariant";
 import type {
   Attestation,
   AttestationResult,
-  AvailableChallengesResult,
   EASChainConfig,
   EnsNamesResult,
   Game,
-  MyAttestationResult,
 } from "./types";
-import {
-  ResolvedAttestation,
-  StoreAttestationRequest,
-  StoreIPFSActionReturn,
-} from "./types";
+import { StoreAttestationRequest, StoreIPFSActionReturn } from "./types";
 import dayjs from "dayjs";
 import duration from "dayjs/plugin/duration";
 import relativeTime from "dayjs/plugin/relativeTime";
@@ -31,9 +25,11 @@ export const CUSTOM_SCHEMAS = {
   COMMIT_HASH:
     "0x2328029cfa84b9ea42f4e0e8fa24fbf66da07ceec0a925dd27370b9617b32d59",
   CREATE_GAME_CHALLENGE:
-    "0x64b1bac6f531c64a6aa372b1239111fe41a60003dcda62bfa967bc6e4c4d91e0",
+    "0x8f60d8dbd47e0a6953b0b1fd640359d249ba8f14c15c02bc5c6b642b0b888f37",
   DECLINE_GAME_CHALLENGE:
     "0x27e160d185f1d97202897bd3ed697906398b70a8d08b0d22bc2cfffdf561e3e9",
+  FINALIZE_GAME:
+    "0x74421276d2c56437784aec6f2ede7d837c2196897b16c0c73fa84865ce9ee565",
 };
 
 export const RPS_GAME_UID =
@@ -79,7 +75,9 @@ export const activeChainConfig = EAS_CHAIN_CONFIGS.find(
 );
 
 // export const baseURL = `http://localhost:8080`;
-export const baseURL = `http://eas-rps.dakh.com`;
+export const baseURL = `http://149.28.39.24:8080`;
+// export const baseURL = `http://eas-rps.dakh.com`;
+export const clientURL = `http://localhost:3000`;
 
 invariant(activeChainConfig, "No chain config found for chain ID");
 export const EASContractAddress = activeChainConfig.contractAddress;
@@ -178,6 +176,10 @@ export async function submitSignedAttestation(
   );
 }
 
+export const CHOICE_ROCK = 0;
+export const CHOICE_PAPER = 1;
+export const CHOICE_SCISSORS = 2;
+
 export const CHOICE_UNKNOWN = 3;
 
 export const STATUS_DRAW = 0;
@@ -192,4 +194,42 @@ export function getGameStatus(game: Game) {
     return STATUS_UNKNOWN;
   }
   return (3 + game.choice1 - game.choice2) % 3;
+}
+
+export function choiceToText(choice: number) {
+  switch (choice) {
+    case CHOICE_ROCK:
+      return "ROCK";
+    case CHOICE_PAPER:
+      return "PAPER";
+    case CHOICE_SCISSORS:
+      return "SCISSORS";
+    default:
+      return "UNKNOWN";
+  }
+}
+
+export const addPlusIfPositive = (num: number) => {
+  return num > 0 ? `+${num}` : num;
+};
+
+export const challengeLinks = [
+  { name: "QR Code", url: "/qr" },
+  { name: "New Challenge", url: "/" },
+  { name: "Leaderboard", url: "/leaderboard/global" },
+];
+
+export const gameLinks = [
+  { name: "Incoming", url: "/challenges" },
+  { name: "Ongoing", url: "/ongoing" },
+  { name: "History", url: "/games" },
+];
+
+export const leaderboardLinks = [
+  { name: "Global", url: "/leaderboard/global" },
+  { name: "Local", url: "/leaderboard/local" },
+];
+
+export function formatAttestationLongValueV2(address: string) {
+  return address.substring(0, 8) + "•••" + address.slice(-8);
 }

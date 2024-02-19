@@ -2,62 +2,75 @@ import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import GradientBar from "./components/GradientBar";
 import { useAccount } from "wagmi";
-import { getENSName } from "./utils/utils";
+import { baseURL, challengeLinks, clientURL, getENSName } from "./utils/utils";
 import { QRCodeSVG } from "qrcode.react";
 import { Link } from "react-router-dom";
+import PlayerCard from "./components/PlayerCard";
+import axios from "axios";
+import Page from "./Page";
+import MiniHeader from "./MiniHeader";
 
 const Container = styled.div`
-  @media (max-width: 700px) {
-    width: 100%;
-  }
-`;
-
-const WhiteBox = styled.div`
-  box-shadow: 0 4px 33px rgba(168, 198, 207, 0.15);
-  background-color: #fff;
-  padding: 36px;
-  max-width: 590px;
-  border-radius: 10px;
-  margin: 40px auto 0;
-  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
   box-sizing: border-box;
-
-  @media (max-width: 700px) {
-    width: 100%;
-    margin: 10px auto;
-  }
+  padding: 0 20px 20px 20px;
+  height: 100vh;
 `;
 
-const SubText = styled(Link)`
-  display: block;
-  cursor: pointer;
-  text-decoration: underline;
-  color: #ababab;
+const QrCard = styled.div`
+  width: 100%;
+  border-radius: 15px;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: 10px 10px 5px 0px rgba(57, 53, 84, 0.05);
   margin-top: 20px;
-
-  @media (min-width: 700px) {
-    display: none;
-  }
 `;
 
-const FinalAddress = styled.div`
-  color: #333342;
-  text-align: center;
-  font-size: 18px;
-  font-family: Montserrat, sans-serif;
+const CopyButton = styled.div`
+  color: rgb(57, 53, 84);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "Space Grotesk";
+  font-size: 14px;
+  font-style: normal;
   font-weight: 700;
-  word-break: break-all;
+  width: 300px;
+  height: 39px;
+  flex-shrink: 0;
+  border-radius: 8px;
+  cursor: pointer;
+  background: rgba(200, 179, 245, 0.15);
+  padding: 10px 20px;
 `;
 
-const SmallWhiteBox = styled(WhiteBox)`
-  max-width: 400px;
-  position: relative;
-  padding-bottom: 40px;
+const ChallengeLink = styled.div`
+  color: rgba(57, 53, 84, 0.5);
+  text-align: center;
+  font-family: Nunito;
+  font-size: 12px;
+  font-style: italic;
+  font-weight: 400;
+  overflow-wrap: anywhere;
+  padding: 20px;
+`;
+
+const QrCodeContainer = styled.div`
+  width: 100%;
+  text-align: center;
+  height: auto;
+  padding-top: 0.75rem;
 `;
 
 function Home() {
   const { address } = useAccount();
   const [ens, setEns] = useState("");
+  const [elo, setElo] = useState(1000);
 
   useEffect(() => {
     async function checkENS() {
@@ -70,27 +83,52 @@ function Home() {
       }
     }
 
+    async function getElo() {
+      const result = await axios.post(`${baseURL}/getElo`, {
+        address: address,
+      });
+      setElo(result.data);
+    }
+
     checkENS();
+
+    getElo();
   }, [address]);
 
   return (
-    <Container>
-      <GradientBar />
-      <SmallWhiteBox>
-        <FinalAddress>{ens ? ens : address}</FinalAddress>
+    <Page>
+      <Container>
+        <MiniHeader links={challengeLinks} selected={0} />
+        <PlayerCard
+          address={address || ""}
+          score={elo}
+          overrideENSWith={"Your Address"}
+        />
 
-        {address && (
-          <QRCodeSVG
-            style={{}}
-            value={`https://metirl.org/?address=${ens ? ens : address}`}
-            includeMargin={true}
-            size={300}
-          />
-        )}
+        <QrCard>
+          <QrCodeContainer>
+            {address && (
+              <QRCodeSVG
+                value={`https://metirl.org/${ens ? ens : address}`}
+                includeMargin={true}
+                size={300}
+              />
+            )}
+          </QrCodeContainer>
 
-        <SubText to={"/"}>Back home</SubText>
-      </SmallWhiteBox>
-    </Container>
+          <CopyButton
+            onClick={async () => {
+              window.navigator.clipboard.writeText(
+                `${clientURL}/${ens || address}`
+              );
+            }}
+          >
+            Copy Challenge Link
+          </CopyButton>
+          <ChallengeLink>{`${clientURL}/${ens || address}`}</ChallengeLink>
+        </QrCard>
+      </Container>
+    </Page>
   );
 }
 

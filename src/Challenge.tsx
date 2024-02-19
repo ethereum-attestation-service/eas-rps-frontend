@@ -3,6 +3,9 @@ import styled from "styled-components";
 import { useAccount } from "wagmi";
 import {
   baseURL,
+  CHOICE_ROCK,
+  CHOICE_PAPER,
+  CHOICE_SCISSORS,
   CHOICE_UNKNOWN,
   CUSTOM_SCHEMAS,
   EASContractAddress,
@@ -19,6 +22,10 @@ import invariant from "tiny-invariant";
 import { useNavigate, useParams } from "react-router";
 import { FaHandRock, FaHandScissors, FaHandPaper } from "react-icons/fa";
 import { theme } from "./utils/theme";
+import rockOptionImage from "./assets/rockOption.png";
+import paperOptionImage from "./assets/paperOption.png";
+import scissorsOptionImage from "./assets/scissorsOption.png";
+
 import {
   AttestationShareablePackageObject,
   EAS,
@@ -30,99 +37,200 @@ import { ethers } from "ethers";
 import dayjs from "dayjs";
 import { useSigner } from "./utils/wagmi-utils";
 import { useStore } from "./useStore";
-import { AcceptedChallenge, Game, GameCommit } from "./utils/types";
+import {
+  AcceptedChallenge,
+  Game,
+  GameCommit,
+  GameWithPlayers,
+} from "./utils/types";
 import axios from "axios";
-import { Button } from "./Home";
+import Lottie from "react-lottie";
+import { Identicon } from "./components/Identicon";
+import PlayerCard from "./components/PlayerCard";
+import RotatedLottie from "./components/RotatedLottie";
 
-const Container = styled.div`
-  @media (max-width: 700px) {
-    width: 100%;
-  }
+type finishedProps = { finished: boolean };
+const Vs = styled.div`
+  text-align: center;
+  font-family: Racing Sans One;
+  font-size: 80px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 34px; /* 42.5% */
+  padding: 20px;
 `;
 
-const UID = styled.div`
-  font-size: 12px;
+const Button = styled.button`
+  border-radius: 8px;
+  border: 1px solid #e18100;
+  background: #e18100;
+  margin: 10px 0;
+  cursor: pointer;
+  color: #fff;
+  text-align: center;
+  font-family: Nunito;
+  font-size: 18px;
+  font-style: normal;
+  font-weight: 700;
+  height: 40px;
+  flex-shrink: 0;
 `;
 
-// Rock paper & sicssors components
-const RPSContainer = styled.div`
+type GameStatusProps = { status: number };
+
+const GameContainer = styled.div<GameStatusProps>`
   display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: ${({ status }) =>
+    status === STATUS_PLAYER1_WIN
+      ? "rgba(46, 196, 182, 0.33)"
+      : status === STATUS_PLAYER2_WIN
+      ? "rgba(255, 0, 28, 0.33)"
+      : status === STATUS_DRAW
+      ? "rgba(255, 220, 0, 0.33)"
+      : "none"};
+  padding: 20px;
+  box-sizing: border-box;
+`;
+
+type WaitingTextProps = { isPlayer1: boolean };
+
+const blinkAnimation = `@keyframes blink {
+  0% { opacity: 1; }
+  50% { opacity: 0; }
+  100% { opacity: 1; }
+}`;
+
+const WaitingText = styled.div<WaitingTextProps>`
+  color: #272343;
+  text-align: center;
+  -webkit-text-stroke-color: ${({ isPlayer1 }) =>
+    isPlayer1 ? "#00ebcf" : "#C8B3F5"};
+  -webkit-text-stroke-width: 2px;
+  font-family: Ubuntu;
+  font-size: 28px;
+  font-style: italic;
+  font-weight: 700;
+  line-height: 34px;
+  padding: 20px;
+  margin: 5px 0;
+  animation: ${blinkAnimation} 1.5s linear infinite;
+`;
+
+const HandSelection = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  margin: 20px;
+`;
+
+const HandOption = styled.div`
+  border-radius: 5px;
+  border: 1px solid rgba(57, 53, 84, 0.26);
+  background: #fff;
+  width: 110px;
+  height: 104px;
+  flex-shrink: 0;
+  display: flex;
+  justify-content: center;
+  cursor: pointer;
+  align-items: center;
+  font-size: 60px;
+`;
+
+const HandOptionImage = styled.img`
+  width: 80%;
+  height: 80%;
+`;
+
+const PlayerContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
   justify-content: space-between;
   align-items: center;
-  padding: 8px 16px;
-
-  width: 260px;
-  margin: 0 auto;
-
-  :hover {
-    cursor: pointer;
-    background-color: #f5f5f5;
-  }
+  gap: 20px;
+  margin: 10px 0;
 `;
 
-const WhiteBox = styled.div`
-  box-shadow: 0 4px 33px rgba(168, 198, 207, 0.15);
-  background-color: #fff;
-  padding: 20px;
-  width: 590px;
-  border-radius: 10px;
-  margin: 40px auto 0;
+const PlayerStatus = styled.div`
+  display: flex;
+  width: 100%;
   text-align: center;
-  box-sizing: border-box;
-
-  @media (max-width: 700px) {
-    width: 100%;
-  }
+  justify-content: center;
+  align-content: center;
+  align-items: center;
+  flex-direction: column;
 `;
 
-function Challenges() {
+function Challenge() {
   const { address } = useAccount();
   const navigate = useNavigate();
   const { challengeId } = useParams();
-  const [attesting, setAttesting] = useState(false);
   const signer = useSigner();
   const [tick, setTick] = useState(0);
-  const [waiting, setWaiting] = useState(true);
-  const [game, setGame] = useState<Game>();
+  const [game, setGame] = useState<GameWithPlayers>();
 
   const gameCommits = useStore((state) => state.gameCommits);
 
+  console.log("gc", gameCommits);
   const thisGameCommit = gameCommits.find(
     (commit) => commit.challengeUID === challengeId
   );
 
   const addGameCommit = useStore((state) => state.addGameCommit);
 
-  const committed = !!thisGameCommit;
-
   invariant(challengeId, "Challenge ID should be defined");
 
   const update = async () => {
     //query server for game status
-    const gameRes = await axios.post<Game>(`${baseURL}/gameStatus`, {
+    const gameRes = await axios.post<GameWithPlayers>(`${baseURL}/gameStatus`, {
       uid: challengeId,
     });
-    console.log(gameRes.data);
+    // swap players if we are player 2
+    if (gameRes.data.player2 === address) {
+      gameRes.data.player2 = gameRes.data.player1;
+      gameRes.data.player1 = address;
+      const tmpCommit = gameRes.data.commit2;
+      gameRes.data.commit2 = gameRes.data.commit1;
+      gameRes.data.commit1 = tmpCommit;
+      const tmpChoice = gameRes.data.choice2;
+      gameRes.data.choice2 = gameRes.data.choice1;
+      gameRes.data.choice1 = tmpChoice;
+      const tmpSalt = gameRes.data.salt2;
+      gameRes.data.salt2 = gameRes.data.salt1;
+      gameRes.data.salt1 = tmpSalt;
+      const tmpPlayerObject = gameRes.data.player2Object;
+      gameRes.data.player2Object = gameRes.data.player1Object;
+      gameRes.data.player1Object = tmpPlayerObject;
+    }
     setGame(gameRes.data);
   };
 
   //watch for game updates
 
   useEffect(() => {
-    if (waiting) {
-      update();
-      setTimeout(() => {
-        setTick(tick + 1);
-      }, 5000);
-    }
+    update();
+    setTimeout(() => {
+      setTick(tick + 1);
+    }, 5000);
   }, [tick]);
+
+  const status = game ? getGameStatus(game) : STATUS_UNKNOWN;
+
+  useEffect(() => {
+    if (status !== STATUS_UNKNOWN) {
+      setTimeout(() => {
+        navigate(`/summary/${challengeId}`);
+      }, 1000);
+    }
+  }, [game]);
 
   const commit = async (choice: number) => {
     invariant(address, "Address should be defined");
 
-    console.log("signer", signer);
-    console.log("me", address);
-    setAttesting(true);
     try {
       const schemaEncoder = new SchemaEncoder("bytes32 commitHash");
 
@@ -158,8 +266,6 @@ function Challenges() {
           time: BigInt(dayjs().unix()),
           revocable: false,
           expirationTime: BigInt(0),
-          version: 1,
-          nonce: BigInt(0),
         },
         signer
       );
@@ -179,82 +285,89 @@ function Challenges() {
         });
         window.location.reload();
       } else {
-        console.error(res.data.error);
+        alert(res.data.error);
       }
     } catch (e) {
       console.error(e);
     }
-
-    setAttesting(false);
   };
-
-  const RPSOptions = () => {
-    return (
-      <RPSContainer>
-        <FaHandRock
-          size={50}
-          color={theme.primary["indigo-500"]}
-          onClick={() => commit(0)}
-        />
-        <FaHandPaper
-          size={50}
-          color={theme.primary["indigo-500"]}
-          onClick={() => commit(1)}
-        />
-        <FaHandScissors
-          size={50}
-          color={theme.primary["indigo-500"]}
-          onClick={() => commit(2)}
-        />
-      </RPSContainer>
-    );
-  };
-
-  const status = game ? getGameStatus(game) : STATUS_UNKNOWN;
 
   if (!game) {
     return <div>no game here</div>;
   }
+
   return (
-    <Container>
-      <WhiteBox>
-        <UID>Challenge UID: {challengeId}</UID>
-        {game.player1 === address ? (
-          <>
-            {status !== STATUS_UNKNOWN ? (
-              <>
-                {status === STATUS_PLAYER1_WIN
-                  ? "You won"
-                  : status === STATUS_DRAW
-                  ? "Tied"
-                  : "Lost"}
-              </>
-            ) : game.commit1 !== ZERO_BYTES32 ? (
-              <>Waiting for opponent...</>
-            ) : (
-              <RPSOptions />
-            )}
-          </>
-        ) : game.player2 === address ? (
-          <>
-            {status !== STATUS_UNKNOWN ? (
-              <>
-                {status === STATUS_PLAYER2_WIN
-                  ? "You won"
-                  : status === STATUS_DRAW
-                  ? "Tied"
-                  : "Lost"}
-              </>
-            ) : game.commit2 !== ZERO_BYTES32 ? (
-              <> Waiting for opponent...</>
-            ) : (
-              <RPSOptions />
-            )}
-          </>
-        ) : null}
-      </WhiteBox>
-    </Container>
+    <GameContainer status={status}>
+      <PlayerContainer>
+        <PlayerCard
+          address={game.player2}
+          score={game.player2Object.elo}
+          overrideENSWith={"Opponent"}
+        />
+        <PlayerStatus>
+          {game.commit2 === ZERO_BYTES32 ? (
+            <WaitingText isPlayer1={false}>Waiting For Opponent...</WaitingText>
+          ) : game.choice2 === CHOICE_UNKNOWN ? (
+            <WaitingText isPlayer1={false}>Player Ready</WaitingText>
+          ) : (
+            <RotatedLottie choice={game.choice2} isPlayer1={false} />
+          )}
+        </PlayerStatus>
+      </PlayerContainer>
+
+      <Vs>VS</Vs>
+
+      <PlayerContainer>
+        <PlayerStatus>
+          {game.commit1 === ZERO_BYTES32 ? (
+            <>
+              <WaitingText isPlayer1={true}>Waiting For You...</WaitingText>
+              <HandSelection>
+                <HandOption
+                  onClick={() => {
+                    commit(CHOICE_ROCK);
+                  }}
+                >
+                  🪨
+                </HandOption>
+                <HandOption
+                  onClick={() => {
+                    commit(CHOICE_PAPER);
+                  }}
+                >
+                  📄
+                </HandOption>
+                <HandOption
+                  onClick={() => {
+                    commit(CHOICE_SCISSORS);
+                  }}
+                >
+                  ✂️
+                </HandOption>
+              </HandSelection>
+            </>
+          ) : (
+            <RotatedLottie
+              choice={
+                game.choice1 !== CHOICE_UNKNOWN
+                  ? game.choice1
+                  : thisGameCommit && thisGameCommit.choice !== CHOICE_UNKNOWN
+                  ? thisGameCommit.choice
+                  : CHOICE_UNKNOWN
+              }
+              isPlayer1={true}
+            />
+          )}
+        </PlayerStatus>
+
+        <PlayerCard
+          address={game.player1}
+          score={game.player1Object.elo}
+          overrideENSWith={"You"}
+        />
+      </PlayerContainer>
+    </GameContainer>
   );
 }
 
-export default Challenges;
+export default Challenge;

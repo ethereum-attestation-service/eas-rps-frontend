@@ -11,6 +11,7 @@ const Container = styled.div`
   background-color: ${theme.neutrals["cool-grey-500"]}88;
   padding: 8px;
   box-sizing: border-box;
+  z-index: 100;
 `;
 
 const DialogContainer = styled.div`

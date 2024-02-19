@@ -1,3 +1,5 @@
+import exp from "node:constants";
+
 export type EASChainConfig = {
   chainId: number;
   chainName: string;
@@ -96,9 +98,34 @@ export type Game = {
   choice2: number;
   salt1: number;
   salt2: number;
+  stakes: string;
+  eloChange1: number;
+  eloChange2: number;
+};
+
+export type IncomingChallenge = {
+  uid: string;
+  stakes: string;
+  player1Object: { address: string; elo: number | string };
+  winstreak: number;
+  gameCount: number;
+};
+
+export type GameWithPlayers = Game & {
+  player1Object: { address: string; elo: number };
+  player2Object: { address: string; elo: number };
+};
+
+export type GameWithPlayersAndAttestations = GameWithPlayers & {
+  relevantAttestations: { packageObjString: string }[];
 };
 
 export type MyStats = {
   games: Game[];
+  elo: number;
+};
+
+export type Player = {
+  address: string;
   elo: number;
 };
