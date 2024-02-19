@@ -74,7 +74,8 @@ export const activeChainConfig = EAS_CHAIN_CONFIGS.find(
   (config) => config.chainId === CHAINID
 );
 
-export const baseURL = `http://localhost:8080`;
+// export const baseURL = `http://localhost:8080`;
+export const baseURL = `http://149.28.39.24:8080`;
 // export const baseURL = `http://eas-rps.dakh.com`;
 export const clientURL = `http://localhost:3000`;
 
