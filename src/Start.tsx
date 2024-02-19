@@ -66,7 +66,7 @@ const Descriptor = styled.p`
 `;
 
 export default function Start() {
-  const { login, user } = usePrivy();
+  const { login } = usePrivy();
 
   return (
     <div style={styles.wholeContainer}>
