@@ -194,6 +194,9 @@ export function ChallengeAttestation({ game: g, isChallenge }: Props) {
         address={g.player1Object.address}
         score={g.player1Object.elo}
         overrideENSWith={""}
+        badges={
+          g.player1Object.whiteListAttestations.map((att) => att.type) || []
+        }
       />
       {isChallenge && (
         <>

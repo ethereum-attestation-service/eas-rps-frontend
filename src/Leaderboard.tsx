@@ -169,6 +169,7 @@ export default function Leaderboard() {
               address={player.address}
               score={player.elo}
               overrideENSWith={""}
+              badges={player.badges}
             />
           </RankCard>
         ))}

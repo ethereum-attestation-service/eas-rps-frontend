@@ -303,6 +303,9 @@ function Challenge() {
           address={game.player2}
           score={game.player2Object.elo}
           overrideENSWith={"Opponent"}
+          badges={game.player2Object.whiteListAttestations.map(
+            (att) => att.type
+          )}
         />
         <PlayerStatus>
           {game.commit2 === ZERO_BYTES32 ? (
@@ -364,6 +367,9 @@ function Challenge() {
           address={game.player1}
           score={game.player1Object.elo}
           overrideENSWith={"You"}
+          badges={game.player1Object.whiteListAttestations.map(
+            (att) => att.type
+          )}
         />
       </PlayerContainer>
     </GameContainer>

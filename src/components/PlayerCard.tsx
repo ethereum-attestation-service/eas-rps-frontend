@@ -3,6 +3,8 @@ import styled from "styled-components";
 import { useEffect, useState } from "react";
 import { getENSName } from "../utils/utils";
 import { MaxWidthDiv } from "./MaxWidthDiv";
+import easLogo from "../assets/easlogo.png";
+import coinbaseLogo from "../assets/coinbaseLogo.png";
 
 const PlayerName = styled.div`
   font-size: 18px;
@@ -18,6 +20,7 @@ const PlayerScore = styled.div`
   font-style: normal;
   font-weight: 700;
   line-height: normal;
+  text-align: center;
 `;
 
 const PlayerAddress = styled.div`
@@ -27,8 +30,8 @@ const PlayerAddress = styled.div`
 `;
 
 const CardContainer = styled(MaxWidthDiv)`
-  display: flex;
-  flex-direction: row;
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr;
   align-items: center;
   padding: 20px;
   box-sizing: border-box;
@@ -43,7 +46,19 @@ const CardContainer = styled(MaxWidthDiv)`
 const PlayerInfo = styled.div`
   margin: 0 10px;
   overflow-wrap: anywhere;
-  max-width: 50%;
+`;
+
+const BadgesContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  box-sizing: border-box;
+  justify-content: center;
+  width: 100%;
+`;
+
+const Badge = styled.img`
+  width: 20px;
+  height: 20px;
 `;
 
 type Props = {
@@ -51,12 +66,14 @@ type Props = {
   score: number | string;
   overrideENSWith: string;
   style?: React.CSSProperties;
+  badges: string[];
 };
 
 export default function PlayerCard({
   address,
   score,
   overrideENSWith,
+  badges,
   style,
 }: Props) {
   const [ensName, setEnsName] = useState<string>("");
@@ -76,7 +93,20 @@ export default function PlayerCard({
     <CardContainer style={style}>
       <Identicon address={address} size={56} />
       <PlayerInfo>
-        <PlayerName>{ensName}</PlayerName>
+        <PlayerName>
+          {ensName}
+          {badges.map((badge) => (
+            <Badge
+              src={
+                badge === "MetIRL"
+                  ? easLogo
+                  : badge === "Coinbase"
+                  ? coinbaseLogo
+                  : undefined
+              }
+            />
+          ))}
+        </PlayerName>
         <PlayerAddress>{address}</PlayerAddress>
       </PlayerInfo>
       <PlayerScore>{score}</PlayerScore>

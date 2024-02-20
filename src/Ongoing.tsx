@@ -19,9 +19,8 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  background-color: #fef6e4;
   min-height: 100vh;
-  margin: 20px;
+  padding: 20px;
   box-sizing: border-box;
 `;
 
@@ -72,6 +71,7 @@ function Ongoing() {
               address === game.player1
                 ? game.player2Object.elo
                 : game.player1Object.elo,
+            whiteListAttestations: [],
           },
           gameCount: 0,
           winstreak: 0,

@@ -146,19 +146,19 @@ export function Header() {
 
   if (user && address) {
     menuItems.push({
-      title: "Home",
+      title: "Play",
       onClick: () => navigate("/"),
       path: "/",
-    });
-    menuItems.push({
-      title: "Challenges",
-      onClick: () => navigate("/challenges"),
-      path: "/challenges",
     });
     menuItems.push({
       title: "Games",
       onClick: () => navigate("/games"),
       path: "/games",
+    });
+    menuItems.push({
+      title: "Leaderboard",
+      onClick: () => navigate("/leaderboard/global"),
+      path: "/leaderboard/global",
     });
   }
 

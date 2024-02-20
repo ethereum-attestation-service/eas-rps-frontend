@@ -24,8 +24,7 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  background-color: #fef6e4;
-  margin: 20px;
+  padding: 20px;
   box-sizing: border-box;
 `;
 
@@ -143,6 +142,7 @@ function Games() {
                 address={isPlayer1 ? gameObj.player2 : gameObj.player1}
                 score={gameResults ? gameResults[i] : ""}
                 overrideENSWith={""}
+                badges={[]}
               />
             </BattleContainer>
           );

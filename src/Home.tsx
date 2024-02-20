@@ -211,7 +211,7 @@ function Home() {
         <Page>
           <Container>
             <MiniHeaderContainer>
-              <MiniHeader links={challengeLinks} selected={1} />
+              <MiniHeader links={challengeLinks} selected={0} />
             </MiniHeaderContainer>
             <FistsImage src={newChallengeFists} />
             <BigText>Who are you battling?</BigText>
