@@ -15,6 +15,7 @@ import {
   getGameStatus,
   CUSTOM_SCHEMAS,
   choiceToText,
+  STATUS_INVALID,
 } from "./utils/utils";
 import {
   Game,
@@ -269,7 +270,6 @@ function Summary() {
     game.relevantAttestations.map((attestation) =>
       JSON.parse(attestation.packageObjString)
     );
-  console.log("att objects", gameAttestationObjects);
 
   const attestationDescriptions = gameAttestationObjects.map((attestation) => {
     switch (attestation.sig.message.schema) {
@@ -300,7 +300,14 @@ function Summary() {
           />
         )}
         <VictoryMessageContainer>
-          {address === game?.player1 ? (
+          {status===STATUS_INVALID?
+            <VictoryMessage
+              won={false}
+              isBig={true}
+            >
+              Abandoned
+            </VictoryMessage>
+            :address === game?.player1 ? (
             <VictoryMessage
               won={status === STATUS_PLAYER1_WIN}
               isBig={!eloChangeHappened}

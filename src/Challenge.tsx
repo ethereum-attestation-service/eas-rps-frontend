@@ -21,10 +21,6 @@ import {
 import invariant from "tiny-invariant";
 import { useNavigate, useParams } from "react-router";
 import { FaHandRock, FaHandScissors, FaHandPaper } from "react-icons/fa";
-import { theme } from "./utils/theme";
-import rockOptionImage from "./assets/rockOption.png";
-import paperOptionImage from "./assets/paperOption.png";
-import scissorsOptionImage from "./assets/scissorsOption.png";
 
 import {
   AttestationShareablePackageObject,
@@ -38,9 +34,6 @@ import dayjs from "dayjs";
 import { useSigner } from "./utils/wagmi-utils";
 import { useStore } from "./useStore";
 import {
-  AcceptedChallenge,
-  Game,
-  GameCommit,
   GameWithPlayers,
 } from "./utils/types";
 import axios from "axios";
@@ -175,7 +168,6 @@ function Challenge() {
 
   const gameCommits = useStore((state) => state.gameCommits);
 
-  console.log("gc", gameCommits);
   const thisGameCommit = gameCommits.find(
     (commit) => commit.challengeUID === challengeId
   );

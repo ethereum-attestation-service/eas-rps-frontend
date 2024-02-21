@@ -101,6 +101,7 @@ export type Game = {
   stakes: string;
   eloChange1: number;
   eloChange2: number;
+  invalidated: boolean;
 };
 
 export type IncomingChallenge = {

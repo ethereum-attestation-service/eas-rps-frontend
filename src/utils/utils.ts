@@ -192,9 +192,14 @@ export const STATUS_UNKNOWN = 3;
 export const STATUS_INVALID = 4;
 
 export function getGameStatus(game: Game) {
+  if (game.invalidated){
+    return STATUS_INVALID;
+  }
+  
   if (game.choice1 === CHOICE_UNKNOWN || game.choice2 === CHOICE_UNKNOWN) {
     return STATUS_UNKNOWN;
   }
+  
   return (3 + game.choice1 - game.choice2) % 3;
 }
 

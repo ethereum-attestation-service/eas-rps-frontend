@@ -32,7 +32,7 @@ const PlayerAddress = styled.div`
 
 const CardContainer = styled(MaxWidthDiv)`
     display: grid;
-    grid-template-columns: 1fr 2fr 1fr 1fr;
+    grid-template-columns: 1fr 2fr 1fr;
     align-items: center;
     padding: 10px 20px;
     box-sizing: border-box;
@@ -51,17 +51,14 @@ const PlayerInfo = styled.div`
 `;
 
 const BadgesContainer = styled.div`
-    display: flex;
-    flex-direction: row;
-    box-sizing: border-box;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
+    position: absolute;
+    bottom: -8px;
+    left: -4px;
 `;
 
 const Badge = styled.img`
-    width: 40px;
-    height: 40px;
+    width: 16px;
+    height: 16px;
 `;
 
 type Props = {
@@ -71,6 +68,10 @@ type Props = {
   style?: React.CSSProperties;
   badges: string[];
 };
+
+const IconWrapper = styled.div`
+    position: relative
+`;
 
 export default function PlayerCard({
                                      address,
@@ -97,20 +98,20 @@ export default function PlayerCard({
     <CardContainer style={style} onClick={() => {
       navigate(`/games/${address}`)
     }}>
-      <Identicon address={address} size={56}/>
+      <IconWrapper>
+        <Identicon address={address} size={56}/>
+        <BadgesContainer>
+          {badges.map((badge) => (
+            <Badge src={badge==='MetIRL'?easLogo:coinbaseLogo}/>
+          ))}
+        </BadgesContainer>
+      </IconWrapper>
       <PlayerInfo>
         <PlayerName>
           {ensName}
         </PlayerName>
         <PlayerAddress>{address}</PlayerAddress>
       </PlayerInfo>
-      <span>
-        {badges.length > 0 &&
-          <BadgesContainer>
-            <Badge src={easLogo}/>
-          </BadgesContainer>
-        }
-      </span>
       {score !== 0 &&
         <PlayerScore>{score}</PlayerScore>
       }

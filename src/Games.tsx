@@ -130,6 +130,7 @@ function Games() {
         address={address || ""}
         ensName={ensName || ""}
         stats={gameStats}
+        isSelf={(!preComputedAddress) || preComputedAddress === user?.wallet?.address}
       />
       <RecentBattles>Recent Battles</RecentBattles>
       {finishedGames.length > 0 || loading ? (
