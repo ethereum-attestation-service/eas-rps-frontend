@@ -1,31 +1,31 @@
 import styled from "styled-components";
-import { useLocation, useNavigate } from "react-router";
-import { theme } from "../utils/theme";
+import {useLocation, useNavigate} from "react-router";
+import {theme} from "../utils/theme";
 // import { CustomConnectButton } from "./ui/CustomConnectKit";
 import PrivyConnectButton from "./PrivyConnectButton";
-import { activeChainConfig, clientURL } from "../utils/utils";
+import {activeChainConfig, clientURL} from "../utils/utils";
 import invariant from "tiny-invariant";
-import { useAccount } from "wagmi";
-import { FaQrcode, FaBars } from "react-icons/fa";
-import { useAutoReveal } from "../hooks/useAutoReveal";
-import { useEffect, useState } from "react";
-import { ProfileModal } from "./ProfileModal";
-import { usePrivy } from "@privy-io/react-auth";
+import {useAccount} from "wagmi";
+import {FaQrcode, FaBars} from "react-icons/fa";
+import {useAutoReveal} from "../hooks/useAutoReveal";
+import {useEffect, useState} from "react";
+import {ProfileModal} from "./ProfileModal";
+import {usePrivy} from "@privy-io/react-auth";
 
 const Outer = styled.div`
-  font-family: "Nunito", sans-serif;
-  user-select: none;
+    font-family: "Nunito", sans-serif;
+    user-select: none;
 
-  padding: 1rem 3rem;
-  color: #000;
+    padding: 1rem 3rem;
+    color: #000;
 
-  @media only screen and (max-width: 750px) {
-    padding: 1rem 1rem;
-  }
+    @media only screen and (max-width: 750px) {
+        padding: 1rem 1rem;
+    }
 `;
 
 const Container = styled.div`
-  display: flex;
+    display: flex;
 `;
 
 const LogoContainer = styled.div`
@@ -35,24 +35,24 @@ const LogoContainer = styled.div`
 `;
 
 const MainNavigation = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    width: 100%;
 `;
 
 const Logo = styled.div`
-  display: flex;
-  align-items: center;
-  cursor: pointer;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
 `;
 
 const QR = styled(FaQrcode)`
-  margin-right: 10px;
+    margin-right: 10px;
 `;
 
 const LogoImage = styled.img`
-  width: 40px;
-  margin-right: 4px;
+    width: 40px;
+    margin-right: 4px;
 `;
 
 const Left = styled.div`
@@ -62,23 +62,23 @@ const Left = styled.div`
 `;
 
 const Right = styled.div`
-  display: flex;
-  justify-content: end;
-  align-items: center;
+    display: flex;
+    justify-content: end;
+    align-items: center;
 
-  @media only screen and (min-width: 700px) {
-    .second-search-bar {
-      display: none;
+    @media only screen and (min-width: 700px) {
+        .second-search-bar {
+            display: none;
+        }
     }
-  }
 `;
 
 const HamburgerContainer = styled.div`
-  cursor: pointer;
-  margin-left: 12px;
-  @media only screen and (min-width: 700px) {
-    display: none;
-  }
+    cursor: pointer;
+    margin-left: 12px;
+    @media only screen and (min-width: 700px) {
+        display: none;
+    }
 `;
 
 const Links = styled.div`
@@ -116,7 +116,7 @@ const MenuItem = styled.div<MenuItemProps>`
   padding: 12px 20px;
   font-family: "Montserrat", serif;
   font-style: normal;
-  font-weight: ${({ active }) => (active ? "700" : "500")};
+  font-weight: ${({active}) => (active ? "700" : "500")};
   font-size: 16px;
   line-height: 20px;
   cursor: pointer;
@@ -124,7 +124,7 @@ const MenuItem = styled.div<MenuItemProps>`
   text-align: center;
 
   :hover {
-    background-color: ${({ active }) => (active ? "#F1F4F9" : "#f1f4f966")};
+    background-color: ${({active}) => (active ? "#F1F4F9" : "#f1f4f966")};
   }
 `;
 
@@ -136,8 +136,8 @@ type MenuItemType = {
 
 export function Header() {
   const navigate = useNavigate();
-  const { address } = useAccount();
-  const { user } = usePrivy();
+  const {address} = useAccount();
+  const {user} = usePrivy();
   useAutoReveal(address);
   const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -171,7 +171,7 @@ export function Header() {
           <MainNavigation>
             <LogoContainer>
               <Logo onClick={() => navigate("/")}>
-                <LogoImage src="/logo.png" />
+                <LogoImage src="/logo.png"/>
                 <LogoText>RPS</LogoText>
               </Logo>
             </LogoContainer>
@@ -190,18 +190,20 @@ export function Header() {
             </Left>
             <Right>
               {window.location.href !== `${clientURL}/` || address ? (
-                <PrivyConnectButton
-                  handleClickWhileConnected={() => {
-                    setIsModalOpen(true);
-                  }}
-                />
+                <>
+                  <PrivyConnectButton
+                    handleClickWhileConnected={() => {
+                      setIsModalOpen(true);
+                    }}
+                  />
+                  <HamburgerContainer>
+                    <FaBars
+                      size={24}
+                      onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                    />
+                  </HamburgerContainer>
+                </>
               ) : null}
-              <HamburgerContainer>
-                <FaBars
-                  size={24}
-                  onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                />
-              </HamburgerContainer>
             </Right>
           </MainNavigation>
         </Container>
