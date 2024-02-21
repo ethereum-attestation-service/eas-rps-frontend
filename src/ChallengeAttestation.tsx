@@ -203,9 +203,9 @@ export function ChallengeAttestation({ game: g, isChallenge }: Props) {
           <LineBreak />
           <StatsContainer>
             <BoldNumber>{g.gameCount}</BoldNumber>
-            <NumberDescriptor>Games Played</NumberDescriptor>
+            <NumberDescriptor>Games Against You</NumberDescriptor>
             <BoldNumber>{g.winstreak}</BoldNumber>
-            <NumberDescriptor>Win Streak</NumberDescriptor>
+            <NumberDescriptor>Your Win Streak</NumberDescriptor>
           </StatsContainer>
         </>
       )}

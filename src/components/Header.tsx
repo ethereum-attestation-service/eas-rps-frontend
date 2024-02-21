@@ -136,15 +136,15 @@ type MenuItemType = {
 
 export function Header() {
   const navigate = useNavigate();
-  const {address} = useAccount();
   const {user} = usePrivy();
+  const address = user?.wallet?.address;
   useAutoReveal(address);
   const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   let menuItems: MenuItemType[] = [];
 
-  if (user && address) {
+  if (address) {
     menuItems.push({
       title: "Play",
       onClick: () => navigate("/"),

@@ -9,6 +9,7 @@ import PlayerCard from "./components/PlayerCard";
 import axios from "axios";
 import Page from "./Page";
 import MiniHeader from "./MiniHeader";
+import { usePrivy } from "@privy-io/react-auth";
 
 const Container = styled.div`
   display: flex;
@@ -68,7 +69,8 @@ const QrCodeContainer = styled.div`
 `;
 
 function Home() {
-  const { address } = useAccount();
+  const {user} = usePrivy();
+  const address = user?.wallet?.address;
   const [ens, setEns] = useState("");
   const [elo, setElo] = useState(1000);
   const [badges, setBadges] = useState<string[]>([]);

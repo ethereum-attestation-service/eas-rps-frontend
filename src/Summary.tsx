@@ -31,6 +31,7 @@ import {
 import { MaxWidthDiv } from "./components/MaxWidthDiv";
 import Confetti from "react-confetti";
 import PlayerCard from "./components/PlayerCard";
+import { usePrivy } from "@privy-io/react-auth";
 // Styled components
 
 type WonProps = { won: boolean };
@@ -230,7 +231,8 @@ function Summary() {
   const [player2ENS, setPlayer2ENS] = useState<string>("");
   const [tick, setTick] = useState<number>(0);
   const { challengeId } = useParams();
-  const { address } = useAccount();
+  const {user} = usePrivy();
+  const address = user?.wallet?.address;
   const navigate = useNavigate();
 
   const update = async () => {

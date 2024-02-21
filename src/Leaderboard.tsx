@@ -8,6 +8,7 @@ import { useParams } from "react-router";
 import { useAccount } from "wagmi";
 import MiniHeader from "./MiniHeader";
 import { Identicon } from "./components/Identicon";
+import { usePrivy } from "@privy-io/react-auth";
 
 const Container = styled.div`
   display: flex;
@@ -125,10 +126,11 @@ const Podium = ({ firstAddress, secondAddress, thirdAddress }: PodiumProps) => (
 );
 
 export default function Leaderboard() {
-  const { address } = useAccount();
+  const {user} = usePrivy();
+  const address = user?.wallet?.address;
   const { type } = useParams();
   const [leaderboard, setLeaderboard] = useState<Player[]>([]);
-
+  console.log(user)
   async function getLeaderboard() {
     const res = await axios.post<Player[]>(`${baseURL}/${type}Leaderboard`, {
       address,
@@ -139,7 +141,7 @@ export default function Leaderboard() {
 
   useEffect(() => {
     getLeaderboard();
-  }, [type]);
+  }, [type, address]);
 
   return (
     <Container>

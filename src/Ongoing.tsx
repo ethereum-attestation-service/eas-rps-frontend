@@ -14,6 +14,7 @@ import {
 } from "./utils/types";
 import Page from "./Page";
 import MiniHeader from "./MiniHeader";
+import { usePrivy } from "@privy-io/react-auth";
 
 const Container = styled.div`
   display: flex;
@@ -36,7 +37,8 @@ const Title = styled.div`
 `;
 
 function Ongoing() {
-  const { address } = useAccount();
+  const {user} = usePrivy();
+  const address = user?.wallet?.address;
   const [challengeObjects, setChallengeObjects] = useState<IncomingChallenge[]>(
     []
   );

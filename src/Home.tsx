@@ -114,7 +114,6 @@ const MiniHeaderContainer = styled.div`
 `;
 
 function Home() {
-  const { status, address: myAddress } = useAccount();
   const { preComputedRecipient } = useParams();
 
   const [address, setAddress] = useState(preComputedRecipient || "");
@@ -125,6 +124,7 @@ function Home() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const { user } = usePrivy();
+  const myAddress = user?.wallet?.address;
 
   const issueChallenge = async () => {
     invariant(address, "Address should be defined");
@@ -206,14 +206,14 @@ function Home() {
 
   return (
     <>
-      <GradientBar />
-      {user && myAddress ? (
+      {/*<GradientBar />*/}
+      {myAddress ? (
         <Page>
           <Container>
             <MiniHeaderContainer>
               <MiniHeader links={challengeLinks} selected={0} />
             </MiniHeaderContainer>
-            <FistsImage src={newChallengeFists} />
+            {/*<FistsImage src={newChallengeFists} />*/}
             <BigText>Who are you battling?</BigText>
             <Input
               type="text"

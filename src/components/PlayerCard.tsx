@@ -5,6 +5,7 @@ import {getENSName} from "../utils/utils";
 import {MaxWidthDiv} from "./MaxWidthDiv";
 import easLogo from "../assets/easlogo.png";
 import coinbaseLogo from "../assets/coinbaseLogo.png";
+import {useNavigate} from "react-router";
 
 const PlayerName = styled.div`
     font-size: 18px;
@@ -41,6 +42,7 @@ const CardContainer = styled(MaxWidthDiv)`
     border: 1px solid rgba(57, 53, 84, 0.1);
     background-color: #fff;
     box-shadow: 10px 10px 10px 0px rgba(57, 53, 84, 0.05);
+    cursor: pointer;
 `;
 
 const PlayerInfo = styled.div`
@@ -77,6 +79,7 @@ export default function PlayerCard({
                                      badges,
                                      style,
                                    }: Props) {
+  const navigate = useNavigate();
   const [ensName, setEnsName] = useState<string>("");
 
   const updateENS = async () => {
@@ -91,7 +94,9 @@ export default function PlayerCard({
   }, [address]);
 
   return (
-    <CardContainer style={style}>
+    <CardContainer style={style} onClick={() => {
+      navigate(`/games/${address}`)
+    }}>
       <Identicon address={address} size={56}/>
       <PlayerInfo>
         <PlayerName>
@@ -106,7 +111,9 @@ export default function PlayerCard({
           </BadgesContainer>
         }
       </span>
-      <PlayerScore>{score}</PlayerScore>
+      {score !== 0 &&
+        <PlayerScore>{score}</PlayerScore>
+      }
     </CardContainer>
   );
 }

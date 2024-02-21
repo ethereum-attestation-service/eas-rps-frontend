@@ -33,7 +33,7 @@ export const CUSTOM_SCHEMAS = {
 };
 
 export const RPS_GAME_UID =
-  "0x048de8e6b4bf0769744930cc2641ce05d473f3cd5ce976ba9e6a3256d4b011eb";
+  "0x9a3b8beb51629e4624923863231c3931f466e79dac4d7c7f2d0e346240e66a72";
 
 dayjs.extend(duration);
 dayjs.extend(relativeTime);
