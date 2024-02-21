@@ -136,6 +136,7 @@ export type GameWithPlayersAndAttestations = GameWithPlayers & {
 export type MyStats = {
   games: Game[];
   elo: number;
+  badges: string[];
 };
 
 export type Player = {

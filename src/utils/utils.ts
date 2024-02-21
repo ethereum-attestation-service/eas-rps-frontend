@@ -13,6 +13,8 @@ import relativeTime from "dayjs/plugin/relativeTime";
 import { ethers } from "ethers";
 import { AttestationShareablePackageObject } from "@ethereum-attestation-service/eas-sdk";
 import axios from "axios";
+import easLogo from "../assets/easlogo.png";
+import coinbaseLogo from "../assets/coinbaseLogo.png";
 
 // @ts-ignore
 BigInt.prototype.toJSON = function () {
@@ -104,6 +106,7 @@ export async function getAddressForENS(name: string) {
 }
 
 export async function getENSName(address: string) {
+  return 'player.eth';
   try {
     const provider = new ethers.JsonRpcProvider(
       `https://eth-mainnet.g.alchemy.com/v2/${process.env.REACT_APP_ALCHEMY_API_KEY}`,
@@ -195,11 +198,11 @@ export function getGameStatus(game: Game) {
   if (game.invalidated){
     return STATUS_INVALID;
   }
-  
+
   if (game.choice1 === CHOICE_UNKNOWN || game.choice2 === CHOICE_UNKNOWN) {
     return STATUS_UNKNOWN;
   }
-  
+
   return (3 + game.choice1 - game.choice2) % 3;
 }
 
@@ -239,4 +242,13 @@ export const leaderboardLinks = [
 
 export function formatAttestationLongValueV2(address: string) {
   return address.substring(0, 8) + "•••" + address.slice(-8);
+}
+
+export function badgeNameToLogo(badgeName: string) {
+  switch (badgeName) {
+    case "MetIRL":
+      return easLogo;
+    case "Coinbase":
+      return coinbaseLogo;
+  }
 }

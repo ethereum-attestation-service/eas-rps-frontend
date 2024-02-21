@@ -53,7 +53,9 @@ const LineBreak = styled.div`
   width: 100%;
 `;
 
-type VictoryMessageProps = { isBig: boolean } & WonProps;
+type CentralProps = { central: boolean };
+
+type VictoryMessageProps = { isBig: boolean } & WonProps & CentralProps;
 
 const VictoryMessage = styled.div<VictoryMessageProps>`
   font-family: Ubuntu;
@@ -217,13 +219,14 @@ const GameInfoContainer = styled.div`
   border-top: 1px solid rgba(57, 53, 84, 0.15);
 `;
 
-const VictoryMessageContainer = styled.div`
+const VictoryMessageContainer = styled.div<CentralProps>`
   width: 100%;
   box-sizing: border-box;
   display: flex;
   padding: 0 2rem;
   flex-direction: column;
   max-width: 400px;
+  ${({ central }) => (central ? "align-items: center;" : "")}
 `;
 
 function Summary() {
@@ -299,11 +302,12 @@ function Summary() {
             initialVelocityY={20}
           />
         )}
-        <VictoryMessageContainer>
+        <VictoryMessageContainer central={!eloChangeHappened}>
           {status===STATUS_INVALID?
             <VictoryMessage
               won={false}
               isBig={true}
+              central={!eloChangeHappened}
             >
               Abandoned
             </VictoryMessage>
@@ -311,6 +315,7 @@ function Summary() {
             <VictoryMessage
               won={status === STATUS_PLAYER1_WIN}
               isBig={!eloChangeHappened}
+              central={!eloChangeHappened}
             >
               {status === STATUS_PLAYER1_WIN
                 ? "You Won!"
@@ -322,6 +327,7 @@ function Summary() {
             <VictoryMessage
               won={status === STATUS_PLAYER2_WIN}
               isBig={!eloChangeHappened}
+              central={!eloChangeHappened}
             >
               {status === STATUS_PLAYER2_WIN
                 ? "You Won!"

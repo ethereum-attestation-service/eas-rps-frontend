@@ -1,10 +1,8 @@
 import {Identicon} from "./Identicon";
 import styled from "styled-components";
 import {useEffect, useState} from "react";
-import {getENSName} from "../utils/utils";
+import {badgeNameToLogo, getENSName} from "../utils/utils";
 import {MaxWidthDiv} from "./MaxWidthDiv";
-import easLogo from "../assets/easlogo.png";
-import coinbaseLogo from "../assets/coinbaseLogo.png";
 import {useNavigate} from "react-router";
 
 const PlayerName = styled.div`
@@ -102,7 +100,7 @@ export default function PlayerCard({
         <Identicon address={address} size={56}/>
         <BadgesContainer>
           {badges.map((badge) => (
-            <Badge src={badge==='MetIRL'?easLogo:coinbaseLogo}/>
+            <Badge src={badgeNameToLogo(badge)}/>
           ))}
         </BadgesContainer>
       </IconWrapper>

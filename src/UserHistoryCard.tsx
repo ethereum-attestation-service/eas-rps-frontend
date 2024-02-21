@@ -2,7 +2,7 @@ import {useNavigate} from "react-router";
 import {Identicon} from "./components/Identicon";
 import styled from "styled-components";
 import axios from "axios";
-import {baseURL} from "./utils/utils";
+import {badgeNameToLogo, baseURL} from "./utils/utils";
 import {useState} from "react";
 
 const CardContainer = styled.div`
@@ -18,15 +18,16 @@ const CardContainer = styled.div`
     padding: 1rem;
 `;
 
-const Name = styled.div`
+type IsBoldProps = { isBold: boolean };
+const OptionallyBoldText = styled.div<IsBoldProps>`
     color: #272343;
     text-align: center;
     font-family: "Space Grotesk";
     font-size: 22px;
     font-style: normal;
-    font-weight: 700;
+    font-weight: ${({isBold}) => (isBold ? 700 : 400)};
     line-height: normal;
-    padding: 0 12px;
+    padding: 1rem;
     overflow-wrap: anywhere;
 `;
 
@@ -89,17 +90,48 @@ const StatContainer = styled.div`
     margin: 0 1rem;
 `;
 
-type Stats = { wins: number; losses: number; draws: number; streak: number };
-type Props = { address: string; ensName: string; stats: Stats, isSelf: boolean };
+const BadgesContainer = styled.div`
+    position: absolute;
+    bottom: 8px;
+    left: 16px;
+`;
 
-export default function UserHistoryCard({address, ensName, stats, isSelf}: Props) {
+const Badge = styled.img`
+    width: 20px;
+    height: 20px;
+`;
+
+type Stats = { wins: number; losses: number; draws: number; streak: number };
+type Props = {
+  address: string;
+  ensName: string;
+  stats: Stats;
+  isSelf: boolean;
+  badges: string[];
+  elo: number;
+};
+
+const IconWrapper = styled.div`
+    position: relative
+`;
+
+export default function UserHistoryCard({address, ensName, stats, isSelf, badges, elo}: Props) {
   const [checkingForBadges, setCheckingForBadges] = useState(false);
   const navigate = useNavigate();
   return (
     <CardContainer>
-      <StyledIdenticon address={address} size={75}/>
-      <Name>{ensName}</Name>
+      <IconWrapper>
+        <StyledIdenticon address={address} size={75}/>
+        <BadgesContainer>
+          {badges.map((badge) => (
+            <Badge src={badgeNameToLogo(badge)}/>
+          ))}
+        </BadgesContainer>
+      </IconWrapper>
+
+      <OptionallyBoldText isBold={ensName !== address}>{ensName}</OptionallyBoldText>
       {ensName !== address && <Address>{address}</Address>}
+      {elo > 0 && <OptionallyBoldText isBold={true}>{elo}</OptionallyBoldText>}
       <LineBreak/>
       {isSelf ?
         <div onClick={async () => {

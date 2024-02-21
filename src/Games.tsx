@@ -64,6 +64,8 @@ function Games() {
     streak: 0,
   });
   const [gameResults, setGameResults] = useState<string[]>();
+  const [badges, setBadges] = useState<string[]>();
+  const [eloScore, setEloScore] = useState<number>(0);
 
   useEffect(() => {
     if (!address) {
@@ -81,13 +83,18 @@ function Games() {
         address: address,
         finalized: true,
       });
+      
+      const {games, elo, badges} = gameList.data;
 
-      setFinishedGames(gameList.data.games);
+      console.log('badges', badges);
+      setFinishedGames(games);
+      setBadges(badges);
+      setEloScore(elo);
       let tmpGameResults = [];
 
       let tmpGameStats = {wins: 0, draws: 0, losses: 0, streak: 0};
       let streakCounting = true;
-      for (const gameObj of gameList.data.games) {
+      for (const gameObj of games) {
         const status = getGameStatus(gameObj);
         const isPlayer1 = gameObj.player1 === address;
         const result = isPlayer1
@@ -131,6 +138,8 @@ function Games() {
         ensName={ensName || ""}
         stats={gameStats}
         isSelf={(!preComputedAddress) || preComputedAddress === user?.wallet?.address}
+        badges={badges || []}
+        elo={eloScore}
       />
       <RecentBattles>Recent Battles</RecentBattles>
       {finishedGames.length > 0 || loading ? (
