@@ -80,8 +80,8 @@ export const baseURL = `http://localhost:8080/api`;
 // export const baseURL = `https://rps.sh/api`;
 // export const baseURL = `http://eas-rps.dakh.com`;
 
-export const clientURL = `http://localhost:3000`;
-// export const clientURL = `https://rps.sh`;
+// export const clientURL = `http://localhost:3000`;
+export const clientURL = `https://rps.sh`;
 
 invariant(activeChainConfig, "No chain config found for chain ID");
 export const EASContractAddress = activeChainConfig.contractAddress;
@@ -106,7 +106,6 @@ export async function getAddressForENS(name: string) {
 }
 
 export async function getENSName(address: string) {
-  return 'player.eth';
   try {
     const provider = new ethers.JsonRpcProvider(
       `https://eth-mainnet.g.alchemy.com/v2/${process.env.REACT_APP_ALCHEMY_API_KEY}`,

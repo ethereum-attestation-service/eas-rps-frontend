@@ -34,6 +34,7 @@ const Container = styled.div`
   flex-direction: column;
   align-items: center;
   margin: 20px;
+    width: 100%;
 `;
 
 const AcceptButton = styled.div`
@@ -197,6 +198,7 @@ export function ChallengeAttestation({ game: g, isChallenge }: Props) {
         badges={
           g.player1Object.whiteListAttestations.map((att) => att.type) || []
         }
+        ens={g.player1Object.ensName}
       />
       {isChallenge && (
         <>

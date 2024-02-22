@@ -111,6 +111,7 @@ export type IncomingChallenge = {
     address: string;
     elo: number | string;
     whiteListAttestations: { type: string }[];
+    ensName?: string;
   };
   winstreak: number;
   gameCount: number;
@@ -121,11 +122,13 @@ export type GameWithPlayers = Game & {
     address: string;
     elo: number;
     whiteListAttestations: { type: string }[];
+    ensName?: string;
   };
   player2Object: {
     address: string;
     elo: number;
     whiteListAttestations: { type: string }[];
+    ensName?: string;
   };
 };
 
@@ -143,4 +146,5 @@ export type Player = {
   address: string;
   elo: number;
   badges: string[];
+  ensName?: string;
 };

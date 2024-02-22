@@ -290,6 +290,7 @@ function Summary() {
     (address === game?.player2 && status === STATUS_PLAYER2_WIN);
 
   const eloChangeHappened = game?.eloChange1 > 0 || game?.eloChange2 > 0;
+  console.log(game)
 
   return (
     <Page>

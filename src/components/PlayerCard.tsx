@@ -1,7 +1,7 @@
 import {Identicon} from "./Identicon";
 import styled from "styled-components";
 import {useEffect, useState} from "react";
-import {badgeNameToLogo, getENSName} from "../utils/utils";
+import {badgeNameToLogo} from "../utils/utils";
 import {MaxWidthDiv} from "./MaxWidthDiv";
 import {useNavigate} from "react-router";
 
@@ -65,6 +65,7 @@ type Props = {
   overrideENSWith: string;
   style?: React.CSSProperties;
   badges: string[];
+  ens?: string;
 };
 
 const IconWrapper = styled.div`
@@ -77,20 +78,9 @@ export default function PlayerCard({
                                      overrideENSWith,
                                      badges,
                                      style,
+                                     ens,
                                    }: Props) {
   const navigate = useNavigate();
-  const [ensName, setEnsName] = useState<string>("");
-
-  const updateENS = async () => {
-    setEnsName((await getENSName(address)) || overrideENSWith);
-    // setEnsName("kirmayer.eth" || address);
-  };
-
-  useEffect(() => {
-    if (address) {
-      updateENS();
-    }
-  }, [address]);
 
   return (
     <CardContainer style={style} onClick={() => {
@@ -106,7 +96,7 @@ export default function PlayerCard({
       </IconWrapper>
       <PlayerInfo>
         <PlayerName>
-          {ensName}
+          {ens || overrideENSWith}
         </PlayerName>
         <PlayerAddress>{address}</PlayerAddress>
       </PlayerInfo>

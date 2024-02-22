@@ -130,7 +130,6 @@ export default function Leaderboard() {
   const address = user?.wallet?.address;
   const { type } = useParams();
   const [leaderboard, setLeaderboard] = useState<Player[]>([]);
-  console.log(user)
   async function getLeaderboard() {
     const res = await axios.post<Player[]>(`${baseURL}/${type}Leaderboard`, {
       address,
@@ -172,6 +171,7 @@ export default function Leaderboard() {
               score={player.elo}
               overrideENSWith={""}
               badges={player.badges}
+              ens={player.ensName}
             />
           </RankCard>
         ))}
