@@ -86,6 +86,14 @@ const StyledIdenticon = styled(Identicon)`
     padding: 15px;
 `;
 
+const StyledENSAvatar = styled.img`
+    margin-top: -3rem;
+    border-radius: 50px;
+    padding: 15px;
+    width: 75px;
+    height: 75px;
+`;
+
 const StatContainer = styled.div`
     margin: 0 1rem;
 `;
@@ -101,10 +109,15 @@ const Badge = styled.img`
     height: 20px;
 `;
 
+const ClickableDiv = styled.div`
+    cursor: pointer;
+`;
+
 type Stats = { wins: number; losses: number; draws: number; streak: number };
 type Props = {
   address: string;
-  ensName: string;
+  ensName?: string;
+  ensAvatar?: string;
   stats: Stats;
   isSelf: boolean;
   badges: string[];
@@ -115,13 +128,16 @@ const IconWrapper = styled.div`
     position: relative
 `;
 
-export default function UserHistoryCard({address, ensName, stats, isSelf, badges, elo}: Props) {
+export default function UserHistoryCard({address, ensName, ensAvatar, stats, isSelf, badges, elo}: Props) {
   const [checkingForBadges, setCheckingForBadges] = useState(false);
   const navigate = useNavigate();
   return (
     <CardContainer>
       <IconWrapper>
-        <StyledIdenticon address={address} size={75}/>
+        {ensAvatar ?
+          <StyledENSAvatar src={ensAvatar}/>
+          : <StyledIdenticon address={address} size={75}/>
+        }
         <BadgesContainer>
           {badges.map((badge) => (
             <Badge src={badgeNameToLogo(badge)}/>
@@ -129,12 +145,12 @@ export default function UserHistoryCard({address, ensName, stats, isSelf, badges
         </BadgesContainer>
       </IconWrapper>
 
-      <OptionallyBoldText isBold={ensName !== address}>{ensName}</OptionallyBoldText>
-      {ensName !== address && <Address>{address}</Address>}
+      <OptionallyBoldText isBold={!!ensName}>{ensName || address}</OptionallyBoldText>
+      {ensName && <Address>{address}</Address>}
       {elo > 0 && <OptionallyBoldText isBold={true}>{elo}</OptionallyBoldText>}
       <LineBreak/>
       {isSelf ?
-        <div onClick={async () => {
+        <ClickableDiv onClick={async () => {
           setCheckingForBadges(true)
           await axios.post(`${baseURL}/checkForBadges`, {
             address,
@@ -142,13 +158,13 @@ export default function UserHistoryCard({address, ensName, stats, isSelf, badges
           window.location.reload()
         }}>
           {checkingForBadges ? "Checking for verifications..." : "Check for verifications"}
-        </div>
+        </ClickableDiv>
         :
-        <div onClick={() => {
+        <ClickableDiv onClick={() => {
           navigate(`/${address}`);
         }}>
           Challenge this player
-        </div>
+        </ClickableDiv>
       }
       <LineBreak/>
       <StatsContainer>

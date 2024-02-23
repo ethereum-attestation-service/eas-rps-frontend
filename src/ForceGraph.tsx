@@ -7,9 +7,7 @@ import ForceGraph3D  from "react-force-graph-3d";
 import axios from "axios";
 import { useAccount } from "wagmi";
 import GraphGameListModal from "./components/GraphGameListModal";
-import { baseURL } from "./utils/utils";
-
-const frontendURL = "http://localhost:3000";
+import { baseURL, clientURL } from "./utils/utils";
 export default function ForceGraph() {
   const [graph, setGraph] = useState({ nodes: [], links: [] });
 
@@ -77,7 +75,7 @@ export default function ForceGraph() {
   return (
     <main>
       <GraphGameListModal
-        frontendURL={frontendURL}
+        frontendURL={clientURL}
         currentLink={currentLink}
         currentGames={currentGames}
         isOpen={!!currentLink}

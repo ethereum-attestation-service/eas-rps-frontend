@@ -75,7 +75,7 @@ function Footer() {
             New Challenge
           </LinkDescriptor>
         </Link>
-        <Link onClick={()=>{navigate('/')}}>
+        <Link onClick={()=>{navigate('/how-it-works')}}>
           <FaRegQuestionCircle size={ICON_SIZE} color={'#fff'}/>
           <LinkDescriptor>
             How it Works

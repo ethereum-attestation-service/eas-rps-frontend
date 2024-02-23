@@ -42,6 +42,7 @@ import {Identicon} from "./components/Identicon";
 import PlayerCard from "./components/PlayerCard";
 import RotatedLottie from "./components/RotatedLottie";
 import {usePrivy} from "@privy-io/react-auth";
+import InGameChosenIcon from "./components/InGameChosenIcon";
 
 type finishedProps = { finished: boolean };
 const Vs = styled.div`
@@ -230,22 +231,23 @@ function Challenge() {
     update();
     setTimeout(() => {
       setTick(tick + 1);
-    }, 5000);
+    }, 2000);
   }, [tick]);
 
   useEffect(() => {
     swapPlayersIfNecessary()
   }, [game, address]);
 
-  const status = game ? getGameStatus(game) : STATUS_UNKNOWN;
-
   useEffect(() => {
-    if (status !== STATUS_UNKNOWN) {
-      setTimeout(() => {
+    if (game) {
+      const status = getGameStatus(game);
+      if (status !== STATUS_UNKNOWN) {
         navigate(`/summary/${challengeId}`);
-      }, 1000);
+      }
     }
   }, [game]);
+
+  const status = game ? getGameStatus(game) : STATUS_UNKNOWN;
 
   const commit = async (choice: number) => {
     invariant(address, "Address should be defined");
@@ -326,14 +328,13 @@ function Challenge() {
             (att) => att.type
           )}
           ens={game.player2Object.ensName}
+          ensAvatar={game.player2Object.ensAvatar}
         />
         <PlayerStatus>
           {game.commit2 === ZERO_BYTES32 ? (
             <WaitingText isPlayer1={false}>Waiting For Opponent...</WaitingText>
-          ) : game.choice2 === CHOICE_UNKNOWN ? (
+          ) :  (
             <WaitingText isPlayer1={false}>Player Ready</WaitingText>
-          ) : (
-            <RotatedLottie choice={game.choice2} isPlayer1={false}/>
           )}
         </PlayerStatus>
       </PlayerContainer>
@@ -370,7 +371,7 @@ function Challenge() {
               </HandSelection>
             </>
           ) : (
-            <RotatedLottie
+            <InGameChosenIcon
               choice={
                 game.choice1 !== CHOICE_UNKNOWN
                   ? game.choice1
@@ -378,7 +379,6 @@ function Challenge() {
                     ? thisGameCommit.choice
                     : CHOICE_UNKNOWN
               }
-              isPlayer1={true}
             />
           )}
         </PlayerStatus>
@@ -391,6 +391,7 @@ function Challenge() {
             (att) => att.type
           )}
           ens={game.player1Object.ensName}
+          ensAvatar={game.player1Object.ensAvatar}
         />
       </PlayerContainer>
     </GameContainer>

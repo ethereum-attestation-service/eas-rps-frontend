@@ -199,6 +199,7 @@ export function ChallengeAttestation({ game: g, isChallenge }: Props) {
           g.player1Object.whiteListAttestations.map((att) => att.type) || []
         }
         ens={g.player1Object.ensName}
+        ensAvatar={g.player1Object.ensAvatar}
       />
       {isChallenge && (
         <>

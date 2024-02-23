@@ -75,6 +75,9 @@ function Ongoing() {
             ensName: address === game.player1
               ? game.player2Object.ensName
               : game.player1Object.ensName,
+            ensAvatar: address === game.player1
+              ? game.player2Object.ensAvatar
+              : game.player1Object.ensAvatar,
           },
           gameCount: 0,
           winstreak: 0,

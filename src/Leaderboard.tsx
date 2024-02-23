@@ -172,6 +172,7 @@ export default function Leaderboard() {
               overrideENSWith={""}
               badges={player.badges}
               ens={player.ensName}
+              ensAvatar={player.ensAvatar}
             />
           </RankCard>
         ))}

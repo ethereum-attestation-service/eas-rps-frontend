@@ -39,21 +39,38 @@ const RecentBattles = styled.div`
 `;
 
 const BattleContainer = styled.div`
-    margin: 12px;
     align-items: center;
     width: 100%;
     justify-content: center;
     display: flex;
     flex-direction: column;
+    box-sizing: border-box;
+    padding: 10px 0;
 `;
 
-type result = "WIN" | "LOSS" | "DRAW";
+const BattlesWrapper = styled.div`
+    background-color: #fff;
+    max-width: 800px;
+    height: 400px;
+    overflow-x: auto;
+    width: 100%;
+    border-radius: 10px;
+`;
+
+const StyledPlayerCard = styled(PlayerCard)`
+    margin: 0;
+    box-shadow: none;
+    border: none;
+    border-bottom: 1px solid rgba(57, 53, 84, 0.1);
+    border-radius: 0;
+`;
 
 function Games() {
   const {address: preComputedAddress} = useParams();
   const {user} = usePrivy();
   const address = preComputedAddress || user?.wallet?.address;
-  const [ensName, setEnsName] = useState<string>("");
+  const [ensName, setEnsName] = useState<string | undefined>(undefined);
+  const [ensAvatar, setEnsAvatar] = useState<string | undefined>(undefined);
   const [finishedGames, setFinishedGames] = useState<Game[]>([]);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -75,21 +92,19 @@ function Games() {
     async function getStats() {
       setFinishedGames([]);
       setLoading(true);
-      if (address) {
-        setEnsName((await getENSName(address)) || address);
-        // setEnsName("kirmayer.eth" || address);
-      }
+
       const gameList = await axios.post<MyStats>(`${baseURL}/myGames`, {
         address: address,
         finalized: true,
       });
-      
-      const {games, elo, badges} = gameList.data;
 
-      console.log('badges', badges);
+      const {games, elo, badges, ensName: ens, ensAvatar: ensAv} = gameList.data;
+
       setFinishedGames(games);
       setBadges(badges);
       setEloScore(elo);
+      setEnsName(ens);
+      setEnsAvatar(ensAv);
       let tmpGameResults = [];
 
       let tmpGameStats = {wins: 0, draws: 0, losses: 0, streak: 0};
@@ -135,34 +150,38 @@ function Games() {
       {(!preComputedAddress) && <MiniHeader links={gameLinks} selected={2}/>}
       <UserHistoryCard
         address={address || ""}
-        ensName={ensName || ""}
+        ensName={ensName}
+        ensAvatar={ensAvatar}
         stats={gameStats}
         isSelf={(!preComputedAddress) || preComputedAddress === user?.wallet?.address}
         badges={badges || []}
         elo={eloScore}
       />
       <RecentBattles>Recent Battles</RecentBattles>
-      {finishedGames.length > 0 || loading ? (
-        finishedGames.slice(0, 5).map((gameObj, i) => {
-          const isPlayer1 = gameObj.player1 === address;
-          return (
-            <BattleContainer
-              onClick={() => {
-                navigate(`/summary/${gameObj.uid}`);
-              }}
-            >
-              <PlayerCard
-                address={isPlayer1 ? gameObj.player2 : gameObj.player1}
-                score={gameResults ? gameResults[i] : ""}
-                overrideENSWith={""}
-                badges={[]}
-              />
-            </BattleContainer>
-          );
-        })
-      ) : (
-        <div>No one here yet</div>
-      )}
+
+      <BattlesWrapper>
+        {finishedGames.length > 0 || loading ? (
+          finishedGames.slice(0, 30).map((gameObj, i) => {
+            const isPlayer1 = gameObj.player1 === address;
+            return (
+              <BattleContainer
+                onClick={() => {
+                  navigate(`/summary/${gameObj.uid}`);
+                }}
+              >
+                <StyledPlayerCard
+                  address={isPlayer1 ? gameObj.player2 : gameObj.player1}
+                  score={gameResults ? gameResults[i] : ""}
+                  overrideENSWith={""}
+                  badges={[]}
+                />
+              </BattleContainer>
+            );
+          })
+        ) : (
+          <div>No one here yet</div>
+        )}
+      </BattlesWrapper>
     </Container>
   );
 }

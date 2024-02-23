@@ -1,2 +1,2 @@
 yarn build
-rsync -avr ./build/* root@ethprophet.com:/rps-frontend-build
+rsync -avr ./build/* root@rps.sh:/rps-frontend-build

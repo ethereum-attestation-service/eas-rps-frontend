@@ -66,10 +66,18 @@ type Props = {
   style?: React.CSSProperties;
   badges: string[];
   ens?: string;
+  ensAvatar?: string;
+  className?: string;
 };
 
 const IconWrapper = styled.div`
     position: relative
+`;
+
+const ENSAvatar = styled.img`
+    width: 56px;
+    height: 56px;
+    border-radius: 12px;
 `;
 
 export default function PlayerCard({
@@ -78,16 +86,21 @@ export default function PlayerCard({
                                      overrideENSWith,
                                      badges,
                                      style,
+                                     className,
                                      ens,
+                                     ensAvatar
                                    }: Props) {
   const navigate = useNavigate();
 
   return (
-    <CardContainer style={style} onClick={() => {
+    <CardContainer className={className} style={style} onClick={() => {
       navigate(`/games/${address}`)
     }}>
       <IconWrapper>
-        <Identicon address={address} size={56}/>
+        {ensAvatar ?
+          <ENSAvatar src={ensAvatar}/>
+          : <Identicon address={address} size={56}/>
+        }
         <BadgesContainer>
           {badges.map((badge) => (
             <Badge src={badgeNameToLogo(badge)}/>

@@ -112,6 +112,7 @@ export type IncomingChallenge = {
     elo: number | string;
     whiteListAttestations: { type: string }[];
     ensName?: string;
+    ensAvatar?: string;
   };
   winstreak: number;
   gameCount: number;
@@ -123,12 +124,14 @@ export type GameWithPlayers = Game & {
     elo: number;
     whiteListAttestations: { type: string }[];
     ensName?: string;
+    ensAvatar?: string;
   };
   player2Object: {
     address: string;
     elo: number;
     whiteListAttestations: { type: string }[];
     ensName?: string;
+    ensAvatar?: string;
   };
 };
 
@@ -140,6 +143,8 @@ export type MyStats = {
   games: Game[];
   elo: number;
   badges: string[];
+  ensName?: string;
+  ensAvatar?: string;
 };
 
 export type Player = {
@@ -147,4 +152,5 @@ export type Player = {
   elo: number;
   badges: string[];
   ensName?: string;
+  ensAvatar?: string;
 };
