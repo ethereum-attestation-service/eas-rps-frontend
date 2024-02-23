@@ -1,29 +1,20 @@
 import React, { useEffect, useState } from "react";
-import { BiArrowFromBottom } from "react-icons/bi";
 import styled from "styled-components";
-import PlayerResult from "./components/PlayerResult";
 import { useNavigate, useParams } from "react-router";
 import easLogo from "./assets/easlogo.png";
 import {
-  CHOICE_UNKNOWN,
   STATUS_PLAYER1_WIN,
   STATUS_PLAYER2_WIN,
   STATUS_UNKNOWN,
   addPlusIfPositive,
   baseURL,
-  getENSName,
   getGameStatus,
   CUSTOM_SCHEMAS,
   choiceToText,
   STATUS_INVALID,
 } from "./utils/utils";
-import {
-  Game,
-  GameWithPlayers,
-  GameWithPlayersAndAttestations,
-} from "./utils/types";
+import { GameWithPlayersAndAttestations } from "./utils/types";
 import axios from "axios";
-import { useAccount } from "wagmi";
 import Page from "./Page";
 import {
   AttestationShareablePackageObject,
@@ -58,7 +49,7 @@ type CentralProps = { central: boolean };
 type VictoryMessageProps = { isBig: boolean } & WonProps & CentralProps;
 
 const VictoryMessage = styled.div<VictoryMessageProps>`
-  font-family: Ubuntu;
+  font-family: Ubuntu, serif;
   text-align: left;
   -webkit-text-stroke-width: 2px;
   -webkit-text-stroke-color: ${({ won }) => (won ? "#00ebcf" : "#C8B3F5")};
@@ -82,7 +73,7 @@ const PointsNum = styled.span<WonProps>`
   -webkit-text-stroke-color: ${({ won }) => (won ? "#ff9f1c" : "#F582AE")};
   color: rgb(39, 35, 67);
   -webkit-text-stroke: 3px rgb(245, 130, 174);
-  font-family: "Space Grotesk";
+  font-family: "Space Grotesk", serif;
   font-size: 75px;
   font-style: normal;
   font-weight: 700;
@@ -92,7 +83,7 @@ const PointsNum = styled.span<WonProps>`
 
 const PointsWord = styled.span`
   color: rgb(39, 35, 67);
-  font-family: "Space Grotesk";
+  font-family: "Space Grotesk", serif;
   font-size: 24px;
   font-style: normal;
   font-weight: 400;
@@ -115,7 +106,7 @@ const ResultContainer = styled(MaxWidthDiv)`
 const BoxTitle = styled.div`
   color: #272343;
   text-align: center;
-  font-family: "Space Grotesk";
+  font-family: "Space Grotesk", serif;
   font-size: 22px;
   font-style: normal;
   font-weight: 700;
@@ -123,17 +114,9 @@ const BoxTitle = styled.div`
   padding: 20px;
 `;
 
-// const StakesContainer = styled.div`
-//   display: flex;
-//   flex-direction: column;
-//   align-items: center;
-//   justify-content: center;
-//   width: 100%;
-// `;
-
 const StakeTitle = styled.div`
   color: rgba(39, 35, 67, 0.66);
-  font-family: "Space Grotesk";
+  font-family: "Space Grotesk", serif;
   font-size: 14px;
   font-style: normal;
   font-weight: 400;
@@ -142,7 +125,7 @@ const StakeTitle = styled.div`
 
 const StakeBet = styled.div`
   color: #272343;
-  font-family: "Space Grotesk";
+  font-family: "Space Grotesk", serif;
   font-size: 22px;
   font-style: normal;
   font-weight: 700;
@@ -151,7 +134,7 @@ const StakeBet = styled.div`
 
 const GameUID = styled.a`
   color: #272343;
-  font-family: "Space Grotesk";
+  font-family: "Space Grotesk", serif;
   font-size: 14px;
   font-style: normal;
   font-weight: 400;
@@ -162,7 +145,7 @@ const GameUID = styled.a`
 
 const AttestationTitle = styled.div`
   color: rgba(76, 58, 78, 0.9);
-  font-family: "Space Grotesk";
+  font-family: "Space Grotesk", serif;
   font-size: 12px;
   font-style: normal;
   font-weight: 500;
@@ -186,7 +169,7 @@ const Button = styled(MaxWidthDiv)`
   cursor: pointer;
   color: #fff;
   text-align: center;
-  font-family: Nunito;
+  font-family: Nunito, serif;
   font-size: 18px;
   font-style: normal;
   font-weight: 700;
@@ -202,7 +185,7 @@ const Button = styled(MaxWidthDiv)`
 const UnderlinedLink = styled.a`
   color: #272343;
   text-align: center;
-  font-family: "Space Grotesk";
+  font-family: "Space Grotesk", serif;
   font-size: 18px;
   font-style: normal;
   font-weight: 400;
@@ -231,11 +214,9 @@ const VictoryMessageContainer = styled.div<CentralProps>`
 
 function Summary() {
   const [game, setGame] = useState<GameWithPlayersAndAttestations>();
-  const [player1ENS, setPlayer1ENS] = useState<string>("");
-  const [player2ENS, setPlayer2ENS] = useState<string>("");
   const [tick, setTick] = useState<number>(0);
   const { challengeId } = useParams();
-  const {user} = usePrivy();
+  const { user } = usePrivy();
   const address = user?.wallet?.address;
   const navigate = useNavigate();
 
@@ -249,12 +230,6 @@ function Summary() {
     );
 
     setGame(gameRes.data);
-    setPlayer1ENS(
-      (await getENSName(gameRes.data.player1)) || gameRes.data.player1
-    );
-    setPlayer2ENS(
-      (await getENSName(gameRes.data.player2)) || gameRes.data.player2
-    );
   };
 
   //watch for game updates
@@ -290,7 +265,7 @@ function Summary() {
     (address === game?.player2 && status === STATUS_PLAYER2_WIN);
 
   const eloChangeHappened = game?.eloChange1 > 0 || game?.eloChange2 > 0;
-  console.log(game)
+  console.log(game);
 
   return (
     <Page>
@@ -304,7 +279,7 @@ function Summary() {
           />
         )}
         <VictoryMessageContainer central={!eloChangeHappened}>
-          {status===STATUS_INVALID?
+          {status === STATUS_INVALID ? (
             <VictoryMessage
               won={false}
               isBig={true}
@@ -312,7 +287,7 @@ function Summary() {
             >
               Abandoned
             </VictoryMessage>
-            :address === game?.player1 ? (
+          ) : address === game?.player1 ? (
             <VictoryMessage
               won={status === STATUS_PLAYER1_WIN}
               isBig={!eloChangeHappened}
