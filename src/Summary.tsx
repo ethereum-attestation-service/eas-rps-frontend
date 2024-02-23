@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, {useEffect, useState} from "react";
 import styled from "styled-components";
-import { useNavigate, useParams } from "react-router";
+import {useNavigate, useParams} from "react-router";
 import easLogo from "./assets/easlogo.png";
 import {
   STATUS_PLAYER1_WIN,
@@ -13,17 +13,17 @@ import {
   choiceToText,
   STATUS_INVALID,
 } from "./utils/utils";
-import { GameWithPlayersAndAttestations } from "./utils/types";
+import {GameWithPlayersAndAttestations} from "./utils/types";
 import axios from "axios";
 import Page from "./Page";
 import {
   AttestationShareablePackageObject,
   createOffchainURL,
 } from "@ethereum-attestation-service/eas-sdk";
-import { MaxWidthDiv } from "./components/MaxWidthDiv";
+import {MaxWidthDiv} from "./components/MaxWidthDiv";
 import Confetti from "react-confetti";
 import PlayerCard from "./components/PlayerCard";
-import { usePrivy } from "@privy-io/react-auth";
+import {usePrivy} from "@privy-io/react-auth";
 // Styled components
 
 type WonProps = { won: boolean };
@@ -52,42 +52,42 @@ const VictoryMessage = styled.div<VictoryMessageProps>`
   font-family: Ubuntu, serif;
   text-align: left;
   -webkit-text-stroke-width: 2px;
-  -webkit-text-stroke-color: ${({ won }) => (won ? "#00ebcf" : "#C8B3F5")};
-  font-size: ${({ isBig }) => (isBig ? "48px" : "26px")};
+  -webkit-text-stroke-color: ${({won}) => (won ? "#00ebcf" : "#C8B3F5")};
+  font-size: ${({isBig}) => (isBig ? "48px" : "26px")};
   font-style: normal;
   font-weight: 700;
   line-height: normal;
   margin-bottom: -0.85rem;
-  padding: ${({ isBig }) => (isBig ? "20px" : "0")};
+  padding: ${({isBig}) => (isBig ? "20px" : "0")};
 `;
 
 const Points = styled.div`
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: baseline;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: baseline;
 `;
 
 const PointsNum = styled.span<WonProps>`
-  -webkit-text-stroke-width: 2px;
-  -webkit-text-stroke-color: ${({ won }) => (won ? "#ff9f1c" : "#F582AE")};
-  color: rgb(39, 35, 67);
-  -webkit-text-stroke: 3px rgb(245, 130, 174);
-  font-family: "Space Grotesk", serif;
-  font-size: 75px;
-  font-style: normal;
-  font-weight: 700;
-  text-shadow: 10px 10px 10px rgba(33, 28, 67, 0.25);
-  line-height: normal;
+    -webkit-text-stroke-width: 2px;
+    -webkit-text-stroke-color: ${({won}) => (won ? "#ff9f1c" : "#F582AE")};
+    color: rgb(39, 35, 67);
+    -webkit-text-stroke: 3px rgb(245, 130, 174);
+    font-family: "Space Grotesk", serif;
+    font-size: 75px;
+    font-style: normal;
+    font-weight: 700;
+    text-shadow: 10px 10px 10px rgba(33, 28, 67, 0.25);
+    line-height: normal;
 `;
 
 const PointsWord = styled.span`
-  color: rgb(39, 35, 67);
-  font-family: "Space Grotesk", serif;
-  font-size: 24px;
-  font-style: normal;
-  font-weight: 400;
-  line-height: normal;
+    color: rgb(39, 35, 67);
+    font-family: "Space Grotesk", serif;
+    font-size: 24px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
 `;
 
 const ResultContainer = styled(MaxWidthDiv)`
@@ -209,14 +209,14 @@ const VictoryMessageContainer = styled.div<CentralProps>`
   padding: 0 2rem;
   flex-direction: column;
   max-width: 400px;
-  ${({ central }) => (central ? "align-items: center;" : "")}
+  ${({central}) => (central ? "align-items: center;" : "")}
 `;
 
 function Summary() {
   const [game, setGame] = useState<GameWithPlayersAndAttestations>();
   const [tick, setTick] = useState<number>(0);
-  const { challengeId } = useParams();
-  const { user } = usePrivy();
+  const {challengeId} = useParams();
+  const {user} = usePrivy();
   const address = user?.wallet?.address;
   const navigate = useNavigate();
 
@@ -279,7 +279,7 @@ function Summary() {
           />
         )}
         <VictoryMessageContainer central={!eloChangeHappened}>
-          {status === STATUS_INVALID ? (
+          {status === STATUS_UNKNOWN ? null : status === STATUS_INVALID ? (
             <VictoryMessage
               won={false}
               isBig={true}
@@ -296,8 +296,8 @@ function Summary() {
               {status === STATUS_PLAYER1_WIN
                 ? "You Won!"
                 : status === STATUS_PLAYER2_WIN
-                ? "You Lost!"
-                : "It's a tie!"}
+                  ? "You Lost!"
+                  : "It's a tie!"}
             </VictoryMessage>
           ) : address === game?.player2 ? (
             <VictoryMessage
@@ -308,8 +308,8 @@ function Summary() {
               {status === STATUS_PLAYER2_WIN
                 ? "You Won!"
                 : status === STATUS_PLAYER1_WIN
-                ? "You Lost!"
-                : "It's a tie!"}
+                  ? "You Lost!"
+                  : "It's a tie!"}
             </VictoryMessage>
           ) : null}
 
@@ -329,7 +329,7 @@ function Summary() {
                     : game?.eloChange2) || 0
                 )}
               </PointsNum>
-              <div style={{ width: 5 }} />
+              <div style={{width: 5}}/>
               <PointsWord>points</PointsWord>
             </Points>
           ) : null}
@@ -337,7 +337,7 @@ function Summary() {
         <ResultContainer>
           {/*<BiArrowFromBottom color={"#000"} size={24} />*/}
           <BoxTitle>Game Result</BoxTitle>
-          <LineBreak />
+          <LineBreak/>
           <PlayerCard
             address={game?.player1 || ""}
             score={choiceToText(game?.choice1 || 0)}
@@ -355,6 +355,8 @@ function Summary() {
                 (att) => att.type
               ) || []
             }
+            ens={game?.player1Object.ensName}
+            ensAvatar={game?.player1Object.ensAvatar}
           />
           <PlayerCard
             address={game?.player2 || ""}
@@ -373,13 +375,15 @@ function Summary() {
                 (att) => att.type
               ) || []
             }
+            ens={game?.player2Object.ensName}
+            ensAvatar={game?.player2Object.ensAvatar}
           />
           {game?.stakes && (
             <>
-              <LineBreak />
+              <LineBreak/>
               <StakeTitle>What was at stake...</StakeTitle>
               <StakeBet>{game?.stakes}</StakeBet>
-              <LineBreak />
+              <LineBreak/>
             </>
           )}
         </ResultContainer>
@@ -390,7 +394,7 @@ function Summary() {
             <GameInfoContainer>
               <img
                 src={easLogo}
-                style={{ width: 28, height: 28, display: "flex", margin: 20 }}
+                style={{width: 28, height: 28, display: "flex", margin: 20}}
               />
               <GameUIDContainer>
                 <AttestationTitle>
