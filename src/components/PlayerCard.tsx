@@ -1,6 +1,5 @@
 import {Identicon} from "./Identicon";
 import styled from "styled-components";
-import {useEffect, useState} from "react";
 import {badgeNameToLogo} from "../utils/utils";
 import {MaxWidthDiv} from "./MaxWidthDiv";
 import {useNavigate} from "react-router";
@@ -14,7 +13,7 @@ const PlayerName = styled.div`
 
 const PlayerScore = styled.div`
     color: #272343;
-    font-family: "Space Grotesk";
+    font-family: "Space Grotesk",serif;
     font-size: 24px;
     font-style: normal;
     font-weight: 700;
@@ -39,7 +38,7 @@ const CardContainer = styled(MaxWidthDiv)`
     border-radius: 10px;
     border: 1px solid rgba(57, 53, 84, 0.1);
     background-color: #fff;
-    box-shadow: 10px 10px 10px 0px rgba(57, 53, 84, 0.05);
+    box-shadow: 10px 10px 10px 0 rgba(57, 53, 84, 0.05);
     cursor: pointer;
 `;
 

@@ -1,17 +1,14 @@
 import invariant from "tiny-invariant";
 import type {
-  Attestation,
-  AttestationResult,
   EASChainConfig,
-  EnsNamesResult,
   Game,
 } from "./types";
-import { StoreAttestationRequest, StoreIPFSActionReturn } from "./types";
+import {StoreAttestationRequest, StoreIPFSActionReturn} from "./types";
 import dayjs from "dayjs";
 import duration from "dayjs/plugin/duration";
 import relativeTime from "dayjs/plugin/relativeTime";
-import { ethers } from "ethers";
-import { AttestationShareablePackageObject } from "@ethereum-attestation-service/eas-sdk";
+import {ethers} from "ethers";
+import {AttestationShareablePackageObject} from "@ethereum-attestation-service/eas-sdk";
 import axios from "axios";
 import easLogo from "../assets/easlogo.png";
 import coinbaseLogo from "../assets/coinbaseLogo.png";
@@ -86,9 +83,6 @@ export const clientURL = `https://rps.sh`;
 invariant(activeChainConfig, "No chain config found for chain ID");
 export const EASContractAddress = activeChainConfig.contractAddress;
 
-export const EASVersion = activeChainConfig.version;
-export const timeFormatString = "MM/DD/YYYY h:mm:ss a";
-
 export async function getAddressForENS(name: string) {
   try {
     const provider = new ethers.JsonRpcProvider(
@@ -120,50 +114,7 @@ export async function getENSName(address: string) {
   }
 }
 
-export async function getAttestation(uid: string): Promise<Attestation | null> {
-  const response = await axios.post<AttestationResult>(
-    `${baseURL}/graphql`,
-    {
-      query:
-        "query Query($where: AttestationWhereUniqueInput!) {\n  attestation(where: $where) {\n    id\n    attester\n    recipient\n    revocationTime\n    expirationTime\n    time\n    txid\n    data\n  }\n}",
-      variables: {
-        where: {
-          id: uid,
-        },
-      },
-    },
-    {
-      headers: {
-        "content-type": "application/json",
-      },
-    }
-  );
-  return response.data.data.attestation;
-}
 
-export async function getENSNames(addresses: string[]) {
-  const response = await axios.post<EnsNamesResult>(
-    `${baseURL}/graphql`,
-    {
-      query:
-        "query Query($where: EnsNameWhereInput) {\n  ensNames(where: $where) {\n    id\n    name\n  }\n}",
-      variables: {
-        where: {
-          id: {
-            in: addresses,
-            mode: "insensitive",
-          },
-        },
-      },
-    },
-    {
-      headers: {
-        "content-type": "application/json",
-      },
-    }
-  );
-  return response.data.data.ensNames;
-}
 
 export async function submitSignedAttestation(
   pkg: AttestationShareablePackageObject
@@ -194,7 +145,7 @@ export const STATUS_UNKNOWN = 3;
 export const STATUS_INVALID = 4;
 
 export function getGameStatus(game: Game) {
-  if (game.invalidated){
+  if (game.invalidated) {
     return STATUS_INVALID;
   }
 
@@ -223,20 +174,20 @@ export const addPlusIfPositive = (num: number) => {
 };
 
 export const challengeLinks = [
-  { name: "New Challenge", url: "/" },
-  { name: "QR Code", url: "/qr" },
-  { name: "Leaderboard", url: "/leaderboard/global" },
+  {name: "New Challenge", url: "/"},
+  {name: "QR Code", url: "/qr"},
+  {name: "Leaderboard", url: "/leaderboard/global"},
 ];
 
 export const gameLinks = [
-  { name: "Incoming", url: "/challenges" },
-  { name: "Active", url: "/ongoing" },
-  { name: "History", url: "/games" },
+  {name: "Incoming", url: "/challenges"},
+  {name: "Active", url: "/ongoing"},
+  {name: "History", url: "/games"},
 ];
 
 export const leaderboardLinks = [
-  { name: "Global", url: "/leaderboard/global" },
-  { name: "Local", url: "/leaderboard/local" },
+  {name: "Global", url: "/leaderboard/global"},
+  {name: "Local", url: "/leaderboard/local"},
 ];
 
 export function formatAttestationLongValueV2(address: string) {
