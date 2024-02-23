@@ -139,14 +139,6 @@ export type GameWithPlayersAndAttestations = GameWithPlayers & {
   relevantAttestations: { packageObjString: string }[];
 };
 
-export type MyStats = {
-  games: Game[];
-  elo: number;
-  badges: string[];
-  ensName?: string;
-  ensAvatar?: string;
-};
-
 export type Player = {
   address: string;
   elo: number;
@@ -154,3 +146,16 @@ export type Player = {
   ensName?: string;
   ensAvatar?: string;
 };
+
+export type GameWithOnePlayer = Game & {
+  player1Object: Player
+}
+
+export type MyStats = {
+  games: GameWithOnePlayer[];
+  elo: number;
+  badges: string[];
+  ensName?: string;
+  ensAvatar?: string;
+};
+

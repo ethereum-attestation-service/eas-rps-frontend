@@ -5,7 +5,7 @@ import {useAccount} from "wagmi";
 import {useNavigate} from "react-router";
 import {ChallengeAttestation} from "./ChallengeAttestation";
 import axios from "axios";
-import {baseURL, gameLinks, getENSName} from "./utils/utils";
+import {baseURL, playLinks} from "./utils/utils";
 import {
   Game,
   GameWithPlayers,
@@ -21,7 +21,7 @@ const Container = styled.div`
     flex-direction: column;
     align-items: center;
     min-height: 100vh;
-    padding: 20px;
+    padding: 0 20px 20px 20px;
     box-sizing: border-box;
 `;
 
@@ -92,7 +92,7 @@ function Ongoing() {
   return (
     <Page>
       <Container>
-        <MiniHeader links={gameLinks} selected={1}/>
+        <MiniHeader links={playLinks} selected={2}/>
 
         <Title>Ongoing Battles</Title>
         {loading && <div>Loading...</div>}

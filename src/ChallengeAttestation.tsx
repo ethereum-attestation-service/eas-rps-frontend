@@ -1,8 +1,6 @@
-import { Game, IncomingChallenge } from "./utils/types";
+import { IncomingChallenge } from "./utils/types";
 import styled from "styled-components";
-import { ButtonStandard } from "./styles/buttons";
 import { useNavigate } from "react-router";
-import { useStore } from "./useStore";
 import invariant from "tiny-invariant";
 import {
   AttestationShareablePackageObject,
@@ -13,8 +11,6 @@ import {
 import {
   CUSTOM_SCHEMAS,
   EASContractAddress,
-  RPS_GAME_UID,
-  getENSName,
   submitSignedAttestation,
 } from "./utils/utils";
 import dayjs from "dayjs";

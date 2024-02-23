@@ -31,7 +31,7 @@ const CardContainer = styled(MaxWidthDiv)`
   display: grid;
   grid-template-columns: 1fr 2fr 1fr;
   align-items: center;
-  //padding: 10px 20px;
+  padding: 10px 20px;
   box-sizing: border-box;
   width: 100%;
   justify-content: space-between;

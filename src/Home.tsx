@@ -6,7 +6,7 @@ import newChallengeFists from "./assets/newChallengeFists.png";
 
 import {
   baseURL,
-  challengeLinks,
+  playLinks,
   CUSTOM_SCHEMAS,
   EASContractAddress,
   getAddressForENS,
@@ -211,7 +211,7 @@ function Home() {
         <Page>
           <Container>
             <MiniHeaderContainer>
-              <MiniHeader links={challengeLinks} selected={0} />
+              <MiniHeader links={playLinks} selected={0} />
             </MiniHeaderContainer>
             {/*<FistsImage src={newChallengeFists} />*/}
             <BigText>Who are you battling?</BigText>

@@ -151,9 +151,9 @@ export function Header() {
       path: "/",
     });
     menuItems.push({
-      title: "Games",
-      onClick: () => navigate("/games"),
-      path: "/games",
+      title: "Profile",
+      onClick: () => navigate("/qr"),
+      path: "/qr",
     });
     menuItems.push({
       title: "Leaderboard",

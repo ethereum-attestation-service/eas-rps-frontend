@@ -5,7 +5,7 @@ import { useAccount } from "wagmi";
 import { useNavigate } from "react-router";
 import { ChallengeAttestation } from "./ChallengeAttestation";
 import axios from "axios";
-import { baseURL, gameLinks, getENSName } from "./utils/utils";
+import { baseURL, playLinks } from "./utils/utils";
 import { Game, IncomingChallenge } from "./utils/types";
 import Page from "./Page";
 import MiniHeader from "./MiniHeader";
@@ -17,7 +17,7 @@ const Container = styled.div`
   align-items: center;
   width: 100vw;
   min-height: 100vh;
-  padding: 20px;
+  padding: 0 20px 20px 20px;
   box-sizing: border-box;
 `;
 
@@ -65,7 +65,7 @@ function Challenges() {
   return (
     <Page>
       <Container>
-        <MiniHeader links={gameLinks} selected={0} />
+        <MiniHeader links={playLinks} selected={1} />
 
         <Title>Incoming Battles</Title>
         {loading && <div>Loading...</div>}

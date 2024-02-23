@@ -173,16 +173,15 @@ export const addPlusIfPositive = (num: number) => {
   return num > 0 ? `+${num}` : num;
 };
 
-export const challengeLinks = [
-  {name: "New Challenge", url: "/"},
-  {name: "QR Code", url: "/qr"},
-  {name: "Leaderboard", url: "/leaderboard/global"},
-];
-
-export const gameLinks = [
+export const playLinks = [
+  {name: "New", url: "/"},
   {name: "Incoming", url: "/challenges"},
   {name: "Active", url: "/ongoing"},
-  {name: "History", url: "/games"},
+];
+
+export const profileLinks = [
+  {name: "QR Code", url: "/qr"},
+  {name: "Game History", url: "/games"},
 ];
 
 export const leaderboardLinks = [

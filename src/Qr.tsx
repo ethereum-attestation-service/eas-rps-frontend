@@ -1,24 +1,25 @@
-import React, { useEffect, useState } from "react";
+import React, {useEffect, useState} from "react";
 import styled from "styled-components";
 import GradientBar from "./components/GradientBar";
-import { useAccount } from "wagmi";
-import { baseURL, challengeLinks, clientURL, getENSName } from "./utils/utils";
-import { QRCodeSVG } from "qrcode.react";
-import { Link } from "react-router-dom";
+import {useAccount} from "wagmi";
+import {baseURL, profileLinks, clientURL} from "./utils/utils";
+import {QRCodeSVG} from "qrcode.react";
+import {Link} from "react-router-dom";
 import PlayerCard from "./components/PlayerCard";
 import axios from "axios";
 import Page from "./Page";
 import MiniHeader from "./MiniHeader";
-import { usePrivy } from "@privy-io/react-auth";
+import {usePrivy} from "@privy-io/react-auth";
+import { Player } from "./utils/types";
 
 const Container = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 100%;
-  box-sizing: border-box;
-  padding: 0 20px 20px 20px;
-  height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0 20px 20px 20px;
+    height: 100vh;
 `;
 
 const QrCard = styled.div`
@@ -51,73 +52,59 @@ const CopyButton = styled.div`
 `;
 
 const ChallengeLink = styled.div`
-  color: rgba(57, 53, 84, 0.5);
-  text-align: center;
-  font-family: Nunito;
-  font-size: 12px;
-  font-style: italic;
-  font-weight: 400;
-  overflow-wrap: anywhere;
-  padding: 20px;
+    color: rgba(57, 53, 84, 0.5);
+    text-align: center;
+    font-family: Nunito;
+    font-size: 12px;
+    font-style: italic;
+    font-weight: 400;
+    overflow-wrap: anywhere;
+    padding: 20px;
 `;
 
 const QrCodeContainer = styled.div`
-  width: 100%;
-  text-align: center;
-  height: auto;
-  padding-top: 0.75rem;
+    width: 100%;
+    text-align: center;
+    height: auto;
+    padding-top: 0.75rem;
 `;
 
 function Home() {
   const {user} = usePrivy();
   const address = user?.wallet?.address;
-  const [ens, setEns] = useState("");
-  const [elo, setElo] = useState(1000);
-  const [badges, setBadges] = useState<string[]>([]);
+  const [player, setPlayer] = useState<Player>();
 
   useEffect(() => {
-    async function checkENS() {
-      if (!address) return;
-      const name = await getENSName(address);
-      if (name) {
-        setEns(name);
-      } else {
-        setEns("");
-      }
-    }
-
-    async function getElo() {
-      const result = await axios.post<{
-        elo: number;
-        badges: string[];
-      }>(`${baseURL}/getElo`, {
+    async function fetchPlayerDetails() {
+      const result = await axios.post<Player>(`${baseURL}/getElo`, {
         address: address,
       });
-      setElo(result.data.elo);
-      setBadges(result.data.badges);
+      setPlayer(result.data)
     }
 
-    checkENS();
-
-    getElo();
+    fetchPlayerDetails();
   }, [address]);
+
+  const challengeLink = `${clientURL}/${player?.ensName || address}`
 
   return (
     <Page>
       <Container>
-        <MiniHeader links={challengeLinks} selected={1} />
+        <MiniHeader links={profileLinks} selected={0}/>
         <PlayerCard
           address={address || ""}
-          score={elo}
+          score={player?.elo || 0}
           overrideENSWith={"Your Address"}
-          badges={badges}
+          badges={player?.badges || []}
+          ens={player?.ensName}
+          ensAvatar={player?.ensAvatar}
         />
 
         <QrCard>
           <QrCodeContainer>
             {address && (
               <QRCodeSVG
-                value={`https://metirl.org/${ens ? ens : address}`}
+                value={challengeLink}
                 includeMargin={true}
                 size={300}
               />
@@ -127,13 +114,13 @@ function Home() {
           <CopyButton
             onClick={async () => {
               window.navigator.clipboard.writeText(
-                `${clientURL}/${ens || address}`
+                challengeLink
               );
             }}
           >
             Copy Challenge Link
           </CopyButton>
-          <ChallengeLink>{`${clientURL}/${ens || address}`}</ChallengeLink>
+          <ChallengeLink>{challengeLink}</ChallengeLink>
         </QrCard>
       </Container>
     </Page>
