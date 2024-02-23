@@ -9,6 +9,7 @@ import PlayerCard from "./components/PlayerCard";
 import axios from "axios";
 import Page from "./Page";
 import MiniHeader from "./MiniHeader";
+import { usePrivy } from "@privy-io/react-auth";
 
 const Container = styled.div`
   display: flex;
@@ -21,7 +22,7 @@ const Container = styled.div`
 `;
 
 const QrCard = styled.div`
-  width: 100%;
+  max-width: 600px;
   border-radius: 15px;
   background: #fff;
   display: flex;
@@ -68,9 +69,11 @@ const QrCodeContainer = styled.div`
 `;
 
 function Home() {
-  const { address } = useAccount();
+  const {user} = usePrivy();
+  const address = user?.wallet?.address;
   const [ens, setEns] = useState("");
   const [elo, setElo] = useState(1000);
+  const [badges, setBadges] = useState<string[]>([]);
 
   useEffect(() => {
     async function checkENS() {
@@ -84,10 +87,14 @@ function Home() {
     }
 
     async function getElo() {
-      const result = await axios.post(`${baseURL}/getElo`, {
+      const result = await axios.post<{
+        elo: number;
+        badges: string[];
+      }>(`${baseURL}/getElo`, {
         address: address,
       });
-      setElo(result.data);
+      setElo(result.data.elo);
+      setBadges(result.data.badges);
     }
 
     checkENS();
@@ -98,11 +105,12 @@ function Home() {
   return (
     <Page>
       <Container>
-        <MiniHeader links={challengeLinks} selected={0} />
+        <MiniHeader links={challengeLinks} selected={1} />
         <PlayerCard
           address={address || ""}
           score={elo}
           overrideENSWith={"Your Address"}
+          badges={badges}
         />
 
         <QrCard>

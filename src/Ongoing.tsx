@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, {useEffect, useState} from "react";
 import styled from "styled-components";
 import GradientBar from "./components/GradientBar";
-import { useAccount } from "wagmi";
-import { useNavigate } from "react-router";
-import { ChallengeAttestation } from "./ChallengeAttestation";
+import {useAccount} from "wagmi";
+import {useNavigate} from "react-router";
+import {ChallengeAttestation} from "./ChallengeAttestation";
 import axios from "axios";
-import { baseURL, gameLinks, getENSName } from "./utils/utils";
+import {baseURL, gameLinks, getENSName} from "./utils/utils";
 import {
   Game,
   GameWithPlayers,
@@ -14,30 +14,31 @@ import {
 } from "./utils/types";
 import Page from "./Page";
 import MiniHeader from "./MiniHeader";
+import {usePrivy} from "@privy-io/react-auth";
 
 const Container = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  background-color: #fef6e4;
-  min-height: 100vh;
-  margin: 20px;
-  box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+    box-sizing: border-box;
 `;
 
 const Title = styled.div`
-  color: #272343;
-  text-align: center;
-  font-family: Ubuntu;
-  font-size: 36px;
-  font-style: normal;
-  font-weight: 700;
-  line-height: 34px; /* 94.444% */
-  padding: 30px;
+    color: #272343;
+    text-align: center;
+    font-family: Ubuntu;
+    font-size: 36px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 34px; /* 94.444% */
+    padding: 30px;
 `;
 
 function Ongoing() {
-  const { address } = useAccount();
+  const {user} = usePrivy();
+  const address = user?.wallet?.address;
   const [challengeObjects, setChallengeObjects] = useState<IncomingChallenge[]>(
     []
   );
@@ -45,10 +46,6 @@ function Ongoing() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!address) {
-      return navigate("/");
-    }
-
     async function getAtts() {
       setChallengeObjects([]);
 
@@ -72,6 +69,15 @@ function Ongoing() {
               address === game.player1
                 ? game.player2Object.elo
                 : game.player1Object.elo,
+            whiteListAttestations: address === game.player1
+              ? game.player2Object.whiteListAttestations
+              : game.player1Object.whiteListAttestations,
+            ensName: address === game.player1
+              ? game.player2Object.ensName
+              : game.player1Object.ensName,
+            ensAvatar: address === game.player1
+              ? game.player2Object.ensAvatar
+              : game.player1Object.ensAvatar,
           },
           gameCount: 0,
           winstreak: 0,
@@ -86,13 +92,13 @@ function Ongoing() {
   return (
     <Page>
       <Container>
-        <MiniHeader links={gameLinks} selected={1} />
+        <MiniHeader links={gameLinks} selected={1}/>
 
         <Title>Ongoing Battles</Title>
         {loading && <div>Loading...</div>}
         {challengeObjects.length > 0 || loading ? (
           challengeObjects.map((gameObj) => (
-            <ChallengeAttestation game={gameObj} />
+            <ChallengeAttestation game={gameObj}/>
           ))
         ) : (
           <div>No one here yet</div>

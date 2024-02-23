@@ -15,6 +15,7 @@ import {
   getGameStatus,
   CUSTOM_SCHEMAS,
   choiceToText,
+  STATUS_INVALID,
 } from "./utils/utils";
 import {
   Game,
@@ -31,6 +32,7 @@ import {
 import { MaxWidthDiv } from "./components/MaxWidthDiv";
 import Confetti from "react-confetti";
 import PlayerCard from "./components/PlayerCard";
+import { usePrivy } from "@privy-io/react-auth";
 // Styled components
 
 type WonProps = { won: boolean };
@@ -51,16 +53,21 @@ const LineBreak = styled.div`
   width: 100%;
 `;
 
-const VictoryMessage = styled.div<WonProps>`
+type CentralProps = { central: boolean };
+
+type VictoryMessageProps = { isBig: boolean } & WonProps & CentralProps;
+
+const VictoryMessage = styled.div<VictoryMessageProps>`
   font-family: Ubuntu;
   text-align: left;
   -webkit-text-stroke-width: 2px;
   -webkit-text-stroke-color: ${({ won }) => (won ? "#00ebcf" : "#C8B3F5")};
-  font-size: 26px;
+  font-size: ${({ isBig }) => (isBig ? "48px" : "26px")};
   font-style: normal;
   font-weight: 700;
   line-height: normal;
   margin-bottom: -0.85rem;
+  padding: ${({ isBig }) => (isBig ? "20px" : "0")};
 `;
 
 const Points = styled.div`
@@ -212,13 +219,14 @@ const GameInfoContainer = styled.div`
   border-top: 1px solid rgba(57, 53, 84, 0.15);
 `;
 
-const VictoryMessageContainer = styled.div`
+const VictoryMessageContainer = styled.div<CentralProps>`
   width: 100%;
   box-sizing: border-box;
   display: flex;
   padding: 0 2rem;
   flex-direction: column;
   max-width: 400px;
+  ${({ central }) => (central ? "align-items: center;" : "")}
 `;
 
 function Summary() {
@@ -227,7 +235,8 @@ function Summary() {
   const [player2ENS, setPlayer2ENS] = useState<string>("");
   const [tick, setTick] = useState<number>(0);
   const { challengeId } = useParams();
-  const { address } = useAccount();
+  const {user} = usePrivy();
+  const address = user?.wallet?.address;
   const navigate = useNavigate();
 
   const update = async () => {
@@ -264,7 +273,6 @@ function Summary() {
     game.relevantAttestations.map((attestation) =>
       JSON.parse(attestation.packageObjString)
     );
-  console.log("att objects", gameAttestationObjects);
 
   const attestationDescriptions = gameAttestationObjects.map((attestation) => {
     switch (attestation.sig.message.schema) {
@@ -280,6 +288,10 @@ function Summary() {
   const won =
     (address === game?.player1 && status === STATUS_PLAYER1_WIN) ||
     (address === game?.player2 && status === STATUS_PLAYER2_WIN);
+
+  const eloChangeHappened = game?.eloChange1 > 0 || game?.eloChange2 > 0;
+  console.log(game)
+
   return (
     <Page>
       <SummaryContainer>
@@ -291,9 +303,21 @@ function Summary() {
             initialVelocityY={20}
           />
         )}
-        <VictoryMessageContainer>
-          {address === game?.player1 ? (
-            <VictoryMessage won={status === STATUS_PLAYER1_WIN}>
+        <VictoryMessageContainer central={!eloChangeHappened}>
+          {status===STATUS_INVALID?
+            <VictoryMessage
+              won={false}
+              isBig={true}
+              central={!eloChangeHappened}
+            >
+              Abandoned
+            </VictoryMessage>
+            :address === game?.player1 ? (
+            <VictoryMessage
+              won={status === STATUS_PLAYER1_WIN}
+              isBig={!eloChangeHappened}
+              central={!eloChangeHappened}
+            >
               {status === STATUS_PLAYER1_WIN
                 ? "You Won!"
                 : status === STATUS_PLAYER2_WIN
@@ -301,7 +325,11 @@ function Summary() {
                 : "It's a tie!"}
             </VictoryMessage>
           ) : address === game?.player2 ? (
-            <VictoryMessage won={status === STATUS_PLAYER2_WIN}>
+            <VictoryMessage
+              won={status === STATUS_PLAYER2_WIN}
+              isBig={!eloChangeHappened}
+              central={!eloChangeHappened}
+            >
               {status === STATUS_PLAYER2_WIN
                 ? "You Won!"
                 : status === STATUS_PLAYER1_WIN
@@ -310,7 +338,8 @@ function Summary() {
             </VictoryMessage>
           ) : null}
 
-          {address === game?.player1 || address === game?.player2 ? (
+          {(address === game?.player1 || address === game?.player2) &&
+          eloChangeHappened ? (
             <Points>
               <PointsNum
                 won={
@@ -332,19 +361,43 @@ function Summary() {
         </VictoryMessageContainer>
         <ResultContainer>
           {/*<BiArrowFromBottom color={"#000"} size={24} />*/}
-          <BoxTitle>Roshambo Result</BoxTitle>
+          <BoxTitle>Game Result</BoxTitle>
           <LineBreak />
           <PlayerCard
             address={game?.player1 || ""}
             score={choiceToText(game?.choice1 || 0)}
             overrideENSWith={"Player A"}
-            style={{ border: "none" }}
+            style={{
+              border: "none",
+              boxShadow: "none",
+              backgroundColor:
+                status === STATUS_PLAYER1_WIN
+                  ? "rgba(46, 196, 182, 0.33)"
+                  : "#FFF",
+            }}
+            badges={
+              game?.player1Object.whiteListAttestations.map(
+                (att) => att.type
+              ) || []
+            }
           />
           <PlayerCard
             address={game?.player2 || ""}
             score={choiceToText(game?.choice2 || 0)}
             overrideENSWith={"Player B"}
-            style={{ border: "none" }}
+            style={{
+              border: "none",
+              boxShadow: "none",
+              backgroundColor:
+                status === STATUS_PLAYER2_WIN
+                  ? "rgba(46, 196, 182, 0.33)"
+                  : "#FFF",
+            }}
+            badges={
+              game?.player2Object.whiteListAttestations.map(
+                (att) => att.type
+              ) || []
+            }
           />
           {game?.stakes && (
             <>
@@ -357,7 +410,7 @@ function Summary() {
         </ResultContainer>
 
         <ResultContainer>
-          <BoxTitle> Game Receipt </BoxTitle>
+          <BoxTitle> Game Attestations </BoxTitle>
           {gameAttestationObjects.map((attestation, index) => (
             <GameInfoContainer>
               <img

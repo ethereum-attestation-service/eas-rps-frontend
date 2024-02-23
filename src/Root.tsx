@@ -7,7 +7,7 @@ import "./App.css";
 import invariant from "tiny-invariant";
 import { activeChainConfig, alchemyApiKey } from "./utils/utils";
 import { WrongChainModal } from "./components/WrongChainModal";
-import FixedFooter from "./FixedFooter";
+import Footer from "./Footer";
 import { publicProvider } from "wagmi/providers/public";
 import { PrivyWagmiConnector } from "@privy-io/wagmi-connector";
 import { PrivyProvider, usePrivy } from "@privy-io/react-auth";
@@ -103,6 +103,7 @@ export function Root() {
             <PrivyAutoLogout>
               <Outlet />
             </PrivyAutoLogout>
+            <Footer />
           </ConnectKitProvider>
           <WrongChainModal />
         </PrivyWagmiConnector>

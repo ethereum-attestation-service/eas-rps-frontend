@@ -1,16 +1,13 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import SpriteText from "three-spritetext";
 import * as THREE from "three";
-import ForceGraph3D, { ForceGraphMethods } from "react-force-graph-3d";
+import ForceGraph3D  from "react-force-graph-3d";
 import axios from "axios";
-import ResponsiveModal from "react-responsive-modal";
 import { useAccount } from "wagmi";
 import GraphGameListModal from "./components/GraphGameListModal";
-
-const frontendURL = "http://localhost:3000";
-const baseURL = "http://localhost:8080";
+import { baseURL, clientURL } from "./utils/utils";
 export default function ForceGraph() {
   const [graph, setGraph] = useState({ nodes: [], links: [] });
 
@@ -75,22 +72,10 @@ export default function ForceGraph() {
     }
   }, []);
 
-  const popUpStyles = {
-    position: "absolute" as "absolute",
-    top: 0,
-    padding: 10,
-    borderRadius: 10,
-    zIndex: 1000,
-    width: 300,
-    maxHeight: 300,
-    // restrict height
-    overflow: "auto",
-  };
-
   return (
     <main>
       <GraphGameListModal
-        frontendURL={frontendURL}
+        frontendURL={clientURL}
         currentLink={currentLink}
         currentGames={currentGames}
         isOpen={!!currentLink}

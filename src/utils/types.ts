@@ -101,19 +101,38 @@ export type Game = {
   stakes: string;
   eloChange1: number;
   eloChange2: number;
+  invalidated: boolean;
 };
 
 export type IncomingChallenge = {
   uid: string;
   stakes: string;
-  player1Object: { address: string; elo: number | string };
+  player1Object: {
+    address: string;
+    elo: number | string;
+    whiteListAttestations: { type: string }[];
+    ensName?: string;
+    ensAvatar?: string;
+  };
   winstreak: number;
   gameCount: number;
 };
 
 export type GameWithPlayers = Game & {
-  player1Object: { address: string; elo: number };
-  player2Object: { address: string; elo: number };
+  player1Object: {
+    address: string;
+    elo: number;
+    whiteListAttestations: { type: string }[];
+    ensName?: string;
+    ensAvatar?: string;
+  };
+  player2Object: {
+    address: string;
+    elo: number;
+    whiteListAttestations: { type: string }[];
+    ensName?: string;
+    ensAvatar?: string;
+  };
 };
 
 export type GameWithPlayersAndAttestations = GameWithPlayers & {
@@ -123,9 +142,15 @@ export type GameWithPlayersAndAttestations = GameWithPlayers & {
 export type MyStats = {
   games: Game[];
   elo: number;
+  badges: string[];
+  ensName?: string;
+  ensAvatar?: string;
 };
 
 export type Player = {
   address: string;
   elo: number;
+  badges: string[];
+  ensName?: string;
+  ensAvatar?: string;
 };

@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, {useEffect, useState} from "react";
 import styled from "styled-components";
-import { useAccount } from "wagmi";
+import {useAccount} from "wagmi";
 import {
   baseURL,
   CHOICE_ROCK,
@@ -19,12 +19,8 @@ import {
 } from "./utils/utils";
 
 import invariant from "tiny-invariant";
-import { useNavigate, useParams } from "react-router";
-import { FaHandRock, FaHandScissors, FaHandPaper } from "react-icons/fa";
-import { theme } from "./utils/theme";
-import rockOptionImage from "./assets/rockOption.png";
-import paperOptionImage from "./assets/paperOption.png";
-import scissorsOptionImage from "./assets/scissorsOption.png";
+import {useNavigate, useParams} from "react-router";
+import {FaHandRock, FaHandScissors, FaHandPaper} from "react-icons/fa";
 
 import {
   AttestationShareablePackageObject,
@@ -33,65 +29,64 @@ import {
   ZERO_ADDRESS,
   ZERO_BYTES32,
 } from "@ethereum-attestation-service/eas-sdk";
-import { ethers } from "ethers";
+import {ethers} from "ethers";
 import dayjs from "dayjs";
-import { useSigner } from "./utils/wagmi-utils";
-import { useStore } from "./useStore";
+import {useSigner} from "./utils/wagmi-utils";
+import {useStore} from "./useStore";
 import {
-  AcceptedChallenge,
-  Game,
-  GameCommit,
   GameWithPlayers,
 } from "./utils/types";
 import axios from "axios";
 import Lottie from "react-lottie";
-import { Identicon } from "./components/Identicon";
+import {Identicon} from "./components/Identicon";
 import PlayerCard from "./components/PlayerCard";
 import RotatedLottie from "./components/RotatedLottie";
+import {usePrivy} from "@privy-io/react-auth";
+import InGameChosenIcon from "./components/InGameChosenIcon";
 
 type finishedProps = { finished: boolean };
 const Vs = styled.div`
-  text-align: center;
-  font-family: Racing Sans One;
-  font-size: 80px;
-  font-style: normal;
-  font-weight: 700;
-  line-height: 34px; /* 42.5% */
-  padding: 20px;
+    text-align: center;
+    font-family: Racing Sans One;
+    font-size: 80px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 34px; /* 42.5% */
+    padding: 20px;
 `;
 
 const Button = styled.button`
-  border-radius: 8px;
-  border: 1px solid #e18100;
-  background: #e18100;
-  margin: 10px 0;
-  cursor: pointer;
-  color: #fff;
-  text-align: center;
-  font-family: Nunito;
-  font-size: 18px;
-  font-style: normal;
-  font-weight: 700;
-  height: 40px;
-  flex-shrink: 0;
+    border-radius: 8px;
+    border: 1px solid #e18100;
+    background: #e18100;
+    margin: 10px 0;
+    cursor: pointer;
+    color: #fff;
+    text-align: center;
+    font-family: Nunito;
+    font-size: 18px;
+    font-style: normal;
+    font-weight: 700;
+    height: 40px;
+    flex-shrink: 0;
 `;
 
 type GameStatusProps = { status: number };
 
 const GameContainer = styled.div<GameStatusProps>`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  background-color: ${({ status }) =>
-    status === STATUS_PLAYER1_WIN
-      ? "rgba(46, 196, 182, 0.33)"
-      : status === STATUS_PLAYER2_WIN
-      ? "rgba(255, 0, 28, 0.33)"
-      : status === STATUS_DRAW
-      ? "rgba(255, 220, 0, 0.33)"
-      : "none"};
-  padding: 20px;
-  box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: ${({status}) =>
+            status === STATUS_PLAYER1_WIN
+                    ? "rgba(46, 196, 182, 0.33)"
+                    : status === STATUS_PLAYER2_WIN
+                            ? "rgba(255, 0, 28, 0.33)"
+                            : status === STATUS_DRAW
+                                    ? "rgba(255, 220, 0, 0.33)"
+                                    : "none"};
+    padding: 0 1.2rem 1.2rem 1.2rem;
+    box-sizing: border-box;
 `;
 
 type WaitingTextProps = { isPlayer1: boolean };
@@ -103,79 +98,79 @@ const blinkAnimation = `@keyframes blink {
 }`;
 
 const WaitingText = styled.div<WaitingTextProps>`
-  color: #272343;
-  text-align: center;
-  -webkit-text-stroke-color: ${({ isPlayer1 }) =>
-    isPlayer1 ? "#00ebcf" : "#C8B3F5"};
-  -webkit-text-stroke-width: 2px;
-  font-family: Ubuntu;
-  font-size: 28px;
-  font-style: italic;
-  font-weight: 700;
-  line-height: 34px;
-  padding: 20px;
-  margin: 5px 0;
-  animation: ${blinkAnimation} 1.5s linear infinite;
+    color: #272343;
+    text-align: center;
+    -webkit-text-stroke-color: ${({isPlayer1}) =>
+            isPlayer1 ? "#00ebcf" : "#C8B3F5"};
+    -webkit-text-stroke-width: 2px;
+    font-family: Ubuntu;
+    font-size: 28px;
+    font-style: italic;
+    font-weight: 700;
+    line-height: 34px;
+    padding: 20px;
+    margin: 5px 0;
+    animation: ${blinkAnimation} 1.5s linear infinite;
 `;
 
 const HandSelection = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 12px;
-  margin: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+    margin: 20px;
 `;
 
 const HandOption = styled.div`
-  border-radius: 5px;
-  border: 1px solid rgba(57, 53, 84, 0.26);
-  background: #fff;
-  width: 110px;
-  height: 104px;
-  flex-shrink: 0;
-  display: flex;
-  justify-content: center;
-  cursor: pointer;
-  align-items: center;
-  font-size: 60px;
+    border-radius: 5px;
+    border: 1px solid rgba(57, 53, 84, 0.26);
+    background: #fff;
+    width: 110px;
+    height: 104px;
+    flex-shrink: 0;
+    display: flex;
+    justify-content: center;
+    cursor: pointer;
+    align-items: center;
+    font-size: 60px;
 `;
 
 const HandOptionImage = styled.img`
-  width: 80%;
-  height: 80%;
+    width: 80%;
+    height: 80%;
 `;
 
 const PlayerContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  justify-content: space-between;
-  align-items: center;
-  gap: 20px;
-  margin: 10px 0;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    margin: 10px 0;
 `;
 
 const PlayerStatus = styled.div`
-  display: flex;
-  width: 100%;
-  text-align: center;
-  justify-content: center;
-  align-content: center;
-  align-items: center;
-  flex-direction: column;
+    display: flex;
+    width: 100%;
+    text-align: center;
+    justify-content: center;
+    align-content: center;
+    align-items: center;
+    flex-direction: column;
 `;
 
 function Challenge() {
-  const { address } = useAccount();
+  const {user} = usePrivy();
+  const address = user?.wallet?.address;
   const navigate = useNavigate();
-  const { challengeId } = useParams();
+  const {challengeId} = useParams();
   const signer = useSigner();
   const [tick, setTick] = useState(0);
   const [game, setGame] = useState<GameWithPlayers>();
 
   const gameCommits = useStore((state) => state.gameCommits);
 
-  console.log("gc", gameCommits);
   const thisGameCommit = gameCommits.find(
     (commit) => commit.challengeUID === challengeId
   );
@@ -183,6 +178,27 @@ function Challenge() {
   const addGameCommit = useStore((state) => state.addGameCommit);
 
   invariant(challengeId, "Challenge ID should be defined");
+
+  const swapPlayersIfNecessary = () => {
+    let tmpGame = game;
+    if (tmpGame && tmpGame.player2 === address) {
+      tmpGame.player2 = tmpGame.player1;
+      tmpGame.player1 = address;
+      const tmpCommit = tmpGame.commit2;
+      tmpGame.commit2 = tmpGame.commit1;
+      tmpGame.commit1 = tmpCommit;
+      const tmpChoice = tmpGame.choice2;
+      tmpGame.choice2 = tmpGame.choice1;
+      tmpGame.choice1 = tmpChoice;
+      const tmpSalt = tmpGame.salt2;
+      tmpGame.salt2 = tmpGame.salt1;
+      tmpGame.salt1 = tmpSalt;
+      const tmpPlayerObject = tmpGame.player2Object;
+      tmpGame.player2Object = tmpGame.player1Object;
+      tmpGame.player1Object = tmpPlayerObject;
+    }
+    setGame(tmpGame);
+  }
 
   const update = async () => {
     //query server for game status
@@ -215,18 +231,23 @@ function Challenge() {
     update();
     setTimeout(() => {
       setTick(tick + 1);
-    }, 5000);
+    }, 2000);
   }, [tick]);
 
-  const status = game ? getGameStatus(game) : STATUS_UNKNOWN;
+  useEffect(() => {
+    swapPlayersIfNecessary()
+  }, [game, address]);
 
   useEffect(() => {
-    if (status !== STATUS_UNKNOWN) {
-      setTimeout(() => {
+    if (game) {
+      const status = getGameStatus(game);
+      if (status !== STATUS_UNKNOWN) {
         navigate(`/summary/${challengeId}`);
-      }, 1000);
+      }
     }
   }, [game]);
+
+  const status = game ? getGameStatus(game) : STATUS_UNKNOWN;
 
   const commit = async (choice: number) => {
     invariant(address, "Address should be defined");
@@ -247,7 +268,7 @@ function Challenge() {
       console.log("hashedChoice", hashedChoice);
 
       const encoded = schemaEncoder.encodeData([
-        { name: "commitHash", type: "bytes32", value: hashedChoice },
+        {name: "commitHash", type: "bytes32", value: hashedChoice},
       ]);
 
       const eas = new EAS(EASContractAddress);
@@ -303,14 +324,17 @@ function Challenge() {
           address={game.player2}
           score={game.player2Object.elo}
           overrideENSWith={"Opponent"}
+          badges={game.player2Object.whiteListAttestations.map(
+            (att) => att.type
+          )}
+          ens={game.player2Object.ensName}
+          ensAvatar={game.player2Object.ensAvatar}
         />
         <PlayerStatus>
           {game.commit2 === ZERO_BYTES32 ? (
             <WaitingText isPlayer1={false}>Waiting For Opponent...</WaitingText>
-          ) : game.choice2 === CHOICE_UNKNOWN ? (
+          ) :  (
             <WaitingText isPlayer1={false}>Player Ready</WaitingText>
-          ) : (
-            <RotatedLottie choice={game.choice2} isPlayer1={false} />
           )}
         </PlayerStatus>
       </PlayerContainer>
@@ -347,15 +371,14 @@ function Challenge() {
               </HandSelection>
             </>
           ) : (
-            <RotatedLottie
+            <InGameChosenIcon
               choice={
                 game.choice1 !== CHOICE_UNKNOWN
                   ? game.choice1
                   : thisGameCommit && thisGameCommit.choice !== CHOICE_UNKNOWN
-                  ? thisGameCommit.choice
-                  : CHOICE_UNKNOWN
+                    ? thisGameCommit.choice
+                    : CHOICE_UNKNOWN
               }
-              isPlayer1={true}
             />
           )}
         </PlayerStatus>
@@ -364,6 +387,11 @@ function Challenge() {
           address={game.player1}
           score={game.player1Object.elo}
           overrideENSWith={"You"}
+          badges={game.player1Object.whiteListAttestations.map(
+            (att) => att.type
+          )}
+          ens={game.player1Object.ensName}
+          ensAvatar={game.player1Object.ensAvatar}
         />
       </PlayerContainer>
     </GameContainer>

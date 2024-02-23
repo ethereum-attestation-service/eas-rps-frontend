@@ -13,6 +13,8 @@ import relativeTime from "dayjs/plugin/relativeTime";
 import { ethers } from "ethers";
 import { AttestationShareablePackageObject } from "@ethereum-attestation-service/eas-sdk";
 import axios from "axios";
+import easLogo from "../assets/easlogo.png";
+import coinbaseLogo from "../assets/coinbaseLogo.png";
 
 // @ts-ignore
 BigInt.prototype.toJSON = function () {
@@ -33,7 +35,7 @@ export const CUSTOM_SCHEMAS = {
 };
 
 export const RPS_GAME_UID =
-  "0x048de8e6b4bf0769744930cc2641ce05d473f3cd5ce976ba9e6a3256d4b011eb";
+  "0x9a3b8beb51629e4624923863231c3931f466e79dac4d7c7f2d0e346240e66a72";
 
 dayjs.extend(duration);
 dayjs.extend(relativeTime);
@@ -74,10 +76,12 @@ export const activeChainConfig = EAS_CHAIN_CONFIGS.find(
   (config) => config.chainId === CHAINID
 );
 
-// export const baseURL = `http://localhost:8080`;
-export const baseURL = `http://149.28.39.24:8080`;
-// export const baseURL = `http://eas-rps.dakh.com`;
-export const clientURL = `http://localhost:3000`;
+export const baseURL = process.env.NODE_ENV==="development"?
+  `http://localhost:8080/api`:
+  `https://rps.sh/api`;
+
+// export const clientURL = `http://localhost:3000`;
+export const clientURL = `https://rps.sh`;
 
 invariant(activeChainConfig, "No chain config found for chain ID");
 export const EASContractAddress = activeChainConfig.contractAddress;
@@ -190,22 +194,27 @@ export const STATUS_UNKNOWN = 3;
 export const STATUS_INVALID = 4;
 
 export function getGameStatus(game: Game) {
+  if (game.invalidated){
+    return STATUS_INVALID;
+  }
+
   if (game.choice1 === CHOICE_UNKNOWN || game.choice2 === CHOICE_UNKNOWN) {
     return STATUS_UNKNOWN;
   }
+
   return (3 + game.choice1 - game.choice2) % 3;
 }
 
 export function choiceToText(choice: number) {
   switch (choice) {
     case CHOICE_ROCK:
-      return "ROCK";
+      return "🪨";
     case CHOICE_PAPER:
-      return "PAPER";
+      return "📄";
     case CHOICE_SCISSORS:
-      return "SCISSORS";
+      return "✂️";
     default:
-      return "UNKNOWN";
+      return "?";
   }
 }
 
@@ -214,14 +223,14 @@ export const addPlusIfPositive = (num: number) => {
 };
 
 export const challengeLinks = [
-  { name: "QR Code", url: "/qr" },
   { name: "New Challenge", url: "/" },
+  { name: "QR Code", url: "/qr" },
   { name: "Leaderboard", url: "/leaderboard/global" },
 ];
 
 export const gameLinks = [
   { name: "Incoming", url: "/challenges" },
-  { name: "Ongoing", url: "/ongoing" },
+  { name: "Active", url: "/ongoing" },
   { name: "History", url: "/games" },
 ];
 
@@ -232,4 +241,13 @@ export const leaderboardLinks = [
 
 export function formatAttestationLongValueV2(address: string) {
   return address.substring(0, 8) + "•••" + address.slice(-8);
+}
+
+export function badgeNameToLogo(badgeName: string) {
+  switch (badgeName) {
+    case "MetIRL":
+      return easLogo;
+    case "Coinbase":
+      return coinbaseLogo;
+  }
 }

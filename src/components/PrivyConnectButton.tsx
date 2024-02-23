@@ -33,12 +33,11 @@ export default function PrivyConnectButton({
   handleClickWhileConnected,
 }: Props) {
   const { login, user } = usePrivy();
-  const { wallet: activeWallet } = usePrivyWagmi();
-  const { address } = useAccount();
+  const address = user?.wallet?.address;
 
   return (
-    <StyledButton onClick={user && address ? handleClickWhileConnected : login}>
-      {user && address
+    <StyledButton onClick={address ? handleClickWhileConnected : login}>
+      {address
         ? formatAttestationLongValueV2(address)
         : "Connect Wallet"}
     </StyledButton>

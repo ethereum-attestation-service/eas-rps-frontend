@@ -5,9 +5,11 @@ import { useAccount } from "wagmi";
 import { useNavigate } from "react-router";
 import { ChallengeAttestation } from "./ChallengeAttestation";
 import axios from "axios";
-import { baseURL, getENSName } from "./utils/utils";
+import { baseURL, gameLinks, getENSName } from "./utils/utils";
 import { Game, IncomingChallenge } from "./utils/types";
 import Page from "./Page";
+import MiniHeader from "./MiniHeader";
+import { usePrivy } from "@privy-io/react-auth";
 
 const Container = styled.div`
   display: flex;
@@ -15,6 +17,8 @@ const Container = styled.div`
   align-items: center;
   width: 100vw;
   min-height: 100vh;
+  padding: 20px;
+  box-sizing: border-box;
 `;
 
 const Title = styled.div`
@@ -29,7 +33,8 @@ const Title = styled.div`
 `;
 
 function Challenges() {
-  const { address } = useAccount();
+  const {user} = usePrivy();
+  const address = user?.wallet?.address;
   const [challengeObjects, setChallengeObjects] = useState<IncomingChallenge[]>(
     []
   );
@@ -60,7 +65,8 @@ function Challenges() {
   return (
     <Page>
       <Container>
-        <GradientBar />
+        <MiniHeader links={gameLinks} selected={0} />
+
         <Title>Incoming Battles</Title>
         {loading && <div>Loading...</div>}
         {challengeObjects.length > 0 || loading ? (

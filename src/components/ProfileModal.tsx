@@ -87,10 +87,10 @@ const DisconnectButton = styled.button`
 `;
 
 export function ProfileModal({ handleClose }: Props) {
-  const { address } = useAccount();
   const [copying, setCopying] = useState(false);
   const navigate = useNavigate();
-  const { logout } = usePrivy();
+  const {user, logout } = usePrivy();
+  const address = user?.wallet?.address;
 
   if (!address) return null;
 

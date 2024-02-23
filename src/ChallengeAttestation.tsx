@@ -34,6 +34,7 @@ const Container = styled.div`
   flex-direction: column;
   align-items: center;
   margin: 20px;
+    width: 100%;
 `;
 
 const AcceptButton = styled.div`
@@ -194,15 +195,20 @@ export function ChallengeAttestation({ game: g, isChallenge }: Props) {
         address={g.player1Object.address}
         score={g.player1Object.elo}
         overrideENSWith={""}
+        badges={
+          g.player1Object.whiteListAttestations.map((att) => att.type) || []
+        }
+        ens={g.player1Object.ensName}
+        ensAvatar={g.player1Object.ensAvatar}
       />
       {isChallenge && (
         <>
           <LineBreak />
           <StatsContainer>
             <BoldNumber>{g.gameCount}</BoldNumber>
-            <NumberDescriptor>Games Played</NumberDescriptor>
+            <NumberDescriptor>Games Against You</NumberDescriptor>
             <BoldNumber>{g.winstreak}</BoldNumber>
-            <NumberDescriptor>Win Streak</NumberDescriptor>
+            <NumberDescriptor>Your Win Streak</NumberDescriptor>
           </StatsContainer>
         </>
       )}
