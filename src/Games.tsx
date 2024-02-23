@@ -1,9 +1,9 @@
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import GradientBar from "./components/GradientBar";
-import {useAccount} from "wagmi";
-import {useNavigate, useParams} from "react-router";
-import {ChallengeAttestation} from "./ChallengeAttestation";
+import { useAccount } from "wagmi";
+import { useNavigate, useParams } from "react-router";
+import { ChallengeAttestation } from "./ChallengeAttestation";
 import axios from "axios";
 import {
   baseURL,
@@ -14,60 +14,63 @@ import {
   STATUS_PLAYER1_WIN,
   STATUS_PLAYER2_WIN,
 } from "./utils/utils";
-import {Game, MyStats} from "./utils/types";
+import { Game, MyStats } from "./utils/types";
 import UserHistoryCard from "./UserHistoryCard";
 import PlayerCard from "./components/PlayerCard";
 import MiniHeader from "./MiniHeader";
-import {usePrivy} from "@privy-io/react-auth";
+import { usePrivy } from "@privy-io/react-auth";
 // import { Button } from "./Home";
 
 const Container = styled.div`
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 20px;
-    box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  box-sizing: border-box;
 `;
 
 const RecentBattles = styled.div`
-    color: #272343;
-    font-family: Ubuntu;
-    font-size: 18px;
-    font-style: normal;
-    font-weight: 700;
-    line-height: normal;
+  color: #272343;
+  font-family: Ubuntu;
+  font-size: 18px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
 `;
 
 const BattleContainer = styled.div`
-    align-items: center;
-    width: 100%;
-    justify-content: center;
-    display: flex;
-    flex-direction: column;
-    box-sizing: border-box;
-    padding: 10px 0;
+  align-items: center;
+  width: 100%;
+  justify-content: center;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
 `;
 
 const BattlesWrapper = styled.div`
-    background-color: #fff;
-    max-width: 800px;
-    height: 400px;
-    overflow-x: auto;
-    width: 100%;
-    border-radius: 10px;
+  background-color: #fff;
+  max-width: 800px;
+  height: 400px;
+  overflow-x: auto;
+  width: 100%;
+  border-radius: 10px;
+  gap: 10px;
+  display: flex;
+  flex-direction: column;
+  padding: 12px;
 `;
 
 const StyledPlayerCard = styled(PlayerCard)`
-    margin: 0;
-    box-shadow: none;
-    border: none;
-    border-bottom: 1px solid rgba(57, 53, 84, 0.1);
-    border-radius: 0;
+  margin: 0;
+  box-shadow: none;
+  border: none;
+  //border-bottom: 1px solid rgba(57, 53, 84, 0.1);
+  border-radius: 0;
 `;
 
 function Games() {
-  const {address: preComputedAddress} = useParams();
-  const {user} = usePrivy();
+  const { address: preComputedAddress } = useParams();
+  const { user } = usePrivy();
   const address = preComputedAddress || user?.wallet?.address;
   const [ensName, setEnsName] = useState<string | undefined>(undefined);
   const [ensAvatar, setEnsAvatar] = useState<string | undefined>(undefined);
@@ -98,7 +101,13 @@ function Games() {
         finalized: true,
       });
 
-      const {games, elo, badges, ensName: ens, ensAvatar: ensAv} = gameList.data;
+      const {
+        games,
+        elo,
+        badges,
+        ensName: ens,
+        ensAvatar: ensAv,
+      } = gameList.data;
 
       setFinishedGames(games);
       setBadges(badges);
@@ -107,7 +116,7 @@ function Games() {
       setEnsAvatar(ensAv);
       let tmpGameResults = [];
 
-      let tmpGameStats = {wins: 0, draws: 0, losses: 0, streak: 0};
+      let tmpGameStats = { wins: 0, draws: 0, losses: 0, streak: 0 };
       let streakCounting = true;
       for (const gameObj of games) {
         const status = getGameStatus(gameObj);
@@ -116,13 +125,13 @@ function Games() {
           ? status === STATUS_PLAYER1_WIN
             ? "WIN"
             : status === STATUS_PLAYER2_WIN
-              ? "LOSS"
-              : "DRAW"
+            ? "LOSS"
+            : "DRAW"
           : status === STATUS_PLAYER2_WIN
-            ? "WIN"
-            : status === STATUS_PLAYER1_WIN
-              ? "LOSS"
-              : "DRAW";
+          ? "WIN"
+          : status === STATUS_PLAYER1_WIN
+          ? "LOSS"
+          : "DRAW";
         if (result === "WIN") {
           tmpGameStats.wins++;
           if (streakCounting) {
@@ -147,13 +156,15 @@ function Games() {
 
   return (
     <Container>
-      {(!preComputedAddress) && <MiniHeader links={gameLinks} selected={2}/>}
+      {!preComputedAddress && <MiniHeader links={gameLinks} selected={2} />}
       <UserHistoryCard
         address={address || ""}
         ensName={ensName}
         ensAvatar={ensAvatar}
         stats={gameStats}
-        isSelf={(!preComputedAddress) || preComputedAddress === user?.wallet?.address}
+        isSelf={
+          !preComputedAddress || preComputedAddress === user?.wallet?.address
+        }
         badges={badges || []}
         elo={eloScore}
       />
