@@ -37,10 +37,7 @@ import {
   GameWithPlayers,
 } from "./utils/types";
 import axios from "axios";
-import Lottie from "react-lottie";
-import {Identicon} from "./components/Identicon";
 import PlayerCard from "./components/PlayerCard";
-import RotatedLottie from "./components/RotatedLottie";
 import {usePrivy} from "@privy-io/react-auth";
 import InGameChosenIcon from "./components/InGameChosenIcon";
 
@@ -168,6 +165,7 @@ function Challenge() {
   const signer = useSigner();
   const [tick, setTick] = useState(0);
   const [game, setGame] = useState<GameWithPlayers>();
+  const [attesting, setAttesting] = useState(false);
 
   const gameCommits = useStore((state) => state.gameCommits);
 
@@ -251,6 +249,7 @@ function Challenge() {
 
   const commit = async (choice: number) => {
     invariant(address, "Address should be defined");
+    setAttesting(true);
 
     try {
       const schemaEncoder = new SchemaEncoder("bytes32 commitHash");
@@ -309,6 +308,7 @@ function Challenge() {
         alert(res.data.error);
       }
     } catch (e) {
+      setAttesting(false);
       console.error(e);
     }
   };
@@ -333,7 +333,7 @@ function Challenge() {
         <PlayerStatus>
           {game.commit2 === ZERO_BYTES32 ? (
             <WaitingText isPlayer1={false}>Waiting For Opponent...</WaitingText>
-          ) :  (
+          ) : (
             <WaitingText isPlayer1={false}>Player Ready</WaitingText>
           )}
         </PlayerStatus>
@@ -346,7 +346,7 @@ function Challenge() {
           {game.commit1 === ZERO_BYTES32 ? (
             <>
               <WaitingText isPlayer1={true}>Waiting For You...</WaitingText>
-              <HandSelection>
+              {!attesting && <HandSelection>
                 <HandOption
                   onClick={() => {
                     commit(CHOICE_ROCK);
@@ -369,6 +369,7 @@ function Challenge() {
                   ✂️
                 </HandOption>
               </HandSelection>
+              }
             </>
           ) : (
             <InGameChosenIcon

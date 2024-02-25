@@ -10,8 +10,9 @@ import relativeTime from "dayjs/plugin/relativeTime";
 import {ethers} from "ethers";
 import {AttestationShareablePackageObject} from "@ethereum-attestation-service/eas-sdk";
 import axios from "axios";
-import easLogo from "../assets/easlogo.png";
-import coinbaseLogo from "../assets/coinbaseLogo.png";
+
+const easLogo = "/images/rps/easlogo.png";
+const coinbaseLogo = "/images/rps/coinbaseLogo.png";
 
 // @ts-ignore
 BigInt.prototype.toJSON = function () {
@@ -73,8 +74,8 @@ export const activeChainConfig = EAS_CHAIN_CONFIGS.find(
   (config) => config.chainId === CHAINID
 );
 
-export const baseURL = process.env.NODE_ENV==="development"?
-  `http://localhost:8080/api`:
+export const baseURL = process.env.NODE_ENV === "development" ?
+  `http://localhost:8080/api` :
   `https://rps.sh/api`;
 
 // export const clientURL = `http://localhost:3000`;
@@ -113,7 +114,6 @@ export async function getENSName(address: string) {
     return null;
   }
 }
-
 
 
 export async function submitSignedAttestation(
@@ -165,7 +165,7 @@ export function choiceToText(choice: number) {
     case CHOICE_SCISSORS:
       return "✂️";
     default:
-      return "?";
+      return " ";
   }
 }
 

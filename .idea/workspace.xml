@@ -5,15 +5,30 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="4b6b4d34-3ef3-4b21-bcd4-f67b10a33234" name="Changes" comment="graph">
+      <change beforePath="$PROJECT_DIR$/.env" beforeDir="false" afterPath="$PROJECT_DIR$/.env" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Challenge.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/Challenge.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/ChallengeAttestation.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/ChallengeAttestation.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Challenges.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/Challenges.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Games.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/Games.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Home.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/Home.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Ongoing.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/Ongoing.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Qr.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/Qr.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/PlayerCard.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/PlayerCard.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/utils/types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/types.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/HowItWorks.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/HowItWorks.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Root.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/Root.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Summary.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/Summary.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/assets/brick-wall.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/assets/coinbaseLogo.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/assets/confetti-rps.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/assets/easlogo.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/assets/how-it-works-line.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/assets/newChallengeFists.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/assets/paper-orange.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/assets/paper-purple.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/assets/paperOption.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/assets/power-orange.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/assets/power-purple.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/assets/rockOption.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/assets/scissors-orange.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/assets/scissors-purple.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/assets/scissorsOption.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/RotatedLottie.tsx" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/utils/utils.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/utils.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -102,7 +117,7 @@
       <workItem from="1708539425158" duration="50000" />
       <workItem from="1708539487578" duration="148000" />
       <workItem from="1708539652741" duration="40580000" />
-      <workItem from="1708715157542" duration="3768000" />
+      <workItem from="1708715157542" duration="13425000" />
     </task>
     <task id="LOCAL-00001" summary="graph">
       <option name="closed" value="true" />

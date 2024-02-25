@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, {useEffect, useState} from "react";
 import styled from "styled-components";
 import GradientBar from "./components/GradientBar";
-import { useAccount } from "wagmi";
+import {useAccount} from "wagmi";
 import newChallengeFists from "./assets/newChallengeFists.png";
 
 import {
@@ -19,102 +19,104 @@ import {
   SchemaEncoder,
 } from "@ethereum-attestation-service/eas-sdk";
 import invariant from "tiny-invariant";
-import { ethers } from "ethers";
-import { Link, useSearchParams } from "react-router-dom";
-import { useNavigate, useParams } from "react-router";
+import {ethers} from "ethers";
+import {Link, useSearchParams} from "react-router-dom";
+import {useNavigate, useParams} from "react-router";
 import axios from "axios";
 import dayjs from "dayjs";
-import { useSigner } from "./utils/wagmi-utils";
-import { useStore } from "./useStore";
+import {useSigner} from "./utils/wagmi-utils";
+import {useStore} from "./useStore";
 import Start from "./Start";
 import Page from "./Page";
 import MiniHeader from "./MiniHeader";
-import { usePrivy } from "@privy-io/react-auth";
-import { globalMaxWidth } from "./components/MaxWidthDiv";
+import {usePrivy} from "@privy-io/react-auth";
+import {globalMaxWidth} from "./components/MaxWidthDiv";
 
 const Container = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  height: 100vh;
-  padding: 0 20px 20px 20px;
-  box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    height: 100%;
+    padding: 0 20px 20px 20px;
+    box-sizing: border-box;
 `;
 
 const StartButton = styled.div`
-  border-radius: 8px;
-  background: rgba(46, 196, 182, 0.33);
-  color: #fff;
-  font-family: Nunito;
-  font-size: 18px;
-  font-weight: 700;
-  width: 100%;
-  height: 71px;
-  margin: 20px 0; // Adds space above and below the button
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  max-width: ${globalMaxWidth};
+    border-radius: 8px;
+    background: rgba(46, 196, 182, 0.33);
+    color: #fff;
+    font-family: Nunito;
+    font-size: 18px;
+    font-weight: 700;
+    width: 100%;
+    padding: 30px 0;
+    margin: 20px 0; // Adds space above and below the button
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    max-width: ${globalMaxWidth};
 `;
 
 const FistsImage = styled.img`
-  width: 133px;
-  height: 100px;
-  flex-shrink: 0;
+    width: 133px;
+    height: 100px;
+    flex-shrink: 0;
 `;
 
 const BigText = styled.div`
-  text-align: center;
-  font-family: Ubuntu;
-  font-size: 24px;
-  font-style: normal;
-  font-weight: 700;
-  color: rgb(80, 80, 80);
-  padding: 20px 0;
+    text-align: center;
+    font-family: Ubuntu;
+    font-size: 24px;
+    font-style: normal;
+    font-weight: 700;
+    color: rgb(80, 80, 80);
+    padding: 20px 0;
 `;
 
 // styled component with above styles
 const Input = styled.input`
-  text-align: center;
-  font-family: Ubuntu;
-  font-size: 14px;
-  font-style: normal;
-  font-weight: 400;
-  width: 100%;
-  height: 65px;
-  border: 1px solid #eee;
-  border-radius: 4px;
-  outline: none;
-  max-width: ${globalMaxWidth};
+    text-align: center;
+    font-family: Ubuntu;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    width: 100%;
+    padding: 25px 0;
+    border: 1px solid #eee;
+    border-radius: 4px;
+    outline: none;
+    max-width: ${globalMaxWidth};
+    box-sizing: border-box;
 `;
 
 const TextArea = styled.textarea`
-  text-align: center;
-  font-family: Ubuntu;
-  font-size: 14px;
-  font-style: normal;
-  font-weight: 400;
-  width: 100%;
-  border: 1px solid #eee;
-  resize: none;
-  box-sizing: border-box;
-  padding: 20px;
-  border-radius: 4px;
-  outline: none;
-  max-width: ${globalMaxWidth};
+    text-align: center;
+    font-family: Ubuntu;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    width: 100%;
+    border: 1px solid #eee;
+    resize: none;
+    box-sizing: border-box;
+    padding: 25px 0px;
+    border-radius: 4px;
+    outline: none;
+    max-width: ${globalMaxWidth};
 `;
 
 const MiniHeaderContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 100%;
-  max-width: 400px;
-  box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 400px;
+    box-sizing: border-box;
 `;
 
 function Home() {
-  const { preComputedRecipient } = useParams();
+  const {preComputedRecipient} = useParams();
 
   const [address, setAddress] = useState(preComputedRecipient || "");
   const [stakes, setStakes] = useState("");
@@ -123,7 +125,7 @@ function Home() {
   const [ensResolvedAddress, setEnsResolvedAddress] = useState("");
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const { user } = usePrivy();
+  const {user} = usePrivy();
   const myAddress = user?.wallet?.address;
 
   const issueChallenge = async () => {
@@ -135,7 +137,7 @@ function Home() {
       const schemaEncoder = new SchemaEncoder("string stakes");
 
       const encoded = schemaEncoder.encodeData([
-        { name: "stakes", type: "string", value: stakes },
+        {name: "stakes", type: "string", value: stakes},
       ]);
 
       const eas = new EAS(EASContractAddress);
@@ -211,7 +213,7 @@ function Home() {
         <Page>
           <Container>
             <MiniHeaderContainer>
-              <MiniHeader links={playLinks} selected={0} />
+              <MiniHeader links={playLinks} selected={0}/>
             </MiniHeaderContainer>
             {/*<FistsImage src={newChallengeFists} />*/}
             <BigText>Who are you battling?</BigText>
@@ -233,22 +235,23 @@ function Home() {
             />
             <StartButton
               style={
-                ethers.isAddress(ensResolvedAddress || address)
-                  ? { backgroundColor: "#2EC4B6", cursor: "pointer" }
+                ethers.isAddress(ensResolvedAddress || address) && !attesting
+                  ? {backgroundColor: "#2EC4B6", cursor: "pointer"}
                   : {}
               }
               onClick={
-                ethers.isAddress(ensResolvedAddress || address)
+                ethers.isAddress(ensResolvedAddress || address) && !attesting
                   ? issueChallenge
-                  : () => {}
+                  : () => {
+                  }
               }
             >
-              Start Battle
+              {attesting ? 'Starting...' : 'Start Battle'}
             </StartButton>
           </Container>
         </Page>
       ) : (
-        <Start />
+        <Start/>
       )}
     </>
   );

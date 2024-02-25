@@ -3,9 +3,11 @@ import {BiUserCheck, BiTrophy} from 'react-icons/bi';
 import {FaRegHandRock, FaRegHandPaper, FaFlagCheckered} from 'react-icons/fa';
 import {HiOutlineSparkles, HiOutlineUsers} from 'react-icons/hi';
 import {MaxWidthDiv} from './components/MaxWidthDiv';
-import easLogo from './assets/easlogo.png';
-import lineSvg from './assets/how-it-works-line.svg';
 import { formatAttestationLongValueV2 } from './utils/utils';
+
+const easLogo = '/images/rps/easlogo.png';
+const lineSvg = '/images/rps/how-it-works-line.svg';
+
 
 const FullPageContainer = styled.div`
     display: flex;

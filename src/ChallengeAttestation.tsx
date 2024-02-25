@@ -1,6 +1,6 @@
-import { IncomingChallenge } from "./utils/types";
+import {IncomingChallenge} from "./utils/types";
 import styled from "styled-components";
-import { useNavigate } from "react-router";
+import {useNavigate} from "react-router";
 import invariant from "tiny-invariant";
 import {
   AttestationShareablePackageObject,
@@ -14,123 +14,124 @@ import {
   submitSignedAttestation,
 } from "./utils/utils";
 import dayjs from "dayjs";
-import { useSigner } from "./utils/wagmi-utils";
+import {useSigner} from "./utils/wagmi-utils";
 import PlayerCard from "./components/PlayerCard";
+import {MaxWidthDiv} from "./components/MaxWidthDiv";
 
 type Props = {
   game: IncomingChallenge;
   isChallenge?: boolean;
 };
 
-const Container = styled.div`
-  border-radius: 10px;
-  background: #fff;
-  flex-shrink: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin: 20px;
+const Container = styled(MaxWidthDiv)`
+    border-radius: 10px;
+    background: #fff;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 20px;
     width: 100%;
 `;
 
 const AcceptButton = styled.div`
-  border-radius: 5px;
-  border: 1px solid #00ebc7;
-  background: #fff;
-  width: 80%;
-  height: 65px;
-  flex-shrink: 0;
-  color: #272343;
-  text-align: center;
-  font-family: "Space Grotesk";
-  font-size: 16px;
-  font-style: normal;
-  font-weight: 700;
-  line-height: normal;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  margin: 20px;
+    border-radius: 5px;
+    border: 1px solid #00ebc7;
+    background: #fff;
+    width: 80%;
+    height: 65px;
+    flex-shrink: 0;
+    color: #272343;
+    text-align: center;
+    font-family: "Space Grotesk";
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    margin: 20px;
 `;
 
 const DeclineLink = styled.div`
-  color: #272343;
-  font-family: "Space Grotesk";
-  font-size: 12px;
-  font-style: normal;
-  font-weight: 400;
-  line-height: normal;
-  text-decoration-line: underline;
-  cursor: pointer;
-  margin-bottom: 20px;
+    color: #272343;
+    font-family: "Space Grotesk";
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+    text-decoration-line: underline;
+    cursor: pointer;
+    margin-bottom: 20px;
 `;
 
 const LineBreak = styled.div`
-  height: 1px;
-  background: rgba(57, 53, 84, 0.15);
-  margin: 10px;
-  width: 100%;
+    height: 1px;
+    background: rgba(57, 53, 84, 0.15);
+    margin: 10px;
+    width: 100%;
 `;
 
 const BoldNumber = styled.div`
-  color: #272343;
-  text-align: right;
-  font-family: "Space Grotesk";
-  font-size: 18px;
-  font-style: normal;
-  font-weight: 700;
-  line-height: normal;
-  margin-left: 20px;
-  margin-right: 10px;
+    color: #272343;
+    text-align: right;
+    font-family: "Space Grotesk";
+    font-size: 18px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+    margin-left: 20px;
+    margin-right: 10px;
 `;
 
 const NumberDescriptor = styled.div`
-  color: #272343;
-  font-family: "Space Grotesk";
-  font-size: 14px;
-  font-style: normal;
-  font-weight: 400;
-  line-height: normal;
-  margin-left: 10px;
-  margin-right: 20px;
+    color: #272343;
+    font-family: "Space Grotesk";
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+    margin-left: 10px;
+    margin-right: 20px;
 `;
 
 const StatsContainer = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
 `;
 
 const StakesContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: left;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: left;
 `;
 
 const StakesDescriptor = styled.div`
-  color: rgba(39, 35, 67, 0.4);
-  font-family: Nunito;
-  font-size: 14px;
-  font-style: italic;
-  font-weight: 400;
-  line-height: normal;
+    color: rgba(39, 35, 67, 0.4);
+    font-family: Nunito;
+    font-size: 14px;
+    font-style: italic;
+    font-weight: 400;
+    line-height: normal;
 `;
 
 const Stakes = styled.div`
-  color: #272343;
-  font-family: Nunito;
-  font-size: 18px;
-  font-style: italic;
-  font-weight: 700;
-  line-height: normal;
+    color: #272343;
+    font-family: Nunito;
+    font-size: 18px;
+    font-style: italic;
+    font-weight: 700;
+    line-height: normal;
 `;
 
-export function ChallengeAttestation({ game: g, isChallenge }: Props) {
+export function ChallengeAttestation({game: g, isChallenge}: Props) {
   const navigate = useNavigate();
   const signer = useSigner();
 
@@ -139,7 +140,7 @@ export function ChallengeAttestation({ game: g, isChallenge }: Props) {
       const schemaEncoder = new SchemaEncoder("bool declineGameChallenge");
 
       const encoded = schemaEncoder.encodeData([
-        { name: "declineGameChallenge", type: "bool", value: true },
+        {name: "declineGameChallenge", type: "bool", value: true},
       ]);
 
       const eas = new EAS(EASContractAddress);
@@ -199,7 +200,7 @@ export function ChallengeAttestation({ game: g, isChallenge }: Props) {
       />
       {isChallenge && (
         <>
-          <LineBreak />
+          <LineBreak/>
           <StatsContainer>
             <BoldNumber>{g.gameCount}</BoldNumber>
             <NumberDescriptor>Games Against You</NumberDescriptor>
@@ -209,14 +210,14 @@ export function ChallengeAttestation({ game: g, isChallenge }: Props) {
         </>
       )}
 
-      <LineBreak />
+      <LineBreak/>
       {g.stakes && (
         <>
           <StakesContainer>
             <StakesDescriptor>What's at Stake...</StakesDescriptor>
             <Stakes>{g.stakes}</Stakes>
           </StakesContainer>
-          <LineBreak />
+          <LineBreak/>
         </>
       )}
       <AcceptButton

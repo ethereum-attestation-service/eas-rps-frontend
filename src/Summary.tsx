@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from "react";
 import styled from "styled-components";
 import {useNavigate, useParams} from "react-router";
-import easLogo from "./assets/easlogo.png";
 import {
   STATUS_PLAYER1_WIN,
   STATUS_PLAYER2_WIN,
@@ -24,7 +23,8 @@ import {MaxWidthDiv} from "./components/MaxWidthDiv";
 import Confetti from "react-confetti";
 import PlayerCard from "./components/PlayerCard";
 import {usePrivy} from "@privy-io/react-auth";
-// Styled components
+
+const easLogo = "/images/rps/easlogo.png";
 
 type WonProps = { won: boolean };
 

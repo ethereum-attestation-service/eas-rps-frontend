@@ -1,18 +1,19 @@
-import { Header } from "./components/Header";
-import { Outlet } from "react-router";
+import {Header} from "./components/Header";
+import {Outlet} from "react-router";
 import * as chains from "wagmi/chains";
-import { WagmiConfig, createConfig, configureChains, useAccount } from "wagmi";
-import { ConnectKitProvider, getDefaultConfig } from "connectkit";
+import {WagmiConfig, createConfig, configureChains, useAccount} from "wagmi";
+import {ConnectKitProvider, getDefaultConfig} from "connectkit";
 import "./App.css";
 import invariant from "tiny-invariant";
-import { activeChainConfig, alchemyApiKey } from "./utils/utils";
-import { WrongChainModal } from "./components/WrongChainModal";
+import {activeChainConfig, alchemyApiKey} from "./utils/utils";
+import {WrongChainModal} from "./components/WrongChainModal";
 import Footer from "./Footer";
-import { publicProvider } from "wagmi/providers/public";
-import { PrivyWagmiConnector } from "@privy-io/wagmi-connector";
-import { PrivyProvider, usePrivy } from "@privy-io/react-auth";
-import { useEffect } from "react";
-import { PrivyAutoLogout } from "./PrivyAutoLogout";
+import {publicProvider} from "wagmi/providers/public";
+import {PrivyWagmiConnector} from "@privy-io/wagmi-connector";
+import {PrivyProvider, usePrivy} from "@privy-io/react-auth";
+import {useEffect} from "react";
+import {PrivyAutoLogout} from "./PrivyAutoLogout";
+import styled from "styled-components";
 
 invariant(activeChainConfig, "Chain config is not set");
 
@@ -99,13 +100,13 @@ export function Root() {
               enforceSupportedChains: false,
             }}
           >
-            <Header />
+            <Header/>
             <PrivyAutoLogout>
-              <Outlet />
+              <Outlet/>
             </PrivyAutoLogout>
-            <Footer />
+            <Footer/>
           </ConnectKitProvider>
-          <WrongChainModal />
+          <WrongChainModal/>
         </PrivyWagmiConnector>
       </PrivyProvider>
     </>
