@@ -67,6 +67,7 @@ type Props = {
   ens?: string;
   ensAvatar?: string;
   className?: string;
+  ignoreClick?: boolean;
 };
 
 const IconWrapper = styled.div`
@@ -88,6 +89,7 @@ export default function PlayerCard({
   className,
   ens,
   ensAvatar,
+  ignoreClick
 }: Props) {
   const navigate = useNavigate();
 
@@ -96,6 +98,7 @@ export default function PlayerCard({
       className={className}
       style={style}
       onClick={() => {
+        if (ignoreClick) return;
         navigate(`/games/${address}`);
       }}
     >

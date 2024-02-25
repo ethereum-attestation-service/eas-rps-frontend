@@ -189,6 +189,7 @@ function Games() {
                     badges={gameObj.player1Object.badges}
                     ens={gameObj.player1Object.ensName}
                     ensAvatar={gameObj.player1Object.ensAvatar}
+                    ignoreClick={true}
                   />
                 </BattleContainer>
               );

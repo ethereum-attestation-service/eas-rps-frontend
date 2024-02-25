@@ -332,9 +332,9 @@ function Challenge() {
         />
         <PlayerStatus>
           {game.commit2 === ZERO_BYTES32 ? (
-            <WaitingText isPlayer1={false}>Waiting For Opponent...</WaitingText>
+            <WaitingText isPlayer1={false}>Waiting For Opponent Choice...</WaitingText>
           ) : (
-            <WaitingText isPlayer1={false}>Player Ready</WaitingText>
+            <WaitingText isPlayer1={false}>Waiting For Opponent Reveal...</WaitingText>
           )}
         </PlayerStatus>
       </PlayerContainer>

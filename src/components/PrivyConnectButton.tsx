@@ -1,10 +1,8 @@
-import { usePrivy, useWallets } from "@privy-io/react-auth";
-import { usePrivyWagmi } from "@privy-io/wagmi-connector";
+import {usePrivy} from "@privy-io/react-auth";
 import styled from "styled-components";
-import { ButtonBase } from "../styles/buttons";
-import { theme } from "../utils/theme";
-import { formatAttestationLongValueV2 } from "../utils/utils";
-import { useAccount } from "wagmi";
+import {ButtonBase} from "../styles/buttons";
+import {theme} from "../utils/theme";
+import {formatAttestationLongValueV2} from "../utils/utils";
 
 const StyledButton = styled.button`
     ${ButtonBase};
@@ -30,16 +28,28 @@ const StyledButton = styled.button`
 type Props = { handleClickWhileConnected: () => void };
 
 export default function PrivyConnectButton({
-  handleClickWhileConnected,
-}: Props) {
-  const { login, user } = usePrivy();
+                                             handleClickWhileConnected,
+                                           }: Props) {
+  const {login, user, ready} = usePrivy();
   const address = user?.wallet?.address;
 
+  console.log('privy button ready', ready,)
+
   return (
-    <StyledButton onClick={address ? handleClickWhileConnected : login}>
-      {address
-        ? formatAttestationLongValueV2(address)
-        : "Connect Wallet"}
+    <StyledButton onClick={
+      !ready ? () => {
+          console.log('not ready')
+        }
+        : address ? ()=>{
+        console.log('handling click while connected')
+        handleClickWhileConnected()
+      }
+          : login}>
+      {!ready
+        ? "Loading..." :
+        address
+          ? formatAttestationLongValueV2(address)
+          : "Connect Wallet"}
     </StyledButton>
   );
 }

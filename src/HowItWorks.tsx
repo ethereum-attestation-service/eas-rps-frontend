@@ -245,7 +245,7 @@ export default function HowItWorks() {
   return (<FullPageContainer>
     <Title>How It Works</Title>
     <TitleDescription>
-      RPS uses a series of offchain attestations to player the game.
+      RPS uses a series of offchain attestations to play the game.
       Here’s how it works under the hood:
     </TitleDescription>
 

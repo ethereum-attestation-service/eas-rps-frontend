@@ -129,6 +129,9 @@ const Stakes = styled.div`
     font-style: italic;
     font-weight: 700;
     line-height: normal;
+    padding: 0 1.2rem;
+    box-sizing: border-box;
+    text-align: center;
 `;
 
 export function ChallengeAttestation({game: g, isChallenge}: Props) {

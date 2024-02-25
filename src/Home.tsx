@@ -125,7 +125,7 @@ function Home() {
   const [ensResolvedAddress, setEnsResolvedAddress] = useState("");
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const {user} = usePrivy();
+  const {user, ready} = usePrivy();
   const myAddress = user?.wallet?.address;
 
   const issueChallenge = async () => {
@@ -205,6 +205,8 @@ function Home() {
 
     checkENS();
   }, [address]);
+
+  console.log("user", user, 'ready',ready);
 
   return (
     <>
