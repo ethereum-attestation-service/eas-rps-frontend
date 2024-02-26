@@ -7,8 +7,8 @@ import { usePrivy } from "@privy-io/react-auth";
 
 export function useAutoReveal(myAddress: string | undefined) {
   const gameCommits = useStore((state) => state.gameCommits);
-  const keyStorage = useStore((state) => state.key);
-  const setKeyStorage = useStore((state) => state.setKey);
+  const keyStorage = useStore((state) => state.keyObj);
+  const setKeyStorage = useStore((state) => state.setKeyObj);
 
   const [tick, setTick] = useState(0);
   const [sigRequested, setSigRequested] = useState(false);
@@ -32,7 +32,7 @@ export function useAutoReveal(myAddress: string | undefined) {
 
       if (signer && user && (keyInPlace || !sigRequested) ) {
         setSigRequested(true);
-        const {choice,salt} = await decryptWithLocalKey(signer, game.encryptedChoice,keyStorage, setKeyStorage);
+        const {choice,salt} = await decryptWithLocalKey(signer, game.encryptedChoice,game.uid,keyStorage, setKeyStorage);
         if ((choice || choice===0) && choice!==CHOICE_UNKNOWN && salt) {
           reveals.push({
             uid: game.uid,

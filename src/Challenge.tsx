@@ -179,8 +179,8 @@ function Challenge() {
 
   const addGameCommit = useStore((state) => state.addGameCommit);
 
-  const keyStorage = useStore((state) => state.key);
-  const setKeyStorage = useStore((state) => state.setKey);
+  const keyStorage = useStore((state) => state.keyObj);
+  const setKeyStorage = useStore((state) => state.setKeyObj);
 
   invariant(challengeId, "Challenge ID should be defined");
 
@@ -218,8 +218,10 @@ function Challenge() {
     const keyInPlace = signer && keyStorage.key.length > 0 && keyStorage.wallet === await signer.getAddress();
     if (signer && user && (keyInPlace || !sigRequested)) {
       setSigRequested(true);
-      const {choice} = await decryptWithLocalKey(signer, swappedGame.encryptedChoice1, keyStorage, setKeyStorage);
-      setDecryptedChoice(choice);
+      const {choice} = await decryptWithLocalKey(signer, swappedGame.encryptedChoice1, challengeId, keyStorage, setKeyStorage);
+      if (choice === CHOICE_ROCK || choice === CHOICE_PAPER || choice === CHOICE_SCISSORS) {
+        setDecryptedChoice(choice);
+      }
       setSigRequested(false);
     }
     setGame(swappedGame);
@@ -269,7 +271,7 @@ function Challenge() {
 
       invariant(signer, "signer must be defined");
 
-      const encryptedChoice = await encryptWithLocalKey(signer, choice, saltHex, keyStorage, setKeyStorage);
+      const encryptedChoice = await encryptWithLocalKey(signer, choice, saltHex, challengeId, keyStorage, setKeyStorage);
 
       const encoded = schemaEncoder.encodeData([
         {name: "commitHash", type: "bytes32", value: hashedChoice},

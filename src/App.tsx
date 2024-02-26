@@ -56,7 +56,7 @@ const router = createBrowserRouter([
       {
         path: "/how-it-works",
         element: <HowItWorks />,
-      }
+      },
     ],
   },
 ]);

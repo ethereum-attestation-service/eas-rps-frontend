@@ -11,6 +11,7 @@ import {ethers} from "ethers";
 import {AttestationShareablePackageObject} from "@ethereum-attestation-service/eas-sdk";
 import axios from "axios";
 import {KeyStorage} from "../useStore";
+import aesjs from "aes-js";
 
 const easLogo = "/images/rps/easlogo.png";
 const coinbaseLogo = "/images/rps/coinbaseLogo.png";
@@ -202,7 +203,7 @@ export function badgeNameToLogo(badgeName: string) {
   }
 }
 
-const LOCAL_KEY_SEED = 'Signing this message makes your rps.sh account accessible to you on any device. ' +
+const LOCAL_KEY_SEED = 'Signing this message makes your rps.sh account accessible to you on any device.\n\n' +
   'DO NOT SHARE YOUR SIGNATURE WITH ANYONE. DO NOT SIGN THIS EXACT MESSAGE FOR ANY APP EXCEPT rps.sh. ';
 
 async function generateAndStoreLocalKey(signer: ethers.Signer, setKeyStorage: (ks: KeyStorage) => void) {
@@ -219,38 +220,47 @@ async function getLocalKey(signer: ethers.Signer, keyStorage: KeyStorage, setKey
   }
 }
 
+function hexStrToLastNBytesBuffer(hexStr: string, n: number) {
+  return Buffer.from(hexStr.slice(-2*n), 'hex');
+}
+
+function padWithZerosUntilMultipleOf16Bytes(hexStr: string) {
+  const length = hexStr.length;
+  const padding = (32 - (length % 32)) % 32;
+  return hexStr + '0'.repeat(padding);
+}
+
 export async function encryptWithLocalKey(signer: ethers.Signer,
                                           choice: number,
                                           saltHex: string,
+                                          gameUID: string,
                                           keyStorage: KeyStorage,
                                           setKeyStorage: (ks: KeyStorage) => void) {
   const keyHexStr = await getLocalKey(signer, keyStorage, setKeyStorage);
-  const keyBuffer33Bytes = Buffer.from(keyHexStr.slice(-66), 'hex');
-  const dataToEncrypt = Buffer.from(`0${choice}${saltHex.slice(2)}`, 'hex');
-  const encrypted = new Uint8Array(33);
-  for (let i = 0; i < 33; i++) {
-    encrypted[i] = dataToEncrypt[i] ^ keyBuffer33Bytes[i];
-  }
-
-  const result =  Buffer.from(encrypted).toString('hex');
+  const keyBuffer32Bytes = hexStrToLastNBytesBuffer(keyHexStr, 32);
+  const initVector = hexStrToLastNBytesBuffer(gameUID, 16);
+  const aesCbc = new aesjs.ModeOfOperation.cbc(keyBuffer32Bytes, initVector);
+  const paddedHexData = padWithZerosUntilMultipleOf16Bytes(`0${choice}${saltHex.slice(2)}`);
+  const dataBuffer = Buffer.from(paddedHexData, 'hex');
+  console.log('db',dataBuffer, dataBuffer.length)
+  const result =  Buffer.from(aesCbc.encrypt(dataBuffer)).toString('hex');
   return `0x${result}`;
 }
 
 export async function decryptWithLocalKey(signer: ethers.Signer,
                                           encryptedHex: string,
+                                          gameUID: string,
                                           keyStorage: KeyStorage,
                                           setKeyStorage: (ks: KeyStorage) => void) {
   try {
     const keyHexStr = await getLocalKey(signer, keyStorage, setKeyStorage);
-    const keyBuffer33Bytes = Buffer.from(keyHexStr.slice(-66), 'hex');
+    const keyBuffer32Bytes = hexStrToLastNBytesBuffer(keyHexStr, 32);
+    const initVector = hexStrToLastNBytesBuffer(gameUID, 16);
     const encrypted = Buffer.from(encryptedHex.slice(2), 'hex');
-    const decrypted = new Uint8Array(33);
-    for (let i = 0; i < 33; i++) {
-      decrypted[i] = encrypted[i] ^ keyBuffer33Bytes[i];
-    }
-
+    const aesCbc = new aesjs.ModeOfOperation.cbc(keyBuffer32Bytes, initVector);
+    const decrypted = aesCbc.decrypt(encrypted);
     const result = Buffer.from(decrypted).toString('hex');
-    return {choice: parseInt(result[1]), salt: `0x${result.slice(2)}`};
+    return {choice: parseInt(result[1]), salt: `0x${result.slice(2,66)}`};
   } catch (e) {
     console.log(e)
     return {choice: CHOICE_UNKNOWN, salt: '0x'};

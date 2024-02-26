@@ -15,7 +15,7 @@ type InitialState = {
   gameCommits: GameCommit[];
   acceptedChallenges: AcceptedChallenge[];
   isConnected: boolean;
-  key: KeyStorage;
+  keyObj: KeyStorage;
 };
 
 type StoreMethods = {
@@ -23,7 +23,7 @@ type StoreMethods = {
   addGameCommit: (commit: GameCommit) => void;
   addAcceptedChallenge: (challenge: AcceptedChallenge) => void;
   setIsConnected: (connected: boolean) => void;
-  setKey: (ks: KeyStorage) => void;
+  setKeyObj: (ks: KeyStorage) => void;
 };
 
 const initialState: InitialState = {
@@ -32,7 +32,7 @@ const initialState: InitialState = {
   gameCommits: [],
   acceptedChallenges: [],
   isConnected: false,
-  key: {key: "", wallet: ""},
+  keyObj: {key: "", wallet: ""},
 };
 
 const reducer: StateCreator<InitialState & StoreMethods> = (set, get) => ({
@@ -48,7 +48,7 @@ const reducer: StateCreator<InitialState & StoreMethods> = (set, get) => ({
       acceptedChallenges: [...state.acceptedChallenges, challenge],
     })),
   setIsConnected: (connected: boolean) => set({isConnected: connected}),
-  setKey: (ks: KeyStorage) => set({key:ks}),
+  setKeyObj: (ks: KeyStorage) => set({keyObj:ks}),
 });
 
 export const useStore = create(
