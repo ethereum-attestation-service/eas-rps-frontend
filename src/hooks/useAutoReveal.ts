@@ -9,11 +9,12 @@ export function useAutoReveal(myAddress: string | undefined) {
   const gameCommits = useStore((state) => state.gameCommits);
   const keyStorage = useStore((state) => state.keyObj);
   const setKeyStorage = useStore((state) => state.setKeyObj);
-
+  const sigRequested = useStore((state) => state.sigRequested);
+  const setSigRequested = useStore((state) => state.setSigRequested);
   const [tick, setTick] = useState(0);
-  const [sigRequested, setSigRequested] = useState(false);
   const signer = useSigner();
   const {user} = usePrivy();
+
 
   async function getGamesPendingReveal(myAddress: string) {
     const gamesPendingReveal = await axios.post<{ uid: string; encryptedChoice: string; }[]>(

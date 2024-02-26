@@ -160,7 +160,7 @@ const PlayerStatus = styled.div`
 `;
 
 function Challenge() {
-  const {user} = usePrivy();
+  const {user, ready} = usePrivy();
   const address = user?.wallet?.address;
   const navigate = useNavigate();
   const {challengeId} = useParams();
@@ -168,7 +168,6 @@ function Challenge() {
   const [tick, setTick] = useState(0);
   const [game, setGame] = useState<GameWithPlayers>();
   const [attesting, setAttesting] = useState(false);
-  const [sigRequested, setSigRequested] = useState(false);
   const [decrpytedChoice, setDecryptedChoice] = useState<number>(CHOICE_UNKNOWN);
 
   const gameCommits = useStore((state) => state.gameCommits);
@@ -181,6 +180,8 @@ function Challenge() {
 
   const keyStorage = useStore((state) => state.keyObj);
   const setKeyStorage = useStore((state) => state.setKeyObj);
+  const sigRequested = useStore((state) => state.sigRequested);
+  const setSigRequested = useStore((state) => state.setSigRequested);
 
   invariant(challengeId, "Challenge ID should be defined");
 
@@ -217,6 +218,7 @@ function Challenge() {
     const swappedGame = swapPlayersIfNecessary(gameRes.data);
     const keyInPlace = signer && keyStorage.key.length > 0 && keyStorage.wallet === await signer.getAddress();
     if (signer && user && (keyInPlace || !sigRequested)) {
+      console.log('requesting key for decrypting');
       setSigRequested(true);
       const {choice} = await decryptWithLocalKey(signer, swappedGame.encryptedChoice1, challengeId, keyStorage, setKeyStorage);
       if (choice === CHOICE_ROCK || choice === CHOICE_PAPER || choice === CHOICE_SCISSORS) {
@@ -271,6 +273,7 @@ function Challenge() {
 
       invariant(signer, "signer must be defined");
 
+      console.log('reuqesting key for encrypting');
       const encryptedChoice = await encryptWithLocalKey(signer, choice, saltHex, challengeId, keyStorage, setKeyStorage);
 
       const encoded = schemaEncoder.encodeData([
@@ -353,7 +356,7 @@ function Challenge() {
           {game.commit1 === ZERO_BYTES32 ? (
             <>
               <WaitingText isPlayer1={true}>Waiting For You...</WaitingText>
-              {!attesting && <HandSelection>
+              {!attesting && ready && <HandSelection>
                 <HandOption
                   onClick={() => {
                     commit(CHOICE_ROCK);
