@@ -1,14 +1,17 @@
 import { usePrivy } from "@privy-io/react-auth";
 import React, { useEffect, useState } from "react";
 import { useAccount } from "wagmi";
+import { useStore } from "./useStore";
 
 export function PrivyAutoLogout({ children }: { children: React.ReactNode }) {
   const { isDisconnected } = useAccount();
   const { logout } = usePrivy();
   const [initialLoad, setInitialLoad] = useState(true);
+  const setKeyStorage = useStore((state) => state.setKeyObj);
 
   useEffect(() => {
     if (isDisconnected && !initialLoad) {
+      setKeyStorage({key: '', wallet: ''});
       logout();
     }
 
