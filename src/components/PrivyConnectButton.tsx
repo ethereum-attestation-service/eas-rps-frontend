@@ -33,17 +33,11 @@ export default function PrivyConnectButton({
   const {login, user, ready} = usePrivy();
   const address = user?.wallet?.address;
 
-  console.log('privy button ready', ready,)
 
   return (
     <StyledButton onClick={
-      !ready ? () => {
-          console.log('not ready')
-        }
-        : address ? ()=>{
-        console.log('handling click while connected')
-        handleClickWhileConnected()
-      }
+      !ready ? undefined
+        : address ? handleClickWhileConnected
           : login}>
       {!ready
         ? "Loading..." :

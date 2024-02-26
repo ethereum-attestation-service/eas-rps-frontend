@@ -192,7 +192,6 @@ function Home() {
     async function checkENS() {
       if (address.includes(".eth")) {
         const tmpAddress = await getAddressForENS(address);
-        console.log("tmpAddress", tmpAddress);
         if (tmpAddress) {
           setEnsResolvedAddress(tmpAddress);
         } else {
@@ -205,8 +204,6 @@ function Home() {
 
     checkENS();
   }, [address]);
-
-  console.log("user", user, 'ready',ready);
 
   return (
     <>

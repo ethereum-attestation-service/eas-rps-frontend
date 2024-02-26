@@ -265,7 +265,6 @@ function Summary() {
     (address === game?.player2 && status === STATUS_PLAYER2_WIN);
 
   const eloChangeHappened = game?.eloChange1 > 0 || game?.eloChange2 > 0;
-  console.log(game);
 
   return (
     <Page>
@@ -401,7 +400,7 @@ function Summary() {
                   {attestationDescriptions[index]}
                 </AttestationTitle>
                 <GameUID
-                  href={`https://sepolia.easscan.org${createOffchainURL(
+                  href={`https://easscan.org${createOffchainURL(
                     attestation
                   )}`}
                   target="_blank"

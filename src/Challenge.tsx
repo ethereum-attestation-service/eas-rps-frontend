@@ -16,6 +16,8 @@ import {
   STATUS_PLAYER2_WIN,
   STATUS_UNKNOWN,
   submitSignedAttestation,
+  encryptWithLocalKey,
+  decryptWithLocalKey,
 } from "./utils/utils";
 
 import invariant from "tiny-invariant";
@@ -166,6 +168,8 @@ function Challenge() {
   const [tick, setTick] = useState(0);
   const [game, setGame] = useState<GameWithPlayers>();
   const [attesting, setAttesting] = useState(false);
+  const [sigRequested, setSigRequested] = useState(false);
+  const [decrpytedChoice, setDecryptedChoice] = useState<number>(CHOICE_UNKNOWN);
 
   const gameCommits = useStore((state) => state.gameCommits);
 
@@ -175,10 +179,13 @@ function Challenge() {
 
   const addGameCommit = useStore((state) => state.addGameCommit);
 
+  const keyStorage = useStore((state) => state.key);
+  const setKeyStorage = useStore((state) => state.setKey);
+
   invariant(challengeId, "Challenge ID should be defined");
 
-  const swapPlayersIfNecessary = () => {
-    let tmpGame = game;
+  const swapPlayersIfNecessary = (g: GameWithPlayers) => {
+    let tmpGame = g;
     if (tmpGame && tmpGame.player2 === address) {
       tmpGame.player2 = tmpGame.player1;
       tmpGame.player1 = address;
@@ -191,11 +198,14 @@ function Challenge() {
       const tmpSalt = tmpGame.salt2;
       tmpGame.salt2 = tmpGame.salt1;
       tmpGame.salt1 = tmpSalt;
+      const tmpEncryptedChoice = tmpGame.encryptedChoice2;
+      tmpGame.encryptedChoice2 = tmpGame.encryptedChoice1;
+      tmpGame.encryptedChoice1 = tmpEncryptedChoice;
       const tmpPlayerObject = tmpGame.player2Object;
       tmpGame.player2Object = tmpGame.player1Object;
       tmpGame.player1Object = tmpPlayerObject;
     }
-    setGame(tmpGame);
+    return tmpGame;
   }
 
   const update = async () => {
@@ -204,23 +214,15 @@ function Challenge() {
       uid: challengeId,
     });
     // swap players if we are player 2
-    if (gameRes.data.player2 === address) {
-      gameRes.data.player2 = gameRes.data.player1;
-      gameRes.data.player1 = address;
-      const tmpCommit = gameRes.data.commit2;
-      gameRes.data.commit2 = gameRes.data.commit1;
-      gameRes.data.commit1 = tmpCommit;
-      const tmpChoice = gameRes.data.choice2;
-      gameRes.data.choice2 = gameRes.data.choice1;
-      gameRes.data.choice1 = tmpChoice;
-      const tmpSalt = gameRes.data.salt2;
-      gameRes.data.salt2 = gameRes.data.salt1;
-      gameRes.data.salt1 = tmpSalt;
-      const tmpPlayerObject = gameRes.data.player2Object;
-      gameRes.data.player2Object = gameRes.data.player1Object;
-      gameRes.data.player1Object = tmpPlayerObject;
+    const swappedGame = swapPlayersIfNecessary(gameRes.data);
+    const keyInPlace = signer && keyStorage.key.length > 0 && keyStorage.wallet === await signer.getAddress();
+    if (signer && user && (keyInPlace || !sigRequested)) {
+      setSigRequested(true);
+      const {choice} = await decryptWithLocalKey(signer, swappedGame.encryptedChoice1, keyStorage, setKeyStorage);
+      setDecryptedChoice(choice);
+      setSigRequested(false);
     }
-    setGame(gameRes.data);
+    setGame(swappedGame);
   };
 
   //watch for game updates
@@ -233,7 +235,9 @@ function Challenge() {
   }, [tick]);
 
   useEffect(() => {
-    swapPlayersIfNecessary()
+    if (game) {
+      setGame(swapPlayersIfNecessary(game))
+    }
   }, [game, address]);
 
   useEffect(() => {
@@ -252,9 +256,8 @@ function Challenge() {
     setAttesting(true);
 
     try {
-      const schemaEncoder = new SchemaEncoder("bytes32 commitHash");
+      const schemaEncoder = new SchemaEncoder("bytes32 commitHash,bytes encryptedChoice");
 
-      console.log(choice, address);
       // create random bytes32 salt
       const salt = ethers.randomBytes(32);
       const saltHex = ethers.hexlify(salt);
@@ -264,15 +267,17 @@ function Challenge() {
         [choice, saltHex]
       );
 
-      console.log("hashedChoice", hashedChoice);
+      invariant(signer, "signer must be defined");
+
+      const encryptedChoice = await encryptWithLocalKey(signer, choice, saltHex, keyStorage, setKeyStorage);
 
       const encoded = schemaEncoder.encodeData([
         {name: "commitHash", type: "bytes32", value: hashedChoice},
+        {name: "encryptedChoice", type: "bytes", value: encryptedChoice},
       ]);
 
       const eas = new EAS(EASContractAddress);
 
-      invariant(signer, "signer must be defined");
       eas.connect(signer);
 
       const offchain = await eas.getOffchain();
@@ -374,11 +379,11 @@ function Challenge() {
           ) : (
             <InGameChosenIcon
               choice={
-                game.choice1 !== CHOICE_UNKNOWN
-                  ? game.choice1
-                  : thisGameCommit && thisGameCommit.choice !== CHOICE_UNKNOWN
-                    ? thisGameCommit.choice
-                    : CHOICE_UNKNOWN
+                game.choice1 !== CHOICE_UNKNOWN ? game.choice1
+                  : decrpytedChoice !== CHOICE_UNKNOWN ? decrpytedChoice
+                    : thisGameCommit && thisGameCommit.choice !== CHOICE_UNKNOWN ?
+                      thisGameCommit.choice
+                      : CHOICE_UNKNOWN
               }
             />
           )}

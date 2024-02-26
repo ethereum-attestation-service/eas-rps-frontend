@@ -39,9 +39,12 @@ export function useSigner() {
     async function getSigner() {
       if (!walletClient) return;
 
-      const tmpSigner = await walletClientToSigner(walletClient);
-
-      setSigner(tmpSigner);
+      try {
+        const tmpSigner = await walletClientToSigner(walletClient);
+        setSigner(tmpSigner);
+      } catch (e){
+        console.log('error',e)
+      }
     }
 
     getSigner();

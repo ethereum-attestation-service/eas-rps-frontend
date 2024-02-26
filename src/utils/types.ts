@@ -96,8 +96,10 @@ export type Game = {
   player2: string;
   choice1: number;
   choice2: number;
-  salt1: number;
-  salt2: number;
+  encryptedChoice1: string;
+  encryptedChoice2: string;
+  salt1: string;
+  salt2: string;
   stakes: string;
   eloChange1: number;
   eloChange2: number;

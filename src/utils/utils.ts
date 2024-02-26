@@ -10,6 +10,7 @@ import relativeTime from "dayjs/plugin/relativeTime";
 import {ethers} from "ethers";
 import {AttestationShareablePackageObject} from "@ethereum-attestation-service/eas-sdk";
 import axios from "axios";
+import {KeyStorage} from "../useStore";
 
 const easLogo = "/images/rps/easlogo.png";
 const coinbaseLogo = "/images/rps/coinbaseLogo.png";
@@ -119,7 +120,6 @@ export async function getENSName(address: string) {
 export async function submitSignedAttestation(
   pkg: AttestationShareablePackageObject
 ) {
-  console.log("pkg", pkg);
   const data: StoreAttestationRequest = {
     filename: `eas.txt`,
     textJson: JSON.stringify(pkg),
@@ -199,5 +199,60 @@ export function badgeNameToLogo(badgeName: string) {
       return easLogo;
     case "Coinbase":
       return coinbaseLogo;
+  }
+}
+
+const LOCAL_KEY_SEED = 'Signing this message makes your rps.sh account accessible to you on any device. ' +
+  'DO NOT SHARE YOUR SIGNATURE WITH ANYONE. DO NOT SIGN THIS EXACT MESSAGE FOR ANY APP EXCEPT rps.sh. ';
+
+async function generateAndStoreLocalKey(signer: ethers.Signer, setKeyStorage: (ks: KeyStorage) => void) {
+  const key = await signer.signMessage(LOCAL_KEY_SEED);
+  setKeyStorage({key, wallet: await signer.getAddress()});
+  return key;
+}
+
+async function getLocalKey(signer: ethers.Signer, keyStorage: KeyStorage, setKeyStorage: (ks: KeyStorage) => void) {
+  if (keyStorage.key.length > 0 && keyStorage.wallet === await signer.getAddress()) {
+    return keyStorage.key;
+  } else {
+    return await generateAndStoreLocalKey(signer, setKeyStorage);
+  }
+}
+
+export async function encryptWithLocalKey(signer: ethers.Signer,
+                                          choice: number,
+                                          saltHex: string,
+                                          keyStorage: KeyStorage,
+                                          setKeyStorage: (ks: KeyStorage) => void) {
+  const keyHexStr = await getLocalKey(signer, keyStorage, setKeyStorage);
+  const keyBuffer33Bytes = Buffer.from(keyHexStr.slice(-66), 'hex');
+  const dataToEncrypt = Buffer.from(`0${choice}${saltHex.slice(2)}`, 'hex');
+  const encrypted = new Uint8Array(33);
+  for (let i = 0; i < 33; i++) {
+    encrypted[i] = dataToEncrypt[i] ^ keyBuffer33Bytes[i];
+  }
+
+  const result =  Buffer.from(encrypted).toString('hex');
+  return `0x${result}`;
+}
+
+export async function decryptWithLocalKey(signer: ethers.Signer,
+                                          encryptedHex: string,
+                                          keyStorage: KeyStorage,
+                                          setKeyStorage: (ks: KeyStorage) => void) {
+  try {
+    const keyHexStr = await getLocalKey(signer, keyStorage, setKeyStorage);
+    const keyBuffer33Bytes = Buffer.from(keyHexStr.slice(-66), 'hex');
+    const encrypted = Buffer.from(encryptedHex.slice(2), 'hex');
+    const decrypted = new Uint8Array(33);
+    for (let i = 0; i < 33; i++) {
+      decrypted[i] = encrypted[i] ^ keyBuffer33Bytes[i];
+    }
+
+    const result = Buffer.from(decrypted).toString('hex');
+    return {choice: parseInt(result[1]), salt: `0x${result.slice(2)}`};
+  } catch (e) {
+    console.log(e)
+    return {choice: CHOICE_UNKNOWN, salt: '0x'};
   }
 }

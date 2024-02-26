@@ -4,12 +4,18 @@ import type {StateCreator} from "zustand";
 import {AcceptedChallenge, Attestation, GameCommit} from "./utils/types";
 import {produce} from "immer";
 
+export type KeyStorage = {
+  key: string;
+  wallet: string;
+}
+
 type InitialState = {
   appVersion: number;
   hasHydrated: boolean;
   gameCommits: GameCommit[];
   acceptedChallenges: AcceptedChallenge[];
   isConnected: boolean;
+  key: KeyStorage;
 };
 
 type StoreMethods = {
@@ -17,6 +23,7 @@ type StoreMethods = {
   addGameCommit: (commit: GameCommit) => void;
   addAcceptedChallenge: (challenge: AcceptedChallenge) => void;
   setIsConnected: (connected: boolean) => void;
+  setKey: (ks: KeyStorage) => void;
 };
 
 const initialState: InitialState = {
@@ -25,6 +32,7 @@ const initialState: InitialState = {
   gameCommits: [],
   acceptedChallenges: [],
   isConnected: false,
+  key: {key: "", wallet: ""},
 };
 
 const reducer: StateCreator<InitialState & StoreMethods> = (set, get) => ({
@@ -40,6 +48,7 @@ const reducer: StateCreator<InitialState & StoreMethods> = (set, get) => ({
       acceptedChallenges: [...state.acceptedChallenges, challenge],
     })),
   setIsConnected: (connected: boolean) => set({isConnected: connected}),
+  setKey: (ks: KeyStorage) => set({key:ks}),
 });
 
 export const useStore = create(

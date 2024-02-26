@@ -5,15 +5,21 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="4b6b4d34-3ef3-4b21-bcd4-f67b10a33234" name="Changes" comment="graph">
+      <change afterPath="$PROJECT_DIR$/src/TestButton.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.env" beforeDir="false" afterPath="$PROJECT_DIR$/.env" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/App.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/App.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Challenge.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/Challenge.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ChallengeAttestation.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/ChallengeAttestation.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Games.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/Games.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Home.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/Home.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/HowItWorks.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/HowItWorks.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Start.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/Start.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/PlayerCard.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/PlayerCard.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Summary.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/Summary.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/components/PrivyConnectButton.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/PrivyConnectButton.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/hooks/useAutoReveal.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/hooks/useAutoReveal.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/useStore.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/useStore.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utils/types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/types.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utils/utils.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/utils.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utils/wagmi-utils.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/wagmi-utils.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/yarn.lock" beforeDir="false" afterPath="$PROJECT_DIR$/yarn.lock" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -42,23 +48,23 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/Users/jsk11235/eas/eas-rps-frontend&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;yarn&quot;,
-    &quot;prettierjs.PrettierConfiguration.Package&quot;: &quot;/Users/jsk11235/eas/eas-rps-frontend/node_modules/prettier&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;web-ide.project.structure&quot;,
-    &quot;ts.external.directory.path&quot;: &quot;/Users/jsk11235/eas/eas-rps-frontend/node_modules/typescript/lib&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "device-sync",
+    "last_opened_file_path": "/Users/jsk11235/eas/eas-rps-frontend",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "yarn",
+    "prettierjs.PrettierConfiguration.Package": "/Users/jsk11235/eas/eas-rps-frontend/node_modules/prettier",
+    "settings.editor.selected.configurable": "settings.typescriptcompiler",
+    "ts.external.directory.path": "/Users/jsk11235/eas/eas-rps-frontend/node_modules/typescript/lib",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="es6.move.members.recent.items">
       <recent name="$PROJECT_DIR$/src/utils/utils.ts" />
@@ -101,7 +107,7 @@
       <workItem from="1708539425158" duration="50000" />
       <workItem from="1708539487578" duration="148000" />
       <workItem from="1708539652741" duration="40580000" />
-      <workItem from="1708715157542" duration="20249000" />
+      <workItem from="1708715157542" duration="39622000" />
     </task>
     <task id="LOCAL-00001" summary="graph">
       <option name="closed" value="true" />
