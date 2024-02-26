@@ -8,9 +8,11 @@ export function PrivyAutoLogout({ children }: { children: React.ReactNode }) {
   const { logout } = usePrivy();
   const [initialLoad, setInitialLoad] = useState(true);
   const setKeyStorage = useStore((state) => state.setKeyObj);
+  const setSigRequested = useStore((state) => state.setSigRequested);
 
   useEffect(() => {
     if (isDisconnected && !initialLoad) {
+      setSigRequested(false);
       setKeyStorage({key: '', wallet: ''});
       logout();
     }

@@ -5,10 +5,10 @@ import axios from "axios";
 import styled from "styled-components";
 import PlayerCard from "./components/PlayerCard";
 import { useParams } from "react-router";
-import { useAccount } from "wagmi";
 import MiniHeader from "./MiniHeader";
 import { Identicon } from "./components/Identicon";
 import { usePrivy } from "@privy-io/react-auth";
+import { useStore } from "./useStore";
 
 const Container = styled.div`
   display: flex;
@@ -127,7 +127,8 @@ const Podium = ({ firstAddress, secondAddress, thirdAddress }: PodiumProps) => (
 
 export default function Leaderboard() {
   const {user} = usePrivy();
-  const address = user?.wallet?.address;
+  const cachedAddress = useStore((state) => state.cachedAddress)
+  const address = user?.wallet?.address || cachedAddress;
   const { type } = useParams();
   const [leaderboard, setLeaderboard] = useState<Player[]>([]);
   async function getLeaderboard() {

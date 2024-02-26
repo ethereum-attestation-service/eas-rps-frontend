@@ -104,6 +104,7 @@ export type Game = {
   eloChange1: number;
   eloChange2: number;
   invalidated: boolean;
+  updatedAt: number;
 };
 
 export type IncomingChallenge = {
@@ -138,7 +139,7 @@ export type GameWithPlayers = Game & {
 };
 
 export type GameWithPlayersAndAttestations = GameWithPlayers & {
-  relevantAttestations: { packageObjString: string }[];
+  relevantAttestations: { packageObjString: string, timestamp:number }[];
 };
 
 export type Player = {

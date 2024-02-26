@@ -191,7 +191,11 @@ const steps: StepProps[] = [
       "This generates an offchain attestation attesting to a hash of their move + a salt, referencing the Create Game attestation." +
       "\n" +
       "This attestation is public as soon as it is sent to the server. By making this attestation, the player is publicly committing to their move without " +
-      "revealing it.",
+      "revealing it." +
+      "\n" +
+      "The schema for this attestation also includes a field for an encrypted version of players' choices and corresponding salts." +
+      "This allows players to safely back up their choices and salts in case they lose their local storage or " +
+      "want to play from different devices.",
     hasFooter: true,
     footerContent: "Example Player Move Attestation",
     footerLinkText: formatAttestationLongValueV2("0xdc83e58dd6940b816424f91ce974700870884d1a65b04633f18fee75f773678e"),

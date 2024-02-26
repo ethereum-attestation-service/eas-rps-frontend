@@ -23,25 +23,28 @@ import {MaxWidthDiv} from "./components/MaxWidthDiv";
 import Confetti from "react-confetti";
 import PlayerCard from "./components/PlayerCard";
 import {usePrivy} from "@privy-io/react-auth";
+import {useStore} from "./useStore";
 
 const easLogo = "/images/rps/easlogo.png";
 
 type WonProps = { won: boolean };
 
 const SummaryContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 100vw;
-  padding: 20px;
-  box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100vw;
+    padding: 20px;
+    box-sizing: border-box;
+    min-height: 100vh;
+    height: 100%;
 `;
 
 const LineBreak = styled.div`
-  height: 1px;
-  background-color: rgba(57, 53, 84, 0.15);
-  margin: 10px;
-  width: 100%;
+    height: 1px;
+    background-color: rgba(57, 53, 84, 0.15);
+    margin: 10px;
+    width: 100%;
 `;
 
 type CentralProps = { central: boolean };
@@ -49,16 +52,16 @@ type CentralProps = { central: boolean };
 type VictoryMessageProps = { isBig: boolean } & WonProps & CentralProps;
 
 const VictoryMessage = styled.div<VictoryMessageProps>`
-  font-family: Ubuntu, serif;
-  text-align: left;
-  -webkit-text-stroke-width: 2px;
-  -webkit-text-stroke-color: ${({won}) => (won ? "#00ebcf" : "#C8B3F5")};
-  font-size: ${({isBig}) => (isBig ? "48px" : "26px")};
-  font-style: normal;
-  font-weight: 700;
-  line-height: normal;
-  margin-bottom: -0.85rem;
-  padding: ${({isBig}) => (isBig ? "20px" : "0")};
+    font-family: Ubuntu, serif;
+    text-align: left;
+    -webkit-text-stroke-width: 2px;
+    -webkit-text-stroke-color: ${({won}) => (won ? "#00ebcf" : "#C8B3F5")};
+    font-size: ${({isBig}) => (isBig ? "48px" : "26px")};
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+    margin-bottom: -0.85rem;
+    padding: ${({isBig}) => (isBig ? "20px" : "0")};
 `;
 
 const Points = styled.div`
@@ -91,133 +94,143 @@ const PointsWord = styled.span`
 `;
 
 const ResultContainer = styled(MaxWidthDiv)`
-  border-radius: 10px;
-  width: 100%;
-  flex-shrink: 0;
-  border: 1px solid rgba(57, 53, 84, 0.2);
-  background: #fff;
-  box-shadow: 10px 10px 25px 5px rgba(210, 201, 190, 0.25);
-  display: flex;
-  flex-direction: column;
-  margin: 20px 0;
-  align-items: center;
+    border-radius: 10px;
+    width: 100%;
+    flex-shrink: 0;
+    border: 1px solid rgba(57, 53, 84, 0.2);
+    background: #fff;
+    box-shadow: 10px 10px 25px 5px rgba(210, 201, 190, 0.25);
+    display: flex;
+    flex-direction: column;
+    margin: 20px 0;
+    align-items: center;
 `;
 
 const BoxTitle = styled.div`
-  color: #272343;
-  text-align: center;
-  font-family: "Space Grotesk", serif;
-  font-size: 22px;
-  font-style: normal;
-  font-weight: 700;
-  line-height: normal;
-  padding: 20px;
+    color: #272343;
+    text-align: center;
+    font-family: "Space Grotesk", serif;
+    font-size: 22px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+    padding-top: 20px;
+    padding-bottom: 8px;
 `;
 
 const StakeTitle = styled.div`
-  color: rgba(39, 35, 67, 0.66);
-  font-family: "Space Grotesk", serif;
-  font-size: 14px;
-  font-style: normal;
-  font-weight: 400;
-  line-height: normal;
+    color: rgba(39, 35, 67, 0.66);
+    font-family: "Space Grotesk", serif;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
 `;
 
 const StakeBet = styled.div`
-  color: #272343;
-  font-family: "Space Grotesk", serif;
-  font-size: 22px;
-  font-style: normal;
-  font-weight: 700;
-  line-height: normal;
+    color: #272343;
+    font-family: "Space Grotesk", serif;
+    font-size: 22px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
 `;
 
 const GameUID = styled.a`
-  color: #272343;
-  font-family: "Space Grotesk", serif;
-  font-size: 14px;
-  font-style: normal;
-  font-weight: 400;
-  line-height: normal;
-  overflow-wrap: anywhere;
-  text-decoration: none;
+    color: #272343;
+    font-family: "Space Grotesk", serif;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+    overflow-wrap: anywhere;
+    text-decoration: none;
 `;
 
 const AttestationTitle = styled.div`
-  color: rgba(76, 58, 78, 0.9);
-  font-family: "Space Grotesk", serif;
-  font-size: 12px;
-  font-style: normal;
-  font-weight: 500;
-  line-height: normal;
+    color: rgba(76, 58, 78, 0.9);
+    font-family: "Space Grotesk", serif;
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
 `;
 
 const GameUIDContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: center;
-  overflow: hidden;
-  margin: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    overflow: hidden;
+    margin: 20px;
 `;
 
 const Button = styled(MaxWidthDiv)`
-  border-radius: 8px;
-  border: 1px solid #ff8e3c;
-  background: #ff8e3c;
-  margin: 10px 0;
-  cursor: pointer;
-  color: #fff;
-  text-align: center;
-  font-family: Nunito, serif;
-  font-size: 18px;
-  font-style: normal;
-  font-weight: 700;
-  line-height: 34px; /* 188.889% */
-  width: 100%;
-  height: 71px;
-  flex-shrink: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+    border-radius: 8px;
+    border: 1px solid #ff8e3c;
+    background: #ff8e3c;
+    margin: 10px 0;
+    cursor: pointer;
+    color: #fff;
+    text-align: center;
+    font-family: Nunito, serif;
+    font-size: 18px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 34px; /* 188.889% */
+    width: 100%;
+    height: 71px;
+    flex-shrink: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 `;
 
 const UnderlinedLink = styled.a`
-  color: #272343;
-  text-align: center;
-  font-family: "Space Grotesk", serif;
-  font-size: 18px;
-  font-style: normal;
-  font-weight: 400;
-  line-height: 34px;
-  text-decoration-line: underline;
+    color: #272343;
+    text-align: center;
+    font-family: "Space Grotesk", serif;
+    font-size: 18px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 34px;
+    text-decoration-line: underline;
 `;
 
 const GameInfoContainer = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 15fr;
-  width: 100%;
-  align-items: center;
-  justify-content: center;
-  border-top: 1px solid rgba(57, 53, 84, 0.15);
+    display: grid;
+    grid-template-columns: 1fr 15fr;
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+    border-top: 1px solid rgba(57, 53, 84, 0.15);
 `;
 
 const VictoryMessageContainer = styled.div<CentralProps>`
-  width: 100%;
-  box-sizing: border-box;
-  display: flex;
-  padding: 0 2rem;
-  flex-direction: column;
-  max-width: 400px;
-  ${({central}) => (central ? "align-items: center;" : "")}
+    width: 100%;
+    box-sizing: border-box;
+    display: flex;
+    padding: 0 2rem;
+    flex-direction: column;
+    max-width: 400px;
+    ${({central}) => (central ? "align-items: center;" : "")}
 `;
+
+const Timestamp = styled.div`
+    font-size: 14px;
+    font-weight: 400;
+    color: #777;
+    text-align: center;
+`;
+
 
 function Summary() {
   const [game, setGame] = useState<GameWithPlayersAndAttestations>();
   const [tick, setTick] = useState<number>(0);
   const {challengeId} = useParams();
   const {user} = usePrivy();
-  const address = user?.wallet?.address;
+  const cachedAddress = useStore((state) => state.cachedAddress)
+  const address = user?.wallet?.address || cachedAddress;
   const navigate = useNavigate();
 
   const update = async () => {
@@ -246,8 +259,11 @@ function Summary() {
 
   const gameAttestationObjects: AttestationShareablePackageObject[] =
     game.relevantAttestations.map((attestation) =>
-      JSON.parse(attestation.packageObjString)
-    );
+      ({
+        ...JSON.parse(attestation.packageObjString),
+        timestamp: attestation.timestamp
+      })
+    ).sort((a, b) => b.timestamp - a.timestamp);
 
   const attestationDescriptions = gameAttestationObjects.map((attestation) => {
     switch (attestation.sig.message.schema) {
@@ -336,6 +352,7 @@ function Summary() {
         <ResultContainer>
           {/*<BiArrowFromBottom color={"#000"} size={24} />*/}
           <BoxTitle>Game Result</BoxTitle>
+          <Timestamp>{(new Date(game.updatedAt * 1000)).toLocaleString()}</Timestamp>
           <LineBreak/>
           <PlayerCard
             address={game?.player1 || ""}

@@ -93,6 +93,7 @@ export function ProfileModal({handleClose}: Props) {
   const address = user?.wallet?.address;
 
   const setKeyStorage = useStore((state) => state.setKeyObj);
+  const setSigRequested = useStore((state) => state.setSigRequested);
 
   if (!address) return null;
 

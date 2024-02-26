@@ -3,6 +3,7 @@ import styled from "styled-components";
 import {ButtonBase} from "../styles/buttons";
 import {theme} from "../utils/theme";
 import {formatAttestationLongValueV2} from "../utils/utils";
+import {useStore} from "../useStore";
 
 const StyledButton = styled.button`
     ${ButtonBase};
@@ -31,7 +32,8 @@ export default function PrivyConnectButton({
                                              handleClickWhileConnected,
                                            }: Props) {
   const {login, user, ready} = usePrivy();
-  const address = user?.wallet?.address;
+  const cachedAddress = useStore((state) => state.cachedAddress)
+  const address = user?.wallet?.address || cachedAddress;
 
 
   return (
@@ -39,7 +41,7 @@ export default function PrivyConnectButton({
       !ready ? undefined
         : address ? handleClickWhileConnected
           : login}>
-      {!ready
+      {!ready && !address
         ? "Loading..." :
         address
           ? formatAttestationLongValueV2(address)

@@ -10,7 +10,6 @@ export function useAutoReveal(myAddress: string | undefined) {
   const keyStorage = useStore((state) => state.keyObj);
   const setKeyStorage = useStore((state) => state.setKeyObj);
   const sigRequested = useStore((state) => state.sigRequested);
-  const setSigRequested = useStore((state) => state.setSigRequested);
   const [tick, setTick] = useState(0);
   const signer = useSigner();
   const {user} = usePrivy();
@@ -31,8 +30,7 @@ export function useAutoReveal(myAddress: string | undefined) {
 
       const keyInPlace = signer && keyStorage.key.length > 0 && keyStorage.wallet === await signer.getAddress();
 
-      if (signer && user && (keyInPlace || !sigRequested) ) {
-        setSigRequested(true);
+      if (user && keyInPlace ) {
         const {choice,salt} = await decryptWithLocalKey(signer, game.encryptedChoice,game.uid,keyStorage, setKeyStorage);
         if ((choice || choice===0) && choice!==CHOICE_UNKNOWN && salt) {
           reveals.push({
@@ -41,7 +39,6 @@ export function useAutoReveal(myAddress: string | undefined) {
             salt,
           });
         }
-        setSigRequested(false);
       } else if (thisCommit) {
         reveals.push({
           uid: game.uid,

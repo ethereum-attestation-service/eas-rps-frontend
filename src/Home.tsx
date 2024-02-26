@@ -31,6 +31,7 @@ import Page from "./Page";
 import MiniHeader from "./MiniHeader";
 import {usePrivy} from "@privy-io/react-auth";
 import {globalMaxWidth} from "./components/MaxWidthDiv";
+import AwaitingSignerMessage from "./components/AwaitingSignerMessage";
 
 const Container = styled.div`
     display: flex;
@@ -100,7 +101,7 @@ const TextArea = styled.textarea`
     border: 1px solid #eee;
     resize: none;
     box-sizing: border-box;
-    padding: 25px 0px;
+    padding: 25px 10px;
     border-radius: 4px;
     outline: none;
     max-width: ${globalMaxWidth};
@@ -126,7 +127,8 @@ function Home() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const {user, ready} = usePrivy();
-  const myAddress = user?.wallet?.address;
+  const cachedAddress = useStore((state) => state.cachedAddress)
+  const myAddress = user?.wallet?.address || cachedAddress;
 
   const issueChallenge = async () => {
     invariant(address, "Address should be defined");
@@ -205,6 +207,8 @@ function Home() {
     checkENS();
   }, [address]);
 
+  console.log(signer,'signer')
+
   return (
     <>
       {/*<GradientBar />*/}
@@ -232,7 +236,7 @@ function Home() {
               value={stakes}
               onChange={(e) => setStakes(e.target.value)}
             />
-            <StartButton
+            {signer ? <StartButton
               style={
                 ethers.isAddress(ensResolvedAddress || address) && !attesting
                   ? {backgroundColor: "#2EC4B6", cursor: "pointer"}
@@ -246,7 +250,8 @@ function Home() {
               }
             >
               {attesting ? 'Starting...' : 'Start Battle'}
-            </StartButton>
+            </StartButton> : <AwaitingSignerMessage/>
+            }
           </Container>
         </Page>
       ) : (

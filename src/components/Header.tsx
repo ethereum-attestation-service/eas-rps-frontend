@@ -1,9 +1,8 @@
 import styled from "styled-components";
 import {useLocation, useNavigate} from "react-router";
 import {theme} from "../utils/theme";
-// import { CustomConnectButton } from "./ui/CustomConnectKit";
 import PrivyConnectButton from "./PrivyConnectButton";
-import {activeChainConfig, clientURL} from "../utils/utils";
+import {activeChainConfig, clientURL, getLocalKey} from "../utils/utils";
 import invariant from "tiny-invariant";
 import {useAccount} from "wagmi";
 import {FaQrcode, FaBars} from "react-icons/fa";
@@ -11,6 +10,8 @@ import {useAutoReveal} from "../hooks/useAutoReveal";
 import {useEffect, useState} from "react";
 import {ProfileModal} from "./ProfileModal";
 import {usePrivy} from "@privy-io/react-auth";
+import {useStore} from "../useStore";
+import {useSigner} from "../utils/wagmi-utils";
 
 const Outer = styled.div`
     font-family: "Nunito", sans-serif;
@@ -29,9 +30,9 @@ const Container = styled.div`
 `;
 
 const LogoContainer = styled.div`
-  min-width: 100px;
-  display: flex;
-  align-items: center;
+    min-width: 100px;
+    display: flex;
+    align-items: center;
 `;
 
 const MainNavigation = styled.div`
@@ -51,14 +52,15 @@ const QR = styled(FaQrcode)`
 `;
 
 const LogoImage = styled.img`
-    width: 40px;
+    max-height: 60px;
+    max-width: 100px;
     margin-right: 4px;
 `;
 
 const Left = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 `;
 
 const Right = styled.div`
@@ -82,29 +84,29 @@ const HamburgerContainer = styled.div`
 `;
 
 const Links = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 20px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
 
-  @media only screen and (max-width: 700px) {
-    display: none;
-  }
+    @media only screen and (max-width: 700px) {
+        display: none;
+    }
 `;
 
 const MobileLinks = styled.div`
-  display: block;
-  margin-top: 20px;
+    display: block;
+    margin-top: 20px;
 
-  @media only screen and (min-width: 900px) {
-    display: none;
-  }
+    @media only screen and (min-width: 900px) {
+        display: none;
+    }
 `;
 
 const LogoText = styled.span`
-  font-family: Audiowide, sans-serif;
-  font-size: 22px;
-  font-weight: 400;
-  white-space: nowrap;
+    font-family: Audiowide, sans-serif;
+    font-size: 22px;
+    font-weight: 400;
+    white-space: nowrap;
 `;
 
 type MenuItemProps = {
@@ -112,20 +114,20 @@ type MenuItemProps = {
 };
 
 const MenuItem = styled.div<MenuItemProps>`
-  border-radius: 20px;
-  padding: 12px 20px;
-  font-family: "Montserrat", serif;
-  font-style: normal;
-  font-weight: ${({active}) => (active ? "700" : "500")};
-  font-size: 16px;
-  line-height: 20px;
-  cursor: pointer;
-  color: #333342;
-  text-align: center;
+    border-radius: 20px;
+    padding: 12px 20px;
+    font-family: "Montserrat", serif;
+    font-style: normal;
+    font-weight: ${({active}) => (active ? "700" : "500")};
+    font-size: 16px;
+    line-height: 20px;
+    cursor: pointer;
+    color: #333342;
+    text-align: center;
 
-  :hover {
-    background-color: ${({active}) => (active ? "#F1F4F9" : "#f1f4f966")};
-  }
+    :hover {
+        background-color: ${({active}) => (active ? "#F1F4F9" : "#f1f4f966")};
+    }
 `;
 
 type MenuItemType = {
@@ -137,8 +139,15 @@ type MenuItemType = {
 export function Header() {
   const navigate = useNavigate();
   const {user} = usePrivy();
+  const cachedAddress = useStore((state) => state.cachedAddress);
+  const setCachedAddress = useStore((state) => state.setCachedAddress);
+  const keyStorage = useStore((state) => state.keyObj);
+  const setKeyStorage = useStore((state) => state.setKeyObj);
+  const sigRequested = useStore((state) => state.sigRequested);
+  const setSigRequested = useStore((state) => state.setSigRequested);
   const address = user?.wallet?.address;
   useAutoReveal(address);
+  const signer = useSigner();
   const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -164,16 +173,36 @@ export function Header() {
 
   invariant(activeChainConfig, "activeChainConfig is not set");
 
+  useEffect(() => {
+    if (address && address !== cachedAddress) {
+      setCachedAddress(address);
+    }
+  }, [address]);
+
+  useEffect(() => {
+    if (address && signer && !sigRequested) {
+      setSigRequested(true);
+      try {
+        getLocalKey(signer, keyStorage, setKeyStorage);
+      } catch (e) {
+        setSigRequested(false);
+      }
+    }
+  }, [address, signer, sigRequested]);
+
+  useEffect(() => {
+    if (!address && !signer) {
+      setSigRequested(false);
+    }
+  }, [address, signer]);
+
   return (
     <>
       <Outer>
         <Container>
           <MainNavigation>
             <LogoContainer>
-              <Logo onClick={() => navigate("/")}>
-                <LogoImage src="/logo.png"/>
-                <LogoText>RPS</LogoText>
-              </Logo>
+              <LogoImage src="/images/rps/rps-logo.png"/>
             </LogoContainer>
             <Left>
               <Links>

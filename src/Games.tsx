@@ -18,7 +18,7 @@ import UserHistoryCard from "./UserHistoryCard";
 import PlayerCard from "./components/PlayerCard";
 import MiniHeader from "./MiniHeader";
 import {usePrivy} from "@privy-io/react-auth";
-// import { Button } from "./Home";
+import {useStore} from "./useStore";
 
 const Container = styled.div`
     display: flex;
@@ -35,6 +35,7 @@ const RecentBattles = styled.div`
     font-style: normal;
     font-weight: 700;
     line-height: normal;
+    margin-bottom: 0.5rem;
 `;
 
 const BattleContainer = styled.div`
@@ -71,7 +72,8 @@ const StyledPlayerCard = styled(PlayerCard)`
 function Games() {
   const {address: preComputedAddress} = useParams();
   const {user} = usePrivy();
-  const address = preComputedAddress || user?.wallet?.address;
+  const cachedAddress = useStore((state) => state.cachedAddress)
+  const address = preComputedAddress || user?.wallet?.address || cachedAddress;
   const [ensName, setEnsName] = useState<string | undefined>(undefined);
   const [ensAvatar, setEnsAvatar] = useState<string | undefined>(undefined);
   const [finishedGames, setFinishedGames] = useState<GameWithOnePlayer[]>([]);
@@ -86,6 +88,11 @@ function Games() {
   const [gameResults, setGameResults] = useState<string[]>();
   const [badges, setBadges] = useState<string[]>();
   const [eloScore, setEloScore] = useState<number>(0);
+
+  const timestampToString = (timestamp: number) => {
+    const date = new Date(timestamp*1000);
+    return date.toLocaleString();
+  }
 
   useEffect(() => {
     if (!address) {
@@ -185,11 +192,12 @@ function Games() {
                   <StyledPlayerCard
                     address={isPlayer1 ? gameObj.player2 : gameObj.player1}
                     score={gameResults ? gameResults[i] : ""}
-                    overrideENSWith={""}
+                    overrideENSWith={''}
                     badges={gameObj.player1Object.badges}
-                    ens={gameObj.player1Object.ensName}
+                    ens={gameObj.player1Object.ensName }
                     ensAvatar={gameObj.player1Object.ensAvatar}
                     ignoreClick={true}
+                    timestamp={timestampToString(gameObj.updatedAt)}
                   />
                 </BattleContainer>
               );

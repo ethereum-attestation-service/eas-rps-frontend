@@ -161,10 +161,11 @@ const PlayerStatus = styled.div`
 
 function Challenge() {
   const {user, ready} = usePrivy();
-  const address = user?.wallet?.address;
   const navigate = useNavigate();
   const {challengeId} = useParams();
   const signer = useSigner();
+  const cachedAddress = useStore((state) => state.cachedAddress);
+  const address = user?.wallet?.address || cachedAddress;
   const [tick, setTick] = useState(0);
   const [game, setGame] = useState<GameWithPlayers>();
   const [attesting, setAttesting] = useState(false);
@@ -180,8 +181,6 @@ function Challenge() {
 
   const keyStorage = useStore((state) => state.keyObj);
   const setKeyStorage = useStore((state) => state.setKeyObj);
-  const sigRequested = useStore((state) => state.sigRequested);
-  const setSigRequested = useStore((state) => state.setSigRequested);
 
   invariant(challengeId, "Challenge ID should be defined");
 
@@ -217,14 +216,11 @@ function Challenge() {
     // swap players if we are player 2
     const swappedGame = swapPlayersIfNecessary(gameRes.data);
     const keyInPlace = signer && keyStorage.key.length > 0 && keyStorage.wallet === await signer.getAddress();
-    if (signer && user && (keyInPlace || !sigRequested)) {
-      console.log('requesting key for decrypting');
-      setSigRequested(true);
+    if (user && keyInPlace) {
       const {choice} = await decryptWithLocalKey(signer, swappedGame.encryptedChoice1, challengeId, keyStorage, setKeyStorage);
       if (choice === CHOICE_ROCK || choice === CHOICE_PAPER || choice === CHOICE_SCISSORS) {
         setDecryptedChoice(choice);
       }
-      setSigRequested(false);
     }
     setGame(swappedGame);
   };
@@ -271,9 +267,14 @@ function Challenge() {
         [choice, saltHex]
       );
 
-      invariant(signer, "signer must be defined");
+      if (!signer) {
+        alert("No signer found, attempting to connect...");
+        window.location.reload();
+        return
+      }
 
-      console.log('reuqesting key for encrypting');
+      console.log('about to encrypt')
+
       const encryptedChoice = await encryptWithLocalKey(signer, choice, saltHex, challengeId, keyStorage, setKeyStorage);
 
       const encoded = schemaEncoder.encodeData([

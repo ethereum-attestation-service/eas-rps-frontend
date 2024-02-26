@@ -1,16 +1,14 @@
 import React, {useEffect, useState} from "react";
 import styled from "styled-components";
-import GradientBar from "./components/GradientBar";
-import {useAccount} from "wagmi";
 import {baseURL, profileLinks, clientURL} from "./utils/utils";
 import {QRCodeSVG} from "qrcode.react";
-import {Link} from "react-router-dom";
 import PlayerCard from "./components/PlayerCard";
 import axios from "axios";
 import Page from "./Page";
 import MiniHeader from "./MiniHeader";
 import {usePrivy} from "@privy-io/react-auth";
 import { Player } from "./utils/types";
+import { useStore } from "./useStore";
 
 const Container = styled.div`
     display: flex;
@@ -72,8 +70,10 @@ const QrCodeContainer = styled.div`
 
 function Home() {
   const {user} = usePrivy();
-  const address = user?.wallet?.address;
+  const cachedAddress = useStore((state) => state.cachedAddress)
+  const address = user?.wallet?.address || cachedAddress;
   const [player, setPlayer] = useState<Player>();
+  const [copied,setCopied] = useState(false);
 
   useEffect(() => {
     async function fetchPlayerDetails() {
@@ -117,9 +117,10 @@ function Home() {
               window.navigator.clipboard.writeText(
                 challengeLink
               );
+              setCopied(true);
             }}
           >
-            Copy Challenge Link
+            {copied?'Copied Link':'Copy Challenge Link'}
           </CopyButton>
           <ChallengeLink>{challengeLink}</ChallengeLink>
         </QrCard>

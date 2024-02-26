@@ -5,7 +5,35 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="4b6b4d34-3ef3-4b21-bcd4-f67b10a33234" name="Changes" comment="graph">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/components/AwaitingSignerMessage.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/components/BattleCard.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/favicon-16x16.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/favicon-32x32.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/favicon.ico" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/public/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/logo.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/logo192.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/logo512.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Challenge.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/Challenge.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Games.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/Games.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Home.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/Home.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/HowItWorks.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/HowItWorks.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Leaderboard.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/Leaderboard.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/PrivyAutoLogout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/PrivyAutoLogout.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Qr.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/Qr.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Summary.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/Summary.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/Header.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/Header.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/PlayerCard.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/PlayerCard.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/PrivyConnectButton.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/PrivyConnectButton.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/ProfileModal.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/ProfileModal.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/hooks/useAutoReveal.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/hooks/useAutoReveal.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/useStore.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/useStore.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utils/types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/types.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utils/utils.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/utils.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utils/wagmi-utils.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/wagmi-utils.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/yarn.lock" beforeDir="false" afterPath="$PROJECT_DIR$/yarn.lock" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -93,7 +121,7 @@
       <workItem from="1708539425158" duration="50000" />
       <workItem from="1708539487578" duration="148000" />
       <workItem from="1708539652741" duration="40580000" />
-      <workItem from="1708715157542" duration="48262000" />
+      <workItem from="1708715157542" duration="67779000" />
     </task>
     <task id="LOCAL-00001" summary="graph">
       <option name="closed" value="true" />

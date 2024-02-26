@@ -206,13 +206,14 @@ export function badgeNameToLogo(badgeName: string) {
 const LOCAL_KEY_SEED = 'Signing this message makes your rps.sh account accessible to you on any device.\n\n' +
   'DO NOT SHARE YOUR SIGNATURE WITH ANYONE. DO NOT SIGN THIS EXACT MESSAGE FOR ANY APP EXCEPT rps.sh. ';
 
+
 async function generateAndStoreLocalKey(signer: ethers.Signer, setKeyStorage: (ks: KeyStorage) => void) {
   const key = await signer.signMessage(LOCAL_KEY_SEED);
   setKeyStorage({key, wallet: await signer.getAddress()});
   return key;
 }
 
-async function getLocalKey(signer: ethers.Signer, keyStorage: KeyStorage, setKeyStorage: (ks: KeyStorage) => void) {
+export async function getLocalKey(signer: ethers.Signer, keyStorage: KeyStorage, setKeyStorage: (ks: KeyStorage) => void) {
   if (keyStorage.key.length > 0 && keyStorage.wallet === await signer.getAddress()) {
     return keyStorage.key;
   } else {
@@ -253,7 +254,10 @@ export async function decryptWithLocalKey(signer: ethers.Signer,
                                           keyStorage: KeyStorage,
                                           setKeyStorage: (ks: KeyStorage) => void) {
   try {
-    const keyHexStr = await getLocalKey(signer, keyStorage, setKeyStorage);
+    const keyHexStr = keyStorage.key;
+    if (!keyHexStr || keyHexStr.length === 0) {
+      return {choice: CHOICE_UNKNOWN, salt: '0x'};
+    }
     const keyBuffer32Bytes = hexStrToLastNBytesBuffer(keyHexStr, 32);
     const initVector = hexStrToLastNBytesBuffer(gameUID, 16);
     const encrypted = Buffer.from(encryptedHex.slice(2), 'hex');

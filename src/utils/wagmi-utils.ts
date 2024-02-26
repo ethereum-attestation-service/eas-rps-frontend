@@ -3,6 +3,8 @@ import { type HttpTransport } from "viem";
 import { useEffect, useState } from "react";
 import { usePublicClient, useWalletClient } from "wagmi";
 import { ethers, JsonRpcProvider, JsonRpcSigner } from "ethers";
+import { usePrivy } from "@privy-io/react-auth";
+import { usePrivyWagmi } from "@privy-io/wagmi-connector";
 
 export function publicClientToProvider(publicClient: PublicClient) {
   const { chain, transport } = publicClient;
@@ -32,7 +34,11 @@ export async function walletClientToSigner(walletClient: WalletClient) {
 }
 
 export function useSigner() {
-  const { data: walletClient } = useWalletClient();
+  const {user} = usePrivy()
+  const { data: walletClient } = useWalletClient({
+
+  });
+  const {wallet} = usePrivyWagmi();
 
   const [signer, setSigner] = useState<JsonRpcSigner | undefined>(undefined);
   useEffect(() => {
@@ -46,9 +52,10 @@ export function useSigner() {
         console.log('error',e)
       }
     }
+    console.log(user,walletClient)
 
     getSigner();
-  }, [walletClient]);
+  }, [walletClient,user, wallet]);
   return signer;
 }
 

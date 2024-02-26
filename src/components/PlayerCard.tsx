@@ -27,6 +27,12 @@ const PlayerAddress = styled.div`
   overflow-wrap: anywhere;
 `;
 
+const Timestamp = styled.div`
+    font-size: 12px;
+    font-weight: 300;
+    color: #777;
+`;
+
 const CardContainer = styled(MaxWidthDiv)`
   display: grid;
   grid-template-columns: 1fr 2fr 1fr;
@@ -68,6 +74,7 @@ type Props = {
   ensAvatar?: string;
   className?: string;
   ignoreClick?: boolean;
+  timestamp?: string;
 };
 
 const IconWrapper = styled.div`
@@ -89,7 +96,8 @@ export default function PlayerCard({
   className,
   ens,
   ensAvatar,
-  ignoreClick
+  ignoreClick,
+  timestamp,
 }: Props) {
   const navigate = useNavigate();
 
@@ -115,6 +123,7 @@ export default function PlayerCard({
         </BadgesContainer>
       </IconWrapper>
       <PlayerInfo>
+        {timestamp && <Timestamp>{timestamp}</Timestamp>}
         <PlayerName>{ens || overrideENSWith}</PlayerName>
         <PlayerAddress>{address}</PlayerAddress>
       </PlayerInfo>

@@ -17,6 +17,7 @@ type InitialState = {
   isConnected: boolean;
   keyObj: KeyStorage;
   sigRequested: boolean;
+  cachedAddress: string | undefined;
 };
 
 type StoreMethods = {
@@ -26,6 +27,7 @@ type StoreMethods = {
   setIsConnected: (connected: boolean) => void;
   setKeyObj: (ks: KeyStorage) => void;
   setSigRequested: (sigRequested: boolean) => void;
+  setCachedAddress: (address: string | undefined) => void;
 };
 
 const initialState: InitialState = {
@@ -36,6 +38,7 @@ const initialState: InitialState = {
   isConnected: false,
   keyObj: {key: "", wallet: ""},
   sigRequested: false,
+  cachedAddress: undefined,
 };
 
 const reducer: StateCreator<InitialState & StoreMethods> = (set, get) => ({
@@ -51,8 +54,9 @@ const reducer: StateCreator<InitialState & StoreMethods> = (set, get) => ({
       acceptedChallenges: [...state.acceptedChallenges, challenge],
     })),
   setIsConnected: (connected: boolean) => set({isConnected: connected}),
-  setKeyObj: (ks: KeyStorage) => set({keyObj:ks}),
+  setKeyObj: (ks: KeyStorage) => set({keyObj: ks}),
   setSigRequested: (sr: boolean) => set({sigRequested: sr}),
+  setCachedAddress: (address: string | undefined) => set({cachedAddress: address}),
 });
 
 export const useStore = create(
