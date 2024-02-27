@@ -186,7 +186,6 @@ export function Header() {
       try {
         getLocalKey(signer, keyStorage, setKeyStorage,setSigRequested);
       } catch (e) {
-        console.log('caught error', e);
         setSigRequested(false);
       }
     }

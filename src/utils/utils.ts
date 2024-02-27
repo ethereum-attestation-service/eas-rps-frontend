@@ -214,7 +214,6 @@ async function generateAndStoreLocalKey(signer: ethers.Signer,
     setSigRequested(false);
     return '';
   });
-  console.log('key', key)
   setKeyStorage({key, wallet: await signer.getAddress()});
   return key;
 }
@@ -252,7 +251,6 @@ export async function encryptWithLocalKey(signer: ethers.Signer,
   const aesCbc = new aesjs.ModeOfOperation.cbc(keyBuffer32Bytes, initVector);
   const paddedHexData = padWithZerosUntilMultipleOf16Bytes(`0${choice}${saltHex.slice(2)}`);
   const dataBuffer = Buffer.from(paddedHexData, 'hex');
-  console.log('db',dataBuffer, dataBuffer.length)
   const result =  Buffer.from(aesCbc.encrypt(dataBuffer)).toString('hex');
   return `0x${result}`;
 }
@@ -275,7 +273,6 @@ export async function decryptWithLocalKey(signer: ethers.Signer,
     const result = Buffer.from(decrypted).toString('hex');
     return {choice: parseInt(result[1]), salt: `0x${result.slice(2,66)}`};
   } catch (e) {
-    console.log(e)
     return {choice: CHOICE_UNKNOWN, salt: '0x'};
   }
 }
