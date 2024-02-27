@@ -1,13 +1,13 @@
-import { type PublicClient, type WalletClient } from "@wagmi/core";
-import { type HttpTransport } from "viem";
-import { useEffect, useState } from "react";
-import { usePublicClient, useWalletClient } from "wagmi";
-import { ethers, JsonRpcProvider, JsonRpcSigner } from "ethers";
-import { usePrivy } from "@privy-io/react-auth";
-import { usePrivyWagmi } from "@privy-io/wagmi-connector";
+import {type PublicClient, type WalletClient, getWalletClient} from "@wagmi/core";
+import {type HttpTransport} from "viem";
+import {useEffect, useState} from "react";
+import {usePublicClient, useWalletClient} from "wagmi";
+import {ethers, JsonRpcProvider, JsonRpcSigner} from "ethers";
+import {usePrivy} from "@privy-io/react-auth";
+import {usePrivyWagmi} from "@privy-io/wagmi-connector";
 
 export function publicClientToProvider(publicClient: PublicClient) {
-  const { chain, transport } = publicClient;
+  const {chain, transport} = publicClient;
   const network = {
     chainId: chain.id,
     name: chain.name,
@@ -16,14 +16,14 @@ export function publicClientToProvider(publicClient: PublicClient) {
   if (transport.type === "fallback")
     return new ethers.FallbackProvider(
       (transport.transports as ReturnType<HttpTransport>[]).map(
-        ({ value }) => new ethers.JsonRpcProvider(value?.url, network)
+        ({value}) => new ethers.JsonRpcProvider(value?.url, network)
       )
     );
   return new ethers.JsonRpcProvider(transport.url, network);
 }
 
 export async function walletClientToSigner(walletClient: WalletClient) {
-  const { account, chain, transport } = walletClient;
+  const {account, chain, transport} = walletClient;
   const network = {
     chainId: chain.id,
     name: chain.name,
@@ -34,11 +34,9 @@ export async function walletClientToSigner(walletClient: WalletClient) {
 }
 
 export function useSigner() {
-  const {user} = usePrivy()
-  const { data: walletClient } = useWalletClient({
-
-  });
   const {wallet} = usePrivyWagmi();
+  const [tick, setTick] = useState(0);
+  const {data: walletClient} = useWalletClient();
 
   const [signer, setSigner] = useState<JsonRpcSigner | undefined>(undefined);
   useEffect(() => {
@@ -48,14 +46,16 @@ export function useSigner() {
       try {
         const tmpSigner = await walletClientToSigner(walletClient);
         setSigner(tmpSigner);
-      } catch (e){
-        console.log('error',e)
+      } catch (e) {
+        console.log('error', e)
       }
     }
-    console.log(user,walletClient)
 
-    getSigner();
-  }, [walletClient,user, wallet]);
+    if (!signer) {
+      getSigner();
+      setTimeout(() => {setTick(tick + 1)}, 1000);
+    }
+  }, [wallet, tick]);
   return signer;
 }
 

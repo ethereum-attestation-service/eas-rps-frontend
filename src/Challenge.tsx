@@ -42,6 +42,7 @@ import axios from "axios";
 import PlayerCard from "./components/PlayerCard";
 import {usePrivy} from "@privy-io/react-auth";
 import InGameChosenIcon from "./components/InGameChosenIcon";
+import AwaitingSignerMessage from "./components/AwaitingSignerMessage";
 
 type finishedProps = { finished: boolean };
 const Vs = styled.div`
@@ -357,7 +358,7 @@ function Challenge() {
           {game.commit1 === ZERO_BYTES32 ? (
             <>
               <WaitingText isPlayer1={true}>Waiting For You...</WaitingText>
-              {!attesting && ready && <HandSelection>
+              {!attesting && signer ? <HandSelection>
                 <HandOption
                   onClick={() => {
                     commit(CHOICE_ROCK);
@@ -379,7 +380,8 @@ function Challenge() {
                 >
                   ✂️
                 </HandOption>
-              </HandSelection>
+              </HandSelection> :
+                <AwaitingSignerMessage/>
               }
             </>
           ) : (

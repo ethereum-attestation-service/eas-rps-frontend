@@ -33,6 +33,7 @@ const LogoContainer = styled.div`
     min-width: 100px;
     display: flex;
     align-items: center;
+    cursor: pointer;
 `;
 
 const MainNavigation = styled.div`
@@ -201,7 +202,7 @@ export function Header() {
       <Outer>
         <Container>
           <MainNavigation>
-            <LogoContainer>
+            <LogoContainer onClick={()=>{navigate('/')}}>
               <LogoImage src="/images/rps/rps-logo.png"/>
             </LogoContainer>
             <Left>

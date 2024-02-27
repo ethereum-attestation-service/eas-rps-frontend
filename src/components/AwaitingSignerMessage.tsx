@@ -12,10 +12,21 @@ const Container = styled.div`
     font-size: 20px;
 `;
 
+const Link = styled.div`
+    color: #272343;
+    font-family: "Space Grotesk";
+    font-size: 18px;
+    text-decoration: underline;
+    cursor: pointer;
+`;
+
 export default function AwaitingSignerMessage() {
   return (
     <Container>
       Awaiting Signer Connection...
+      <Link onClick={()=>{window.location.reload()}}>
+        Taking too long? Click here to reinitialize connection.
+      </Link>
     </Container>
   )
 }

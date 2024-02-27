@@ -94,6 +94,7 @@ export function ProfileModal({handleClose}: Props) {
 
   const setKeyStorage = useStore((state) => state.setKeyObj);
   const setSigRequested = useStore((state) => state.setSigRequested);
+  const setCachedAddress = useStore((state) => state.setCachedAddress);
 
   if (!address) return null;
 
@@ -133,6 +134,7 @@ export function ProfileModal({handleClose}: Props) {
       <DisconnectButton
         onClick={async () => {
           setKeyStorage({key: '', wallet: ''});
+          setCachedAddress('');
           await logout();
           handleClose();
           navigate("/");
