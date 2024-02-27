@@ -1,105 +1,113 @@
-import React, { useEffect, useState } from "react";
-import { Player } from "./utils/types";
-import { baseURL, leaderboardLinks } from "./utils/utils";
+import React, {useEffect, useState} from "react";
+import {Player} from "./utils/types";
+import {baseURL, leaderboardLinks} from "./utils/utils";
 import axios from "axios";
 import styled from "styled-components";
 import PlayerCard from "./components/PlayerCard";
-import { useParams } from "react-router";
+import {useParams} from "react-router";
 import MiniHeader from "./MiniHeader";
-import { Identicon } from "./components/Identicon";
-import { usePrivy } from "@privy-io/react-auth";
-import { useStore } from "./useStore";
+import {Identicon} from "./components/Identicon";
+import {usePrivy} from "@privy-io/react-auth";
+import {useStore} from "./useStore";
 
 const Container = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
 `;
 
 const MiniHeaderContainer = styled.div`
-  width: auto;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+    width: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 `;
 
 const RankCard = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 10fr;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px;
-  box-sizing: border-box;
-  border-bottom: 1px solid rgba(57, 53, 84, 0.15);
-  background: rgba(255, 255, 255, 0.5);
-  width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 10fr;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    box-sizing: border-box;
+    border-bottom: 1px solid rgba(57, 53, 84, 0.15);
+    background: rgba(255, 255, 255, 0.5);
+    width: 100%;
 `;
 
 const ListContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  padding: 0 1rem;
+    display: flex;
+    flex-direction: column;
+    padding: 0 1rem;
 `;
 
 const RankNumber = styled.div`
-  color: #fff;
-  -webkit-text-stroke-width: 1px;
-  -webkit-text-stroke-color: #272343;
-  font-family: Audiowide;
-  font-size: 25px;
-  font-style: normal;
-  font-weight: 400;
-  line-height: normal;
+    color: #fff;
+    -webkit-text-stroke-width: 1px;
+    -webkit-text-stroke-color: #272343;
+    font-family: Audiowide;
+    font-size: 25px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
 `;
 
 // Container for the icons
 const PodiumContainer = styled.div`
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  margin-top: 1rem;
-  margin-bottom: 0.5rem;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    margin-top: 1rem;
+    margin-bottom: 0.5rem;
 `;
 
 // Individual icon containers
 const IconContainer = styled.div<{ place: number }>`
-  width: ${({ place }) => (place === 1 ? "150px" : "100px")};
-  height: ${({ place }) => (place === 1 ? "150px" : "100px")};
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  background-color: white; // assuming the icons have a white background
-  border: ${({ place }) => (place === 1 ? "5px" : "3px")} solid #fff;
-  box-shadow: 5px 10px 10px 0 rgba(57, 53, 84, 0.05);
+    width: ${({place}) => (place === 1 ? "150px" : "100px")};
+    height: ${({place}) => (place === 1 ? "150px" : "100px")};
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    background-color: white; // assuming the icons have a white background
+    border: ${({place}) => (place === 1 ? "5px" : "3px")} solid #fff;
+    box-shadow: 5px 10px 10px 0 rgba(57, 53, 84, 0.05);
 `;
 
 // Text for the place number (1st, 2nd, 3rd)
 const PlaceText = styled.span<{ place: number }>`
-  text-shadow: 5px 5px 10px rgba(39, 35, 67, 0.51);
-  color: #fff;
-  -webkit-text-stroke-color: ${({ place }) =>
-    place === 1 ? "#FFBF69" : place === 2 ? "#00EBCF" : "#C8B3F5"};
-  -webkit-text-stroke-width: 1px;
-  position: absolute;
-  top: -30px;
-  font-family: Audiowide;
-  font-size: 32px;
-  font-style: normal;
-  font-weight: 400;
-  line-height: normal;
+    text-shadow: 5px 5px 10px rgba(39, 35, 67, 0.51);
+    color: #fff;
+    -webkit-text-stroke-color: ${({place}) =>
+            place === 1 ? "#FFBF69" : place === 2 ? "#00EBCF" : "#C8B3F5"};
+    -webkit-text-stroke-width: 1px;
+    position: absolute;
+    top: -30px;
+    font-family: Audiowide;
+    font-size: 32px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
 `;
 
 const BorderlessIdenticon = styled(Identicon)`
-  border: none;
+    border: none;
 `;
 
 const FlatPlayerCard = styled(PlayerCard)`
-  border: none !important;
-  box-shadow: none !important;
-  background-color: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    background-color: transparent !important;
+`;
+
+type AvatarProps = {isBig: boolean};
+
+const Avatar = styled.img<AvatarProps>`
+    border-radius: 50%;
+    width: ${({isBig}) => (isBig ? "150px" : "100px")};
+    height: ${({isBig}) => (isBig ? "150px" : "100px")};
 `;
 
 // Example usage
@@ -107,20 +115,36 @@ type PodiumProps = {
   firstAddress: string;
   secondAddress: string;
   thirdAddress: string;
+  firstEnsAvatar?: string;
+  secondEnsAvatar?: string;
+  thirdEnsAvatar?: string;
 };
-const Podium = ({ firstAddress, secondAddress, thirdAddress }: PodiumProps) => (
+const Podium = ({
+                  firstAddress,
+                  secondAddress,
+                  thirdAddress,
+                  firstEnsAvatar,
+                  secondEnsAvatar,
+                  thirdEnsAvatar
+                }: PodiumProps) => (
   <PodiumContainer>
     <IconContainer place={2}>
       <PlaceText place={2}>2nd</PlaceText>
-      <BorderlessIdenticon address={secondAddress} size={70} />
+      {secondEnsAvatar ?
+        <Avatar src={secondEnsAvatar} isBig={false}/>
+        : <BorderlessIdenticon address={secondAddress} size={70}/>}
     </IconContainer>
     <IconContainer place={1}>
       <PlaceText place={1}>1st</PlaceText>
-      <BorderlessIdenticon address={firstAddress} size={70 * 1.5} />
+      {firstEnsAvatar ?
+        <Avatar src={firstEnsAvatar} isBig={true}/>
+        : <BorderlessIdenticon address={firstAddress} size={70 * 1.5}/>}
     </IconContainer>
     <IconContainer place={3}>
       <PlaceText place={3}>3rd</PlaceText>
-      <BorderlessIdenticon address={thirdAddress} size={70} />
+      {thirdEnsAvatar ?
+        <Avatar src={thirdEnsAvatar} isBig={false}/>
+        : <BorderlessIdenticon address={thirdAddress} size={70}/>}
     </IconContainer>
   </PodiumContainer>
 );
@@ -129,8 +153,9 @@ export default function Leaderboard() {
   const {user} = usePrivy();
   const cachedAddress = useStore((state) => state.cachedAddress)
   const address = user?.wallet?.address || cachedAddress;
-  const { type } = useParams();
+  const {type} = useParams();
   const [leaderboard, setLeaderboard] = useState<Player[]>([]);
+
   async function getLeaderboard() {
     const res = await axios.post<Player[]>(`${baseURL}/${type}Leaderboard`, {
       address,
@@ -155,6 +180,9 @@ export default function Leaderboard() {
         firstAddress={leaderboard[0] ? leaderboard[0].address : ""}
         secondAddress={leaderboard[1] ? leaderboard[1].address : ""}
         thirdAddress={leaderboard[2] ? leaderboard[2].address : ""}
+        firstEnsAvatar={leaderboard[0] ? leaderboard[0].ensAvatar : undefined}
+        secondEnsAvatar={leaderboard[1] ? leaderboard[1].ensAvatar : undefined}
+        thirdEnsAvatar={leaderboard[2] ? leaderboard[2].ensAvatar : undefined}
       />
       <ListContainer>
         {leaderboard.map((player, index) => (

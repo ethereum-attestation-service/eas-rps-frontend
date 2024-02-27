@@ -207,8 +207,6 @@ function Home() {
     checkENS();
   }, [address]);
 
-  console.log(signer,'signer')
-
   return (
     <>
       {/*<GradientBar />*/}

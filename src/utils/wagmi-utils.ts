@@ -35,10 +35,9 @@ export async function walletClientToSigner(walletClient: WalletClient) {
 
 export function useSigner() {
   const {wallet} = usePrivyWagmi();
-  const [tick, setTick] = useState(0);
   const {data: walletClient} = useWalletClient();
-
   const [signer, setSigner] = useState<JsonRpcSigner | undefined>(undefined);
+
   useEffect(() => {
     async function getSigner() {
       if (!walletClient) return;
@@ -51,11 +50,9 @@ export function useSigner() {
       }
     }
 
-    if (!signer) {
-      getSigner();
-      setTimeout(() => {setTick(tick + 1)}, 1000);
-    }
-  }, [wallet, tick]);
+    getSigner();
+
+  }, [wallet, walletClient]);
   return signer;
 }
 

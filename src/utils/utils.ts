@@ -207,17 +207,25 @@ const LOCAL_KEY_SEED = 'Signing this message makes your rps.sh account accessibl
   'DO NOT SHARE YOUR SIGNATURE WITH ANYONE. DO NOT SIGN THIS EXACT MESSAGE FOR ANY APP EXCEPT rps.sh. ';
 
 
-async function generateAndStoreLocalKey(signer: ethers.Signer, setKeyStorage: (ks: KeyStorage) => void) {
-  const key = await signer.signMessage(LOCAL_KEY_SEED);
+async function generateAndStoreLocalKey(signer: ethers.Signer,
+                                        setKeyStorage: (ks: KeyStorage) => void,
+                                        setSigRequested: (b: boolean) => void){
+  const key = await signer.signMessage(LOCAL_KEY_SEED).catch((e) => {
+    setSigRequested(false);
+    return '';
+  });
+  console.log('key', key)
   setKeyStorage({key, wallet: await signer.getAddress()});
   return key;
 }
 
-export async function getLocalKey(signer: ethers.Signer, keyStorage: KeyStorage, setKeyStorage: (ks: KeyStorage) => void) {
+export async function getLocalKey(signer: ethers.Signer, keyStorage: KeyStorage,
+                                  setKeyStorage: (ks: KeyStorage) => void,
+                                  setSigRequested: (b: boolean) => void){
   if (keyStorage.key.length > 0 && keyStorage.wallet === await signer.getAddress()) {
     return keyStorage.key;
   } else {
-    return await generateAndStoreLocalKey(signer, setKeyStorage);
+    return await generateAndStoreLocalKey(signer, setKeyStorage,setSigRequested);
   }
 }
 
@@ -236,8 +244,9 @@ export async function encryptWithLocalKey(signer: ethers.Signer,
                                           saltHex: string,
                                           gameUID: string,
                                           keyStorage: KeyStorage,
-                                          setKeyStorage: (ks: KeyStorage) => void) {
-  const keyHexStr = await getLocalKey(signer, keyStorage, setKeyStorage);
+                                          setKeyStorage: (ks: KeyStorage) => void,
+                                          setSigRequested: (b: boolean) => void){
+  const keyHexStr = await getLocalKey(signer, keyStorage, setKeyStorage,setSigRequested);
   const keyBuffer32Bytes = hexStrToLastNBytesBuffer(keyHexStr, 32);
   const initVector = hexStrToLastNBytesBuffer(gameUID, 16);
   const aesCbc = new aesjs.ModeOfOperation.cbc(keyBuffer32Bytes, initVector);

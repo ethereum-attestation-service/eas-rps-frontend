@@ -184,8 +184,9 @@ export function Header() {
     if (address && signer && !sigRequested) {
       setSigRequested(true);
       try {
-        getLocalKey(signer, keyStorage, setKeyStorage);
+        getLocalKey(signer, keyStorage, setKeyStorage,setSigRequested);
       } catch (e) {
+        console.log('caught error', e);
         setSigRequested(false);
       }
     }

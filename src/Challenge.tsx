@@ -87,6 +87,7 @@ const GameContainer = styled.div<GameStatusProps>`
                                     : "none"};
     padding: 0 1.2rem 1.2rem 1.2rem;
     box-sizing: border-box;
+    min-height: 100vh;
 `;
 
 type WaitingTextProps = { isPlayer1: boolean };
@@ -182,6 +183,7 @@ function Challenge() {
 
   const keyStorage = useStore((state) => state.keyObj);
   const setKeyStorage = useStore((state) => state.setKeyObj);
+  const setSigRequested = useStore((state) => state.setSigRequested);
 
   invariant(challengeId, "Challenge ID should be defined");
 
@@ -276,7 +278,8 @@ function Challenge() {
 
       console.log('about to encrypt')
 
-      const encryptedChoice = await encryptWithLocalKey(signer, choice, saltHex, challengeId, keyStorage, setKeyStorage);
+      const encryptedChoice = await encryptWithLocalKey(signer, choice, saltHex, challengeId, keyStorage,
+        setKeyStorage, setSigRequested);
 
       const encoded = schemaEncoder.encodeData([
         {name: "commitHash", type: "bytes32", value: hashedChoice},
@@ -380,8 +383,9 @@ function Challenge() {
                 >
                   ✂️
                 </HandOption>
-              </HandSelection> :
+              </HandSelection> : !attesting?
                 <AwaitingSignerMessage/>
+                : null
               }
             </>
           ) : (
