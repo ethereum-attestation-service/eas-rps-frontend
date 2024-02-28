@@ -12,7 +12,7 @@ import {publicProvider} from "wagmi/providers/public";
 import {PrivyWagmiConnector} from "@privy-io/wagmi-connector";
 import {PrivyProvider, usePrivy} from "@privy-io/react-auth";
 import {useEffect} from "react";
-import {PrivyAutoLogout} from "./PrivyAutoLogout";
+import {usePrivyAutoLogout} from "./usePrivyAutoLogout";
 import styled from "styled-components";
 
 invariant(activeChainConfig, "Chain config is not set");
@@ -101,9 +101,7 @@ export function Root() {
             }}
           >
             <Header/>
-            <PrivyAutoLogout>
               <Outlet/>
-            </PrivyAutoLogout>
             <Footer/>
           </ConnectKitProvider>
           <WrongChainModal/>

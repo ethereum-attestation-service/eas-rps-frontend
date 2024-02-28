@@ -12,6 +12,7 @@ import {ProfileModal} from "./ProfileModal";
 import {usePrivy} from "@privy-io/react-auth";
 import {useStore} from "../useStore";
 import {useSigner} from "../utils/wagmi-utils";
+import { usePrivyAutoLogout } from "../usePrivyAutoLogout";
 
 const Outer = styled.div`
     font-family: "Nunito", sans-serif;
@@ -153,6 +154,7 @@ export function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   let menuItems: MenuItemType[] = [];
+  usePrivyAutoLogout();
 
   if (address) {
     menuItems.push({
