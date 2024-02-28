@@ -22,7 +22,7 @@ export function PrivyAutoLogout({ children }: { children: React.ReactNode }) {
     if (initialLoad) {
       setInitialLoad(false);
     }
-  }, [isDisconnected]);
+  }, [isDisconnected, initialLoad]);
 
   return <>{children}</>;
 }

@@ -1,11 +1,6 @@
 import React, {useEffect, useState} from "react";
 import styled from "styled-components";
-import GradientBar from "./components/GradientBar";
-import {useAccount} from "wagmi";
-import newChallengeFists from "./assets/newChallengeFists.png";
-
 import {
-  baseURL,
   playLinks,
   CUSTOM_SCHEMAS,
   EASContractAddress,
@@ -20,9 +15,8 @@ import {
 } from "@ethereum-attestation-service/eas-sdk";
 import invariant from "tiny-invariant";
 import {ethers} from "ethers";
-import {Link, useSearchParams} from "react-router-dom";
+import { useSearchParams} from "react-router-dom";
 import {useNavigate, useParams} from "react-router";
-import axios from "axios";
 import dayjs from "dayjs";
 import {useSigner} from "./utils/wagmi-utils";
 import {useStore} from "./useStore";
@@ -47,7 +41,7 @@ const StartButton = styled.div`
     border-radius: 8px;
     background: rgba(46, 196, 182, 0.33);
     color: #fff;
-    font-family: Nunito;
+    font-family: Nunito,serif;
     font-size: 18px;
     font-weight: 700;
     width: 100%;
@@ -59,15 +53,11 @@ const StartButton = styled.div`
     max-width: ${globalMaxWidth};
 `;
 
-const FistsImage = styled.img`
-    width: 133px;
-    height: 100px;
-    flex-shrink: 0;
-`;
+
 
 const BigText = styled.div`
     text-align: center;
-    font-family: Ubuntu;
+    font-family: Ubuntu,serif;
     font-size: 24px;
     font-style: normal;
     font-weight: 700;
@@ -75,37 +65,21 @@ const BigText = styled.div`
     padding: 20px 0;
 `;
 
-// styled component with above styles
 const Input = styled.input`
     text-align: center;
-    font-family: Ubuntu;
+    font-family: Ubuntu,serif;
     font-size: 14px;
     font-style: normal;
     font-weight: 400;
     width: 100%;
     padding: 25px 0;
     border: 1px solid #eee;
-    border-radius: 4px;
+    border-radius: 8px;
     outline: none;
     max-width: ${globalMaxWidth};
     box-sizing: border-box;
 `;
 
-const TextArea = styled.textarea`
-    text-align: center;
-    font-family: Ubuntu;
-    font-size: 14px;
-    font-style: normal;
-    font-weight: 400;
-    width: 100%;
-    border: 1px solid #eee;
-    resize: none;
-    box-sizing: border-box;
-    padding: 25px 10px;
-    border-radius: 4px;
-    outline: none;
-    max-width: ${globalMaxWidth};
-`;
 
 const MiniHeaderContainer = styled.div`
     display: flex;
@@ -126,7 +100,7 @@ function Home() {
   const [ensResolvedAddress, setEnsResolvedAddress] = useState("");
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const {user, ready} = usePrivy();
+  const {user} = usePrivy();
   const cachedAddress = useStore((state) => state.cachedAddress)
   const myAddress = user?.wallet?.address || cachedAddress;
 
@@ -228,7 +202,7 @@ function Home() {
               autoCapitalize={"off"}
             />
             <BigText>Optional Stakes...</BigText>
-            <TextArea
+            <Input
               placeholder="What happens if someone wins? Remember, it's only as good as their
               word."
               value={stakes}
