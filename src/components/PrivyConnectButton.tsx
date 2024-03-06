@@ -34,13 +34,19 @@ export default function PrivyConnectButton({
   const {login, user, ready} = usePrivy();
   const cachedAddress = useStore((state) => state.cachedAddress)
   const address = user?.wallet?.address || cachedAddress;
+  const setLoggingIn = useStore((state) => state.setLoggingIn);
 
+
+  const loginFunc = async () => {
+    setLoggingIn(true)
+    login()
+  }
 
   return (
     <StyledButton onClick={
       !ready ? undefined
         : address ? handleClickWhileConnected
-          : login}>
+          : loginFunc}>
       {!ready && !address
         ? "Loading..." :
         address

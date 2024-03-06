@@ -9,7 +9,6 @@ export function useAutoReveal(myAddress: string | undefined) {
   const gameCommits = useStore((state) => state.gameCommits);
   const keyStorage = useStore((state) => state.keyObj);
   const setKeyStorage = useStore((state) => state.setKeyObj);
-  const sigRequested = useStore((state) => state.sigRequested);
   const [tick, setTick] = useState(0);
   const signer = useSigner();
   const {user} = usePrivy();

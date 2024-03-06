@@ -182,7 +182,8 @@ export const playLinks = [
 
 export const profileLinks = [
   {name: "QR Code", url: "/qr"},
-  {name: "Game History", url: "/games"},
+  {name: "History", url: "/games"},
+  {name: "Graph", url: "/graph"},
 ];
 
 export const leaderboardLinks = [
