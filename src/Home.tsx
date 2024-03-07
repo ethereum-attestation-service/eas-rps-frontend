@@ -144,8 +144,6 @@ function Home() {
       const res = await submitSignedAttestation(pkg);
 
       if (!res.data.error) {
-        console.log(res);
-
         navigate(`/challenge/${signedOffchainAttestation.uid}`);
       } else {
         alert(res.data.error);
@@ -183,7 +181,6 @@ function Home() {
 
   return (
     <>
-      {/*<GradientBar />*/}
       {myAddress ? (
         <Page>
           <Container>

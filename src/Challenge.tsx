@@ -1,6 +1,5 @@
 import React, {useEffect, useState} from "react";
 import styled from "styled-components";
-import {useAccount} from "wagmi";
 import {
   baseURL,
   CHOICE_ROCK,
@@ -10,7 +9,6 @@ import {
   CUSTOM_SCHEMAS,
   EASContractAddress,
   getGameStatus,
-  RPS_GAME_UID,
   STATUS_DRAW,
   STATUS_PLAYER1_WIN,
   STATUS_PLAYER2_WIN,
@@ -22,7 +20,6 @@ import {
 
 import invariant from "tiny-invariant";
 import {useNavigate, useParams} from "react-router";
-import {FaHandRock, FaHandScissors, FaHandPaper} from "react-icons/fa";
 
 import {
   AttestationShareablePackageObject,
@@ -44,7 +41,6 @@ import {usePrivy} from "@privy-io/react-auth";
 import InGameChosenIcon from "./components/InGameChosenIcon";
 import AwaitingSignerMessage from "./components/AwaitingSignerMessage";
 
-type finishedProps = { finished: boolean };
 const Vs = styled.div`
     text-align: center;
     font-family: Racing Sans One;
@@ -53,22 +49,6 @@ const Vs = styled.div`
     font-weight: 700;
     line-height: 34px; /* 42.5% */
     padding: 20px;
-`;
-
-const Button = styled.button`
-    border-radius: 8px;
-    border: 1px solid #e18100;
-    background: #e18100;
-    margin: 10px 0;
-    cursor: pointer;
-    color: #fff;
-    text-align: center;
-    font-family: Nunito;
-    font-size: 18px;
-    font-style: normal;
-    font-weight: 700;
-    height: 40px;
-    flex-shrink: 0;
 `;
 
 type GameStatusProps = { status: number };
@@ -136,11 +116,6 @@ const HandOption = styled.div`
     font-size: 60px;
 `;
 
-const HandOptionImage = styled.img`
-    width: 80%;
-    height: 80%;
-`;
-
 const PlayerContainer = styled.div`
     display: flex;
     flex-direction: column;
@@ -162,7 +137,7 @@ const PlayerStatus = styled.div`
 `;
 
 function Challenge() {
-  const {user, ready} = usePrivy();
+  const {user} = usePrivy();
   const navigate = useNavigate();
   const {challengeId} = useParams();
   const signer = useSigner();
@@ -220,7 +195,7 @@ function Challenge() {
     const swappedGame = swapPlayersIfNecessary(gameRes.data);
     const keyInPlace = signer && keyStorage.key.length > 0 && keyStorage.wallet === await signer.getAddress();
     if (user && keyInPlace) {
-      const {choice} = await decryptWithLocalKey(signer, swappedGame.encryptedChoice1, challengeId, keyStorage, setKeyStorage);
+      const {choice} = await decryptWithLocalKey(swappedGame.encryptedChoice1, challengeId, keyStorage);
       if (choice === CHOICE_ROCK || choice === CHOICE_PAPER || choice === CHOICE_SCISSORS) {
         setDecryptedChoice(choice);
       }
@@ -275,8 +250,6 @@ function Challenge() {
         window.location.reload();
         return
       }
-
-      console.log('about to encrypt')
 
       const encryptedChoice = await encryptWithLocalKey(signer, choice, saltHex, challengeId, keyStorage,
         setKeyStorage, setSigRequested);

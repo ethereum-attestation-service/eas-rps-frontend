@@ -174,7 +174,6 @@ export function ChallengeAttestation({game: g, isChallenge}: Props) {
       const res = await submitSignedAttestation(pkg);
 
       if (!res.data.error) {
-        console.log(res);
         window.location.reload();
       } else {
         alert(res.data.error);

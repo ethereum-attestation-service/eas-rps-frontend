@@ -1,10 +1,9 @@
 import React from "react";
 import Lottie from "react-lottie";
 import animationData from "./assets/rps-home.json";
-import {CustomConnectButton} from "./components/ui/CustomConnectKit";
 import {usePrivy} from "@privy-io/react-auth";
-import {usePrivyWagmi} from "@privy-io/wagmi-connector";
 import styled from "styled-components";
+import {useStore} from './useStore'
 
 const Container = styled.div`
     display: flex;
@@ -57,6 +56,7 @@ const Descriptor = styled.p`
 
 export default function Start() {
   const {login, ready} = usePrivy();
+  const setLoggingIn = useStore((state) => state.setLoggingIn);
 
   return (
     <Container>
@@ -76,7 +76,12 @@ export default function Start() {
         <RoshamboText>ROCK PAPER SCISSORS</RoshamboText>
         <Descriptor>The classic game, built on Attestations.</Descriptor>
       </div>
-      {ready ? <Button onClick={login}>
+      {ready ? <Button onClick={
+        () => {
+          setLoggingIn(true)
+          login()
+        }
+      }>
         Start Playing →
       </Button> : <Descriptor>Checking for connections...</Descriptor>}
     </Container>

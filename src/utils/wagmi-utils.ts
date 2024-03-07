@@ -1,26 +1,8 @@
-import {type PublicClient, type WalletClient, getWalletClient} from "@wagmi/core";
-import {type HttpTransport} from "viem";
+import {type WalletClient} from "@wagmi/core";
 import {useEffect, useState} from "react";
-import {usePublicClient, useWalletClient} from "wagmi";
-import {ethers, JsonRpcProvider, JsonRpcSigner} from "ethers";
-import {usePrivy} from "@privy-io/react-auth";
+import {useWalletClient} from "wagmi";
+import {ethers, JsonRpcSigner} from "ethers";
 import {usePrivyWagmi} from "@privy-io/wagmi-connector";
-
-export function publicClientToProvider(publicClient: PublicClient) {
-  const {chain, transport} = publicClient;
-  const network = {
-    chainId: chain.id,
-    name: chain.name,
-    ensAddress: chain.contracts?.ensRegistry?.address,
-  };
-  if (transport.type === "fallback")
-    return new ethers.FallbackProvider(
-      (transport.transports as ReturnType<HttpTransport>[]).map(
-        ({value}) => new ethers.JsonRpcProvider(value?.url, network)
-      )
-    );
-  return new ethers.JsonRpcProvider(transport.url, network);
-}
 
 export async function walletClientToSigner(walletClient: WalletClient) {
   const {account, chain, transport} = walletClient;
@@ -54,24 +36,4 @@ export function useSigner() {
 
   }, [wallet, walletClient]);
   return signer;
-}
-
-export function useProvider() {
-  const publicClient = usePublicClient();
-
-  const [provider, setProvider] = useState<JsonRpcProvider | undefined>(
-    undefined
-  );
-  useEffect(() => {
-    async function getSigner() {
-      if (!publicClient) return;
-
-      const tmpProvider = publicClientToProvider(publicClient);
-
-      setProvider(tmpProvider as JsonRpcProvider);
-    }
-
-    getSigner();
-  }, [publicClient]);
-  return provider;
 }

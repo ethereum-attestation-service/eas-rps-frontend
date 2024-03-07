@@ -1,8 +1,7 @@
 import {create} from "zustand";
 import {persist} from "zustand/middleware";
 import type {StateCreator} from "zustand";
-import {AcceptedChallenge, Attestation, GameCommit} from "./utils/types";
-import {produce} from "immer";
+import {AcceptedChallenge, GameCommit} from "./utils/types";
 
 export type KeyStorage = {
   key: string;
@@ -18,6 +17,7 @@ type InitialState = {
   keyObj: KeyStorage;
   sigRequested: boolean;
   cachedAddress: string | undefined;
+  loggingIn: boolean;
 };
 
 type StoreMethods = {
@@ -28,6 +28,7 @@ type StoreMethods = {
   setKeyObj: (ks: KeyStorage) => void;
   setSigRequested: (sigRequested: boolean) => void;
   setCachedAddress: (address: string | undefined) => void;
+  setLoggingIn: (isLoggingIn: boolean) => void;
 };
 
 const initialState: InitialState = {
@@ -39,6 +40,7 @@ const initialState: InitialState = {
   keyObj: {key: "", wallet: ""},
   sigRequested: false,
   cachedAddress: undefined,
+  loggingIn: false,
 };
 
 const reducer: StateCreator<InitialState & StoreMethods> = (set, get) => ({
@@ -57,6 +59,7 @@ const reducer: StateCreator<InitialState & StoreMethods> = (set, get) => ({
   setKeyObj: (ks: KeyStorage) => set({keyObj: ks}),
   setSigRequested: (sr: boolean) => set({sigRequested: sr}),
   setCachedAddress: (address: string | undefined) => set({cachedAddress: address}),
+  setLoggingIn: (isLoggingIn: boolean) => set({loggingIn: isLoggingIn}),
 });
 
 export const useStore = create(

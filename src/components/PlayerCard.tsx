@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { badgeNameToLogo } from "../utils/utils";
 import { MaxWidthDiv } from "./MaxWidthDiv";
 import { useNavigate } from "react-router";
+import React from "react";
 
 const PlayerName = styled.div`
   font-size: 18px;

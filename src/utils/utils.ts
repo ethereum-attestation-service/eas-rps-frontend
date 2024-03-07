@@ -102,22 +102,6 @@ export async function getAddressForENS(name: string) {
   }
 }
 
-export async function getENSName(address: string) {
-  try {
-    const provider = new ethers.JsonRpcProvider(
-      `https://eth-mainnet.g.alchemy.com/v2/${process.env.REACT_APP_ALCHEMY_API_KEY}`,
-      "mainnet",
-      {
-        staticNetwork: new ethers.Network("mainnet", 1),
-      }
-    );
-    return await provider.lookupAddress(address);
-  } catch (e) {
-    return null;
-  }
-}
-
-
 export async function submitSignedAttestation(
   pkg: AttestationShareablePackageObject
 ) {
@@ -182,7 +166,8 @@ export const playLinks = [
 
 export const profileLinks = [
   {name: "QR Code", url: "/qr"},
-  {name: "Game History", url: "/games"},
+  {name: "History", url: "/games"},
+  {name: "Graph", url: "/graph"},
 ];
 
 export const leaderboardLinks = [
@@ -210,7 +195,7 @@ const LOCAL_KEY_SEED = 'Signing this message makes your rps.sh account accessibl
 async function generateAndStoreLocalKey(signer: ethers.Signer,
                                         setKeyStorage: (ks: KeyStorage) => void,
                                         setSigRequested: (b: boolean) => void){
-  const key = await signer.signMessage(LOCAL_KEY_SEED).catch((e) => {
+  const key = await signer.signMessage(LOCAL_KEY_SEED).catch(() => {
     setSigRequested(false);
     return '';
   });
@@ -255,11 +240,9 @@ export async function encryptWithLocalKey(signer: ethers.Signer,
   return `0x${result}`;
 }
 
-export async function decryptWithLocalKey(signer: ethers.Signer,
-                                          encryptedHex: string,
+export async function decryptWithLocalKey(encryptedHex: string,
                                           gameUID: string,
-                                          keyStorage: KeyStorage,
-                                          setKeyStorage: (ks: KeyStorage) => void) {
+                                          keyStorage: KeyStorage) {
   try {
     const keyHexStr = keyStorage.key;
     if (!keyHexStr || keyHexStr.length === 0) {

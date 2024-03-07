@@ -1,11 +1,9 @@
 import styled from "styled-components";
 import {useLocation, useNavigate} from "react-router";
-import {theme} from "../utils/theme";
 import PrivyConnectButton from "./PrivyConnectButton";
 import {activeChainConfig, clientURL, getLocalKey} from "../utils/utils";
 import invariant from "tiny-invariant";
-import {useAccount} from "wagmi";
-import {FaQrcode, FaBars} from "react-icons/fa";
+import { FaBars} from "react-icons/fa";
 import {useAutoReveal} from "../hooks/useAutoReveal";
 import {useEffect, useState} from "react";
 import {ProfileModal} from "./ProfileModal";
@@ -41,16 +39,6 @@ const MainNavigation = styled.div`
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
     width: 100%;
-`;
-
-const Logo = styled.div`
-    display: flex;
-    align-items: center;
-    cursor: pointer;
-`;
-
-const QR = styled(FaQrcode)`
-    margin-right: 10px;
 `;
 
 const LogoImage = styled.img`
@@ -104,12 +92,6 @@ const MobileLinks = styled.div`
     }
 `;
 
-const LogoText = styled.span`
-    font-family: Audiowide, sans-serif;
-    font-size: 22px;
-    font-weight: 400;
-    white-space: nowrap;
-`;
 
 type MenuItemProps = {
   active: boolean;
