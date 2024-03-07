@@ -6,16 +6,6 @@ import Modal from "react-modal";
 // Set app element for accessibility (set this to your root app element)
 Modal.setAppElement("#root");
 
-const StyledModal = styled(Modal)`
-  background-color: #f0f2f5;
-  border-radius: 10px;
-  padding: 20px;
-  max-width: 400px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  overflow-wrap: anywhere;
-  overflow-y: scroll;
-`;
-
 const Overlay = styled.div`
   position: fixed;
   top: 0;

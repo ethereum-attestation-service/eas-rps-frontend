@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router";
 import styled from "styled-components";
-import { MaxWidthDiv, SmallMaxWidthDiv } from "./components/MaxWidthDiv";
+import { SmallMaxWidthDiv } from "./components/MaxWidthDiv";
 
 const Container = styled(SmallMaxWidthDiv)`
   width: 100%;

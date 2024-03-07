@@ -14,7 +14,6 @@ export function usePrivyAutoLogout() {
   const loggingIn = useStore((state) => state.loggingIn);
 
   useEffect(() => {
-    console.log('logging in',loggingIn)
     if (user && loggingIn){
       setLoggingIn(false)
     }

@@ -1,8 +1,7 @@
 import {create} from "zustand";
 import {persist} from "zustand/middleware";
 import type {StateCreator} from "zustand";
-import {AcceptedChallenge, Attestation, GameCommit} from "./utils/types";
-import {produce} from "immer";
+import {AcceptedChallenge, GameCommit} from "./utils/types";
 
 export type KeyStorage = {
   key: string;

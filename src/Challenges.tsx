@@ -1,12 +1,9 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
-import GradientBar from "./components/GradientBar";
-import { useAccount } from "wagmi";
-import { useNavigate } from "react-router";
 import { ChallengeAttestation } from "./ChallengeAttestation";
 import axios from "axios";
 import { baseURL, playLinks } from "./utils/utils";
-import { Game, IncomingChallenge } from "./utils/types";
+import { IncomingChallenge } from "./utils/types";
 import Page from "./Page";
 import MiniHeader from "./MiniHeader";
 import { usePrivy } from "@privy-io/react-auth";
@@ -39,7 +36,6 @@ function Challenges() {
     []
   );
   const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
 
   useEffect(() => {
     if (!address) {

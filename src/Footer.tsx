@@ -90,6 +90,6 @@ function Footer() {
       </Column>
     </Container>
   );
-};
+}
 
 export default Footer;

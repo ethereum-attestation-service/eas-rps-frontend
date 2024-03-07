@@ -1,19 +1,15 @@
 import React, {useEffect, useState} from "react";
 import styled from "styled-components";
-import GradientBar from "./components/GradientBar";
-import {useAccount} from "wagmi";
 import {useNavigate, useParams} from "react-router";
-import {ChallengeAttestation} from "./ChallengeAttestation";
 import axios from "axios";
 import {
   baseURL,
-  CHOICE_UNKNOWN,
   profileLinks,
   getGameStatus,
   STATUS_PLAYER1_WIN,
   STATUS_PLAYER2_WIN,
 } from "./utils/utils";
-import {Game, GameWithOnePlayer, MyStats} from "./utils/types";
+import { GameWithOnePlayer, MyStats} from "./utils/types";
 import UserHistoryCard from "./UserHistoryCard";
 import PlayerCard from "./components/PlayerCard";
 import MiniHeader from "./MiniHeader";
@@ -24,7 +20,7 @@ const Container = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 0px 20px 20px 20px;
+    padding: 0 20px 20px 20px;
     box-sizing: border-box;
 `;
 
@@ -77,7 +73,7 @@ function Games() {
   const [ensName, setEnsName] = useState<string | undefined>(undefined);
   const [ensAvatar, setEnsAvatar] = useState<string | undefined>(undefined);
   const [finishedGames, setFinishedGames] = useState<GameWithOnePlayer[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [, setLoading] = useState(false);
   const navigate = useNavigate();
   const [gameStats, setGameStats] = useState({
     wins: 0,

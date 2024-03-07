@@ -1,9 +1,7 @@
 import React from "react";
 import Lottie from "react-lottie";
 import animationData from "./assets/rps-home.json";
-import {CustomConnectButton} from "./components/ui/CustomConnectKit";
 import {usePrivy} from "@privy-io/react-auth";
-import {usePrivyWagmi} from "@privy-io/wagmi-connector";
 import styled from "styled-components";
 import {useStore} from './useStore'
 

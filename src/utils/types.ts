@@ -1,5 +1,3 @@
-import exp from "node:constants";
-
 export type EASChainConfig = {
   chainId: number;
   chainName: string;
@@ -13,32 +11,9 @@ export type EASChainConfig = {
   rpcProvider: string;
 };
 
-export interface AttestationResult {
-  data: Data;
-}
-
-export interface MyAttestationResult {
-  data: MyData;
-}
-
-export interface EnsNamesResult {
-  data: {
-    ensNames: { id: string; name: string }[];
-  };
-}
-
 export interface Data {
   attestation: Attestation | null;
 }
-
-export interface MyData {
-  attestations: Attestation[];
-}
-
-export type ResolvedAttestation = Attestation & {
-  name: string;
-  confirmation?: Attestation;
-};
 
 export type StoreAttestationRequest = { filename: string; textJson: string };
 
@@ -47,10 +22,6 @@ export type StoreIPFSActionReturn = {
   ipfsHash: string | null;
   offchainAttestationId: string | null;
 };
-
-export interface AvailableChallengesResult {
-  data: Data;
-}
 
 export interface Data {
   attestations: Attestation[];

@@ -61,7 +61,6 @@ export default function ForceGraph() {
 
   // Open stuff on click.
   const handleLinkClick = useCallback((link: any) => {
-    console.log("l", link);
     setCurrentLink(link);
   }, []);
 
@@ -80,7 +79,6 @@ export default function ForceGraph() {
         currentGames={currentGames}
         isOpen={!!currentLink}
         onRequestClose={() => {
-          console.log("close");
           setCurrentLink(null);
         }}
       />

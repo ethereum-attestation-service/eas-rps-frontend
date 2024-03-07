@@ -1,16 +1,12 @@
 import React, {useEffect, useState} from "react";
 import styled from "styled-components";
-import GradientBar from "./components/GradientBar";
-import {useAccount} from "wagmi";
 import {useNavigate} from "react-router";
 import {ChallengeAttestation} from "./ChallengeAttestation";
 import axios from "axios";
 import {baseURL, playLinks} from "./utils/utils";
 import {
-  Game,
   GameWithPlayers,
   IncomingChallenge,
-  MyStats,
 } from "./utils/types";
 import Page from "./Page";
 import MiniHeader from "./MiniHeader";
@@ -43,7 +39,6 @@ function Ongoing() {
     []
   );
   const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
 
   useEffect(() => {
     async function getAtts() {
@@ -56,8 +51,6 @@ function Ongoing() {
           address: address,
         }
       );
-
-      console.log(newChallenges.data);
 
       setChallengeObjects(
         newChallenges.data.map((game) => ({
