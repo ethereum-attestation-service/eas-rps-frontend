@@ -23,8 +23,6 @@ type InitialState = {
 type StoreMethods = {
   setHasHydrated: (hydrated: boolean) => void;
   addGameCommit: (commit: GameCommit) => void;
-  addAcceptedChallenge: (challenge: AcceptedChallenge) => void;
-  setIsConnected: (connected: boolean) => void;
   setKeyObj: (ks: KeyStorage) => void;
   setSigRequested: (sigRequested: boolean) => void;
   setCachedAddress: (address: string | undefined) => void;
@@ -51,11 +49,6 @@ const reducer: StateCreator<InitialState & StoreMethods> = (set, get) => ({
       gameCommits: !state.gameCommits.find(c => c.challengeUID === commit.challengeUID) ?
         [...state.gameCommits, commit] : [...state.gameCommits],
     })),
-  addAcceptedChallenge: (challenge: AcceptedChallenge) =>
-    set((state) => ({
-      acceptedChallenges: [...state.acceptedChallenges, challenge],
-    })),
-  setIsConnected: (connected: boolean) => set({isConnected: connected}),
   setKeyObj: (ks: KeyStorage) => set({keyObj: ks}),
   setSigRequested: (sr: boolean) => set({sigRequested: sr}),
   setCachedAddress: (address: string | undefined) => set({cachedAddress: address}),

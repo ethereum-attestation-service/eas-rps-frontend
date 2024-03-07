@@ -1,6 +1,5 @@
 import React, {useEffect, useState} from "react";
 import styled from "styled-components";
-import {useNavigate} from "react-router";
 import {ChallengeAttestation} from "./ChallengeAttestation";
 import axios from "axios";
 import {baseURL, playLinks} from "./utils/utils";
