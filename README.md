@@ -54,4 +54,5 @@ Ensure that you have Node.js and npm installed before proceeding.
    ```bash
    npm run start
    ```
+After completing these steps, the RPS frontend display will be shown on port 3000.
    
