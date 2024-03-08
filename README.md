@@ -28,18 +28,25 @@ Although a server is used to store game states in this implementation, all game 
 
 To run the RPS project locally:
 
-0. [Clone the backend repo](https://github.com/ethereum-attestation-service/eas-rps-backend) and follow setup instructions to get the attestation storage server running locally.
+Ensure that you have Node.js and npm installed before proceeding.
 
-1. Clone the repository:
+1. Install typescript and ts-node if not done already:
+   ```bash
+   npm install -g ts-node typescript
+   ```
+
+2. [Clone the backend repo](https://github.com/ethereum-attestation-service/eas-rps-backend) and follow setup instructions to get the attestation storage server running locally.
+
+3. Clone the frontend repo:
    ```bash
    git clone https://github.com/ethereum-attestation-service/eas-rps-frontend.git
    ```
-2. Install dependencies:
+4. Install dependencies:
    ```bash
    cd eas-rps-frontend
    npm i
    ```
-3. Start the Development Server
+5. Start the Development Server
    ```bash
    npm run start
    ```
