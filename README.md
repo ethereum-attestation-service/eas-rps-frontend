@@ -1,46 +1,46 @@
-# Getting Started with Create React App
+# Rock-Paper-Scissors (RPS) with Offchain EAS Attestations
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+RPS is a decentralized implementation of the classic Rock-Paper-Scissors game, utilizing EAS offchain attestations to ensure a secure and trustless gameplay experience. This project aims to demonstrate how offchain attestations can be used in decentralized applications to enhance transparency and integrity.
 
-## Available Scripts
+## How It Works
 
-In the project directory, you can run:
+The RPS game operates through a series of steps, each leveraging offchain attestations to ensure the integrity of the game:
 
-### `npm start`
+1. **User Registration**: Players can sign up using their own wallet or an embedded wallet with Privy. The chosen wallet is used to sign offchain attestations.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+2. **Starting a Challenge**: A player initiates a challenge by attesting to the recipient address they wish to compete against. Optionally, stakes can be added to the game. An offchain attestation is generated and stored on the server.
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+3. **Attesting to a Move**: Players attest to their chosen move (Rock, Paper, or Scissors) by signing a message. This generates a public offchain attestation that commits to their move without revealing it. The attestation includes a hash of the move and a salt, along with an encrypted version for backup and cross-device play.
 
-### `npm test`
+4. **Revealing a Move**: Once both players have committed, they reveal their moves by submitting the original move and salt to the server. The game's outcome can then be verified by matching the choices and salts with the hashes in their attestations.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+5. **RPS Attests to Winners**: The game result, along with all relevant attestations, salts, and choices, is attested by RPS in a game summary. This summary also indicates if a player was timed out by the server.
 
-### `npm run build`
+6. **ELO Ratings Are Updated**: Based on the game's outcome, the players' ELO ratings are adjusted, affecting their leaderboard standings.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+7. **Relative Game Graphs**: As players engage in more games, a social graph is created showing their interactions and the connections among their opponents.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## Note
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+Although a server is used to store game states in this implementation, all game data is public on the server and 100% verifiable. The use of offchain attestations makes it so that a game's outcome can be verified interactively by any third-party or smart contract logic in any situation where each player would benefit from proving victory in a match. This can be done without placing any trust in the server.
 
-### `npm run eject`
+## Getting Started
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+To run the RPS project locally:
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+0. [Clone the backend repo](https://github.com/ethereum-attestation-service/eas-rps-backend) and follow setup instructions to get the attestation storage server running locally.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/ethereum-attestation-service/eas-rps-frontend.git
+   ```
+2. Install dependencies:
+   ```bash
+   cd eas-rps-frontend
+   npm i
+   ```
+3. Start the Development Server
+   ```bash
+   npm run start
+   ```
+   
