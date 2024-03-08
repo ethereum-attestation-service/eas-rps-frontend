@@ -46,7 +46,11 @@ Ensure that you have Node.js and npm installed before proceeding.
    cd eas-rps-frontend
    npm i
    ```
-5. Start the Development Server
+5. Copy the .env.example file using the command below. Set up your .env file with your Alchemy API key (for resolving ENS names).
+   ```bash
+   cp .env.example .env
+   ```
+6. Start the Development Server
    ```bash
    npm run start
    ```
