@@ -2,6 +2,8 @@
 
 RPS is a decentralized implementation of the classic Rock-Paper-Scissors game, utilizing EAS offchain attestations to ensure a secure and trustless gameplay experience. This project aims to demonstrate how offchain attestations can be used in decentralized applications to enhance transparency and integrity.
 
+Check out [RPS.sh](https://rps.sh) to play the live version.
+
 ## How It Works
 
 The RPS game operates through a series of steps, each leveraging offchain attestations to ensure the integrity of the game:
