@@ -3,7 +3,7 @@ import styled from "styled-components";
 import {ButtonBase} from "../styles/buttons";
 import {theme} from "../utils/theme";
 import {formatAttestationLongValueV2} from "../utils/utils";
-import {useStore} from "../useStore";
+import {useStore} from "../hooks/useStore";
 
 const StyledButton = styled.button`
     ${ButtonBase};

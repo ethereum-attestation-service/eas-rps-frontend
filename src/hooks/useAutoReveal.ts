@@ -1,7 +1,7 @@
 import axios from "axios";
 import {CHOICE_UNKNOWN, baseURL, decryptWithLocalKey} from "../utils/utils";
 import {useEffect, useState} from "react";
-import {useStore} from "../useStore";
+import {useStore} from "./useStore";
 import { useSigner } from "../utils/wagmi-utils";
 import { usePrivy } from "@privy-io/react-auth";
 

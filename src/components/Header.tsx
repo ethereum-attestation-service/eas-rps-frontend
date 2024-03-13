@@ -8,9 +8,9 @@ import {useAutoReveal} from "../hooks/useAutoReveal";
 import {useEffect, useState} from "react";
 import {ProfileModal} from "./ProfileModal";
 import {usePrivy} from "@privy-io/react-auth";
-import {useStore} from "../useStore";
+import {useStore} from "../hooks/useStore";
 import {useSigner} from "../utils/wagmi-utils";
-import { usePrivyAutoLogout } from "../usePrivyAutoLogout";
+import { usePrivyAutoLogout } from "../hooks/usePrivyAutoLogout";
 
 const Outer = styled.div`
     font-family: "Nunito", sans-serif;

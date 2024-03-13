@@ -14,7 +14,6 @@ import {
 } from "./utils/utils";
 import {GameWithPlayersAndAttestations} from "./utils/types";
 import axios from "axios";
-import Page from "./Page";
 import {
   AttestationShareablePackageObject,
   createOffchainURL,
@@ -23,7 +22,7 @@ import {MaxWidthDiv} from "./components/MaxWidthDiv";
 import Confetti from "react-confetti";
 import PlayerCard from "./components/PlayerCard";
 import {usePrivy} from "@privy-io/react-auth";
-import {useStore} from "./useStore";
+import {useStore} from "./hooks/useStore";
 
 const easLogo = "/images/rps/easlogo.png";
 
@@ -283,165 +282,163 @@ function Summary() {
   const eloChangeHappened = game?.eloChange1 > 0 || game?.eloChange2 > 0;
 
   return (
-    <Page>
-      <SummaryContainer>
-        {won && (
-          <Confetti
-            recycle={false}
-            numberOfPieces={2000}
-            tweenDuration={10000}
-            initialVelocityY={20}
-          />
-        )}
-        <VictoryMessageContainer central={!eloChangeHappened}>
-          {status === STATUS_UNKNOWN ? null : status === STATUS_INVALID ? (
-            <VictoryMessage
-              won={false}
-              isBig={true}
-              central={!eloChangeHappened}
-            >
-              Abandoned
-            </VictoryMessage>
-          ) : address === game?.player1 ? (
-            <VictoryMessage
-              won={status === STATUS_PLAYER1_WIN}
-              isBig={!eloChangeHappened}
-              central={!eloChangeHappened}
-            >
-              {status === STATUS_PLAYER1_WIN
-                ? "You Won!"
-                : status === STATUS_PLAYER2_WIN
-                  ? "You Lost!"
-                  : "It's a tie!"}
-            </VictoryMessage>
-          ) : address === game?.player2 ? (
-            <VictoryMessage
-              won={status === STATUS_PLAYER2_WIN}
-              isBig={!eloChangeHappened}
-              central={!eloChangeHappened}
-            >
-              {status === STATUS_PLAYER2_WIN
-                ? "You Won!"
-                : status === STATUS_PLAYER1_WIN
-                  ? "You Lost!"
-                  : "It's a tie!"}
-            </VictoryMessage>
-          ) : null}
-
-          {(address === game?.player1 || address === game?.player2) &&
-          eloChangeHappened ? (
-            <Points>
-              <PointsNum
-                won={
-                  (address === game?.player1 &&
-                    status === STATUS_PLAYER1_WIN) ||
-                  (address === game?.player2 && status === STATUS_PLAYER2_WIN)
-                }
-              >
-                {addPlusIfPositive(
-                  (address === game?.player1
-                    ? game?.eloChange1
-                    : game?.eloChange2) || 0
-                )}
-              </PointsNum>
-              <div style={{width: 5}}/>
-              <PointsWord>points</PointsWord>
-            </Points>
-          ) : null}
-        </VictoryMessageContainer>
-        <ResultContainer>
-          {/*<BiArrowFromBottom color={"#000"} size={24} />*/}
-          <BoxTitle>Game Result</BoxTitle>
-          <Timestamp>{(new Date(game.updatedAt * 1000)).toLocaleString()}</Timestamp>
-          <LineBreak/>
-          <PlayerCard
-            address={game?.player1 || ""}
-            score={choiceToText(game?.choice1 || 0)}
-            overrideENSWith={"Player A"}
-            style={{
-              border: "none",
-              boxShadow: "none",
-              backgroundColor:
-                status === STATUS_PLAYER1_WIN
-                  ? "rgba(46, 196, 182, 0.33)"
-                  : "#FFF",
-            }}
-            badges={
-              game?.player1Object.whiteListAttestations.map(
-                (att) => att.type
-              ) || []
-            }
-            ens={game?.player1Object.ensName}
-            ensAvatar={game?.player1Object.ensAvatar}
-          />
-          <PlayerCard
-            address={game?.player2 || ""}
-            score={choiceToText(game?.choice2 || 0)}
-            overrideENSWith={"Player B"}
-            style={{
-              border: "none",
-              boxShadow: "none",
-              backgroundColor:
-                status === STATUS_PLAYER2_WIN
-                  ? "rgba(46, 196, 182, 0.33)"
-                  : "#FFF",
-            }}
-            badges={
-              game?.player2Object.whiteListAttestations.map(
-                (att) => att.type
-              ) || []
-            }
-            ens={game?.player2Object.ensName}
-            ensAvatar={game?.player2Object.ensAvatar}
-          />
-          {game?.stakes && (
-            <>
-              <LineBreak/>
-              <StakeTitle>What was at stake...</StakeTitle>
-              <StakeBet>{game?.stakes}</StakeBet>
-              <LineBreak/>
-            </>
-          )}
-        </ResultContainer>
-
-        <ResultContainer>
-          <BoxTitle> Game Attestations </BoxTitle>
-          {gameAttestationObjects.map((attestation, index) => (
-            <GameInfoContainer>
-              <img
-                src={easLogo}
-                style={{width: 28, height: 28, display: "flex", margin: 20}}
-              />
-              <GameUIDContainer>
-                <AttestationTitle>
-                  {attestationDescriptions[index]}
-                </AttestationTitle>
-                <GameUID
-                  href={`https://easscan.org${createOffchainURL(
-                    attestation
-                  )}`}
-                  target="_blank"
-                >
-                  {attestation.sig.uid}
-                </GameUID>
-              </GameUIDContainer>
-            </GameInfoContainer>
-          ))}
-        </ResultContainer>
-        {address === game?.player1 || address === game?.player2 ? (
-          <Button
-            onClick={() => {
-              navigate(
-                `/${address === game?.player1 ? game?.player2 : game?.player1}`
-              );
-            }}
+    <SummaryContainer>
+      {won && (
+        <Confetti
+          recycle={false}
+          numberOfPieces={2000}
+          tweenDuration={10000}
+          initialVelocityY={20}
+        />
+      )}
+      <VictoryMessageContainer central={!eloChangeHappened}>
+        {status === STATUS_UNKNOWN ? null : status === STATUS_INVALID ? (
+          <VictoryMessage
+            won={false}
+            isBig={true}
+            central={!eloChangeHappened}
           >
-            Rematch
-          </Button>
+            Abandoned
+          </VictoryMessage>
+        ) : address === game?.player1 ? (
+          <VictoryMessage
+            won={status === STATUS_PLAYER1_WIN}
+            isBig={!eloChangeHappened}
+            central={!eloChangeHappened}
+          >
+            {status === STATUS_PLAYER1_WIN
+              ? "You Won!"
+              : status === STATUS_PLAYER2_WIN
+                ? "You Lost!"
+                : "It's a tie!"}
+          </VictoryMessage>
+        ) : address === game?.player2 ? (
+          <VictoryMessage
+            won={status === STATUS_PLAYER2_WIN}
+            isBig={!eloChangeHappened}
+            central={!eloChangeHappened}
+          >
+            {status === STATUS_PLAYER2_WIN
+              ? "You Won!"
+              : status === STATUS_PLAYER1_WIN
+                ? "You Lost!"
+                : "It's a tie!"}
+          </VictoryMessage>
         ) : null}
-        <UnderlinedLink href={"/challenges"}>Back to Battles</UnderlinedLink>
-      </SummaryContainer>
-    </Page>
+
+        {(address === game?.player1 || address === game?.player2) &&
+        eloChangeHappened ? (
+          <Points>
+            <PointsNum
+              won={
+                (address === game?.player1 &&
+                  status === STATUS_PLAYER1_WIN) ||
+                (address === game?.player2 && status === STATUS_PLAYER2_WIN)
+              }
+            >
+              {addPlusIfPositive(
+                (address === game?.player1
+                  ? game?.eloChange1
+                  : game?.eloChange2) || 0
+              )}
+            </PointsNum>
+            <div style={{width: 5}}/>
+            <PointsWord>points</PointsWord>
+          </Points>
+        ) : null}
+      </VictoryMessageContainer>
+      <ResultContainer>
+        {/*<BiArrowFromBottom color={"#000"} size={24} />*/}
+        <BoxTitle>Game Result</BoxTitle>
+        <Timestamp>{(new Date(game.updatedAt * 1000)).toLocaleString()}</Timestamp>
+        <LineBreak/>
+        <PlayerCard
+          address={game?.player1 || ""}
+          score={choiceToText(game?.choice1 || 0)}
+          overrideENSWith={"Player A"}
+          style={{
+            border: "none",
+            boxShadow: "none",
+            backgroundColor:
+              status === STATUS_PLAYER1_WIN
+                ? "rgba(46, 196, 182, 0.33)"
+                : "#FFF",
+          }}
+          badges={
+            game?.player1Object.whiteListAttestations.map(
+              (att) => att.type
+            ) || []
+          }
+          ens={game?.player1Object.ensName}
+          ensAvatar={game?.player1Object.ensAvatar}
+        />
+        <PlayerCard
+          address={game?.player2 || ""}
+          score={choiceToText(game?.choice2 || 0)}
+          overrideENSWith={"Player B"}
+          style={{
+            border: "none",
+            boxShadow: "none",
+            backgroundColor:
+              status === STATUS_PLAYER2_WIN
+                ? "rgba(46, 196, 182, 0.33)"
+                : "#FFF",
+          }}
+          badges={
+            game?.player2Object.whiteListAttestations.map(
+              (att) => att.type
+            ) || []
+          }
+          ens={game?.player2Object.ensName}
+          ensAvatar={game?.player2Object.ensAvatar}
+        />
+        {game?.stakes && (
+          <>
+            <LineBreak/>
+            <StakeTitle>What was at stake...</StakeTitle>
+            <StakeBet>{game?.stakes}</StakeBet>
+            <LineBreak/>
+          </>
+        )}
+      </ResultContainer>
+
+      <ResultContainer>
+        <BoxTitle> Game Attestations </BoxTitle>
+        {gameAttestationObjects.map((attestation, index) => (
+          <GameInfoContainer>
+            <img
+              src={easLogo}
+              style={{width: 28, height: 28, display: "flex", margin: 20}}
+            />
+            <GameUIDContainer>
+              <AttestationTitle>
+                {attestationDescriptions[index]}
+              </AttestationTitle>
+              <GameUID
+                href={`https://easscan.org${createOffchainURL(
+                  attestation
+                )}`}
+                target="_blank"
+              >
+                {attestation.sig.uid}
+              </GameUID>
+            </GameUIDContainer>
+          </GameInfoContainer>
+        ))}
+      </ResultContainer>
+      {address === game?.player1 || address === game?.player2 ? (
+        <Button
+          onClick={() => {
+            navigate(
+              `/${address === game?.player1 ? game?.player2 : game?.player1}`
+            );
+          }}
+        >
+          Rematch
+        </Button>
+      ) : null}
+      <UnderlinedLink href={"/challenges"}>Back to Battles</UnderlinedLink>
+    </SummaryContainer>
   );
 }
 

@@ -8,7 +8,7 @@ import {useState} from "react";
 import {useNavigate} from "react-router";
 import {formatAttestationLongValueV2} from "../utils/utils";
 import {usePrivy} from "@privy-io/react-auth";
-import {useStore} from "../useStore";
+import {useStore} from "../hooks/useStore";
 
 const Container = styled(Modal)`
     max-width: 400px;

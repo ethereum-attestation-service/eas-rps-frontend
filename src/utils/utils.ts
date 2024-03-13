@@ -10,7 +10,7 @@ import relativeTime from "dayjs/plugin/relativeTime";
 import {ethers} from "ethers";
 import {AttestationShareablePackageObject} from "@ethereum-attestation-service/eas-sdk";
 import axios from "axios";
-import {KeyStorage} from "../useStore";
+import {KeyStorage} from "../hooks/useStore";
 import aesjs from "aes-js";
 
 const easLogo = "/images/rps/easlogo.png";

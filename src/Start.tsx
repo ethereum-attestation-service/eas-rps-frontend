@@ -3,7 +3,7 @@ import Lottie from "react-lottie";
 import animationData from "./assets/rps-home.json";
 import {usePrivy} from "@privy-io/react-auth";
 import styled from "styled-components";
-import {useStore} from './useStore'
+import {useStore} from './hooks/useStore'
 
 const Container = styled.div`
     display: flex;

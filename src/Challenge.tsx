@@ -31,7 +31,7 @@ import {
 import {ethers} from "ethers";
 import dayjs from "dayjs";
 import {useSigner} from "./utils/wagmi-utils";
-import {useStore} from "./useStore";
+import {useStore} from "./hooks/useStore";
 import {
   GameWithPlayers,
 } from "./utils/types";

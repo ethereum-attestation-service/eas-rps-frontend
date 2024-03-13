@@ -15,14 +15,13 @@ import {
 } from "@ethereum-attestation-service/eas-sdk";
 import invariant from "tiny-invariant";
 import {ethers} from "ethers";
-import { useSearchParams} from "react-router-dom";
+import {useSearchParams} from "react-router-dom";
 import {useNavigate, useParams} from "react-router";
 import dayjs from "dayjs";
 import {useSigner} from "./utils/wagmi-utils";
-import {useStore} from "./useStore";
+import {useStore} from "./hooks/useStore";
 import Start from "./Start";
-import Page from "./Page";
-import MiniHeader from "./MiniHeader";
+import MiniHeader from "./components/MiniHeader";
 import {usePrivy} from "@privy-io/react-auth";
 import {globalMaxWidth} from "./components/MaxWidthDiv";
 import AwaitingSignerMessage from "./components/AwaitingSignerMessage";
@@ -41,7 +40,7 @@ const StartButton = styled.div`
     border-radius: 8px;
     background: rgba(46, 196, 182, 0.33);
     color: #fff;
-    font-family: Nunito,serif;
+    font-family: Nunito, serif;
     font-size: 18px;
     font-weight: 700;
     width: 100%;
@@ -54,10 +53,9 @@ const StartButton = styled.div`
 `;
 
 
-
 const BigText = styled.div`
     text-align: center;
-    font-family: Ubuntu,serif;
+    font-family: Ubuntu, serif;
     font-size: 24px;
     font-style: normal;
     font-weight: 700;
@@ -67,7 +65,7 @@ const BigText = styled.div`
 
 const Input = styled.input`
     text-align: center;
-    font-family: Ubuntu,serif;
+    font-family: Ubuntu, serif;
     font-size: 14px;
     font-style: normal;
     font-weight: 400;
@@ -182,47 +180,45 @@ function Home() {
   return (
     <>
       {myAddress ? (
-        <Page>
-          <Container>
-            <MiniHeaderContainer>
-              <MiniHeader links={playLinks} selected={0}/>
-            </MiniHeaderContainer>
-            {/*<FistsImage src={newChallengeFists} />*/}
-            <BigText>Who are you battling?</BigText>
-            <Input
-              type="text"
-              placeholder="Type in address or ENS name..."
-              value={address}
-              onChange={(e) => setAddress(e.target.value)}
-              autoCorrect={"off"}
-              autoComplete={"off"}
-              autoCapitalize={"off"}
-            />
-            <BigText>Optional Stakes...</BigText>
-            <Input
-              placeholder="What happens if someone wins? Remember, it's only as good as their
+        <Container>
+          <MiniHeaderContainer>
+            <MiniHeader links={playLinks} selected={0}/>
+          </MiniHeaderContainer>
+          {/*<FistsImage src={newChallengeFists} />*/}
+          <BigText>Who are you battling?</BigText>
+          <Input
+            type="text"
+            placeholder="Type in address or ENS name..."
+            value={address}
+            onChange={(e) => setAddress(e.target.value)}
+            autoCorrect={"off"}
+            autoComplete={"off"}
+            autoCapitalize={"off"}
+          />
+          <BigText>Optional Stakes...</BigText>
+          <Input
+            placeholder="What happens if someone wins? Remember, it's only as good as their
               word."
-              value={stakes}
-              onChange={(e) => setStakes(e.target.value)}
-            />
-            {signer ? <StartButton
-              style={
-                ethers.isAddress(ensResolvedAddress || address) && !attesting
-                  ? {backgroundColor: "#2EC4B6", cursor: "pointer"}
-                  : {}
-              }
-              onClick={
-                ethers.isAddress(ensResolvedAddress || address) && !attesting
-                  ? issueChallenge
-                  : () => {
-                  }
-              }
-            >
-              {attesting ? 'Starting...' : 'Start Battle'}
-            </StartButton> : <AwaitingSignerMessage/>
+            value={stakes}
+            onChange={(e) => setStakes(e.target.value)}
+          />
+          {signer ? <StartButton
+            style={
+              ethers.isAddress(ensResolvedAddress || address) && !attesting
+                ? {backgroundColor: "#2EC4B6", cursor: "pointer"}
+                : {}
             }
-          </Container>
-        </Page>
+            onClick={
+              ethers.isAddress(ensResolvedAddress || address) && !attesting
+                ? issueChallenge
+                : () => {
+                }
+            }
+          >
+            {attesting ? 'Starting...' : 'Start Battle'}
+          </StartButton> : <AwaitingSignerMessage/>
+          }
+        </Container>
       ) : (
         <Start/>
       )}

@@ -7,8 +7,7 @@ import {
   GameWithPlayers,
   IncomingChallenge,
 } from "./utils/types";
-import Page from "./Page";
-import MiniHeader from "./MiniHeader";
+import MiniHeader from "./components/MiniHeader";
 import {usePrivy} from "@privy-io/react-auth";
 
 const Container = styled.div`
@@ -82,21 +81,19 @@ function Ongoing() {
   }, [address]);
 
   return (
-    <Page>
-      <Container>
-        <MiniHeader links={playLinks} selected={2}/>
+    <Container>
+      <MiniHeader links={playLinks} selected={2}/>
 
-        <Title>Ongoing Battles</Title>
-        {loading && <div>Loading...</div>}
-        {challengeObjects.length > 0 || loading ? (
-          challengeObjects.map((gameObj) => (
-            <ChallengeAttestation game={gameObj}/>
-          ))
-        ) : (
-          <div>No one here yet</div>
-        )}
-      </Container>
-    </Page>
+      <Title>Ongoing Battles</Title>
+      {loading && <div>Loading...</div>}
+      {challengeObjects.length > 0 || loading ? (
+        challengeObjects.map((gameObj) => (
+          <ChallengeAttestation game={gameObj}/>
+        ))
+      ) : (
+        <div>No one here yet</div>
+      )}
+    </Container>
   );
 }
 

@@ -5,10 +5,10 @@ import axios from "axios";
 import styled from "styled-components";
 import PlayerCard from "./components/PlayerCard";
 import {useParams} from "react-router";
-import MiniHeader from "./MiniHeader";
+import MiniHeader from "./components/MiniHeader";
 import {Identicon} from "./components/Identicon";
 import {usePrivy} from "@privy-io/react-auth";
-import {useStore} from "./useStore";
+import {useStore} from "./hooks/useStore";
 
 const Container = styled.div`
     display: flex;

@@ -1,8 +1,8 @@
 import {useNavigate} from "react-router";
-import {Identicon} from "./components/Identicon";
+import {Identicon} from "./Identicon";
 import styled from "styled-components";
 import axios from "axios";
-import {badgeNameToLogo, baseURL} from "./utils/utils";
+import {badgeNameToLogo, baseURL} from "../utils/utils";
 import {useState} from "react";
 
 const CardContainer = styled.div`

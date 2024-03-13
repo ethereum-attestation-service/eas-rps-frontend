@@ -4,11 +4,10 @@ import {baseURL, profileLinks, clientURL} from "./utils/utils";
 import {QRCodeSVG} from "qrcode.react";
 import PlayerCard from "./components/PlayerCard";
 import axios from "axios";
-import Page from "./Page";
-import MiniHeader from "./MiniHeader";
+import MiniHeader from "./components/MiniHeader";
 import {usePrivy} from "@privy-io/react-auth";
-import { Player } from "./utils/types";
-import { useStore } from "./useStore";
+import {Player} from "./utils/types";
+import {useStore} from "./hooks/useStore";
 
 const Container = styled.div`
     display: flex;
@@ -22,32 +21,32 @@ const Container = styled.div`
 `;
 
 const QrCard = styled.div`
-  max-width: 600px;
-  border-radius: 15px;
-  background: #fff;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  box-shadow: 10px 10px 5px 0px rgba(57, 53, 84, 0.05);
-  margin-top: 20px;
+    max-width: 600px;
+    border-radius: 15px;
+    background: #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: 10px 10px 5px 0px rgba(57, 53, 84, 0.05);
+    margin-top: 20px;
 `;
 
 const CopyButton = styled.div`
-  color: rgb(57, 53, 84);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: "Space Grotesk";
-  font-size: 14px;
-  font-style: normal;
-  font-weight: 700;
-  width: 300px;
-  height: 39px;
-  flex-shrink: 0;
-  border-radius: 8px;
-  cursor: pointer;
-  background: rgba(200, 179, 245, 0.15);
-  padding: 10px 20px;
+    color: rgb(57, 53, 84);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: "Space Grotesk";
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 700;
+    width: 300px;
+    height: 39px;
+    flex-shrink: 0;
+    border-radius: 8px;
+    cursor: pointer;
+    background: rgba(200, 179, 245, 0.15);
+    padding: 10px 20px;
 `;
 
 const ChallengeLink = styled.div`
@@ -73,7 +72,7 @@ function Home() {
   const cachedAddress = useStore((state) => state.cachedAddress)
   const address = user?.wallet?.address || cachedAddress;
   const [player, setPlayer] = useState<Player>();
-  const [copied,setCopied] = useState(false);
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     async function fetchPlayerDetails() {
@@ -89,43 +88,41 @@ function Home() {
   const challengeLink = `${clientURL}/${player?.ensName || address}`
 
   return (
-    <Page>
-      <Container>
-        <MiniHeader links={profileLinks} selected={0}/>
-        <PlayerCard
-          address={address || ""}
-          score={player?.elo || 0}
-          overrideENSWith={"Your Address"}
-          badges={player?.badges || []}
-          ens={player?.ensName}
-          ensAvatar={player?.ensAvatar}
-        />
+    <Container>
+      <MiniHeader links={profileLinks} selected={0}/>
+      <PlayerCard
+        address={address || ""}
+        score={player?.elo || 0}
+        overrideENSWith={"Your Address"}
+        badges={player?.badges || []}
+        ens={player?.ensName}
+        ensAvatar={player?.ensAvatar}
+      />
 
-        <QrCard>
-          <QrCodeContainer>
-            {address && (
-              <QRCodeSVG
-                value={challengeLink}
-                includeMargin={true}
-                size={300}
-              />
-            )}
-          </QrCodeContainer>
+      <QrCard>
+        <QrCodeContainer>
+          {address && (
+            <QRCodeSVG
+              value={challengeLink}
+              includeMargin={true}
+              size={300}
+            />
+          )}
+        </QrCodeContainer>
 
-          <CopyButton
-            onClick={async () => {
-              window.navigator.clipboard.writeText(
-                challengeLink
-              );
-              setCopied(true);
-            }}
-          >
-            {copied?'Copied Link':'Copy Challenge Link'}
-          </CopyButton>
-          <ChallengeLink>{challengeLink}</ChallengeLink>
-        </QrCard>
-      </Container>
-    </Page>
+        <CopyButton
+          onClick={async () => {
+            window.navigator.clipboard.writeText(
+              challengeLink
+            );
+            setCopied(true);
+          }}
+        >
+          {copied ? 'Copied Link' : 'Copy Challenge Link'}
+        </CopyButton>
+        <ChallengeLink>{challengeLink}</ChallengeLink>
+      </QrCard>
+    </Container>
   );
 }
 

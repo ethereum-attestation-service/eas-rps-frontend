@@ -10,11 +10,11 @@ import {
   STATUS_PLAYER2_WIN,
 } from "./utils/utils";
 import { GameWithOnePlayer, MyStats} from "./utils/types";
-import UserHistoryCard from "./UserHistoryCard";
+import UserHistoryCard from "./components/UserHistoryCard";
 import PlayerCard from "./components/PlayerCard";
-import MiniHeader from "./MiniHeader";
+import MiniHeader from "./components/MiniHeader";
 import {usePrivy} from "@privy-io/react-auth";
-import {useStore} from "./useStore";
+import {useStore} from "./hooks/useStore";
 
 const Container = styled.div`
     display: flex;
