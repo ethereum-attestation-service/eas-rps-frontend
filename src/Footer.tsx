@@ -81,7 +81,7 @@ function Footer() {
             How it Works
           </LinkDescriptor>
         </Link>
-        <Link onClick={()=>{window.location.href = ('https://github.com')}}>
+        <Link onClick={()=>{window.location.href = ('https://github.com/ethereum-attestation-service/eas-rps-frontend')}}>
           <FaGithub size={ICON_SIZE} color={'#fff'}/>
           <LinkDescriptor>
             Github Repo
